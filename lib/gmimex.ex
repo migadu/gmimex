@@ -7,11 +7,13 @@ defmodule Gmimex do
 
 
   def get_json(path, opts) when is_binary(path) do
+    opts = Keyword.merge(@get_json_defaults, opts)
     {:ok, do_get_json(path, opts)}
   end
 
 
   def get_json(paths, opts) when is_list(paths) do
+    opts = Keyword.merge(@get_json_defaults, opts)
     {:ok, paths |> Enum.map(&(do_get_json(&1, opts)))}
   end
 
@@ -33,6 +35,11 @@ defmodule Gmimex do
         data
       end
     end
+  end
+
+
+  def get_json_list(email_list, opts \\ []) do
+    email_list |> Enum.map(fn(x) -> {:ok, email} = Gmimex.get_json(x, opts); email end)
   end
 
 
@@ -61,17 +68,26 @@ defmodule Gmimex do
   Base_dir is the root directory of the mailbox, email the email of the currently
   logged in webmail-user, and folder the folder which defaults to Inbox.
   """
-  def read_folder(base_dir, email, folder \\ ".", _from_idx \\ 0, _to_idx \\ 10) do
+  def read_folder(base_dir, email, folder \\ ".", from_idx \\ 0, to_idx \\ 10) do
     mailbox_path = mailbox_path(base_dir, email, folder)
-    # move all files from 'new' to 'cur'
-    # we need to use the system call, because File.ls cannot do ordering
-    new_emails = files_ordered_by_time_desc(Path.join(mailbox_path, "new"))
-    Enum.each(new_emails, fn(x) -> filepath = Path.join(Path.join(mailbox_path, "new"), x); move_to_cur(filepath) end)
+    move_new_to_cur(mailbox_path)
     cur_path = Path.join(mailbox_path, "cur")
     cur_email_names = files_ordered_by_time_desc(cur_path)
     emails = Enum.map(cur_email_names, fn(x) ->
-      {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), flags: true);email end)
-    emails
+      {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), extended: true, content: false);email end)
+    sorted_emails = Enum.sort(emails, &(&1["sortId"] > &2["sortId"]))
+
+    selection = Enum.map(Enum.slice(sorted_emails, from_idx, to_idx-from_idx), &(&1["path"]))
+    complete_emails = get_json_list(selection, content: true)
+
+    {sorted_emails, complete_emails}
+  end
+
+
+  # move all files from 'new' to 'cur'
+  defp move_new_to_cur(mailbox_path) do
+    {:ok, new_emails} = File.ls(Path.join(mailbox_path, "new"))
+    Enum.each(new_emails, fn(x) -> filepath = Path.join(Path.join(mailbox_path, "new"), x); move_to_cur(filepath) end)
   end
 
 

@@ -110,16 +110,22 @@ defmodule GmimexTest do
   end
 
 
+  test "get_json with list" do
+    path = Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
+    {:ok, [email]} = Gmimex.get_json([path])
+    assert Map.has_key?(email["text"], "preview")
+  end
+
+
   test "read folder" do
     base_dir = Path.expand("test/data")
     email = "aaa@test.com"
     folder = "."
-    emails = Gmimex.read_folder(base_dir, email, folder)
+    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder)
     {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
     assert new_file_listings == [".gitignore"]
-    first_email =  List.first(emails)
-    IO.inspect first_email
-    assert first_email["subject"] == "PETITS PRIX : 2 millions de billets a prix Prem's avec TGV et Intercites !"
+    first_email =  List.first(sorted_emails)
+    assert first_email["subject"] == "Atrachment"
     assert first_email["flags"]["attachments"] == true
     GmimexTest.Helpers.restore_from_backup
   end
@@ -129,12 +135,31 @@ defmodule GmimexTest do
     base_dir = Path.expand("test/data")
     email = "aaa@test.com"
     folder = "."
-    emails = Gmimex.read_folder(base_dir, email, folder)
+    # Read the folder twice! Because the new emails are moved around,
+    # to see if it also works with an empty new directory
+    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder)
+    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder)
     {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
     assert new_file_listings == [".gitignore"]
-    first_email =  List.first(emails)
-    assert first_email["subject"] == "PETITS PRIX : 2 millions de billets a prix Prem's avec TGV et Intercites !"
+    first_email =  List.first(sorted_emails)
+    assert first_email["subject"] == "Atrachment"
     assert first_email["flags"]["attachments"] == true
+    GmimexTest.Helpers.restore_from_backup
+  end
+
+
+  test "the previews of the selected emails" do
+    base_dir = Path.expand("test/data")
+    email = "aaa@test.com"
+    folder = "."
+    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder, 0, 2)
+    {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
+    assert new_file_listings == [".gitignore"]
+    assert Enum.count(complete_emails) == 2
+    first_complete_email =  List.first(complete_emails)
+    first_sorted_email =  List.first(sorted_emails)
+    assert first_complete_email["subject"] == first_sorted_email["subject"]
+    assert Map.has_key?(first_complete_email["text"], "preview")
     GmimexTest.Helpers.restore_from_backup
   end
 end
