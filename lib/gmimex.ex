@@ -7,13 +7,11 @@ defmodule Gmimex do
 
 
   def get_json(path, opts) when is_binary(path) do
-    opts = Keyword.merge(@get_json_defaults, opts)
     {:ok, do_get_json(path, opts)}
   end
 
 
   def get_json(paths, opts) when is_list(paths) do
-    opts = Keyword.merge(@get_json_defaults, opts)
     {:ok, paths |> Enum.map(&(do_get_json(&1, opts)))}
   end
 
@@ -74,7 +72,7 @@ defmodule Gmimex do
     cur_path = Path.join(mailbox_path, "cur")
     cur_email_names = files_ordered_by_time_desc(cur_path)
     emails = Enum.map(cur_email_names, fn(x) ->
-      {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), extended: true, content: false);email end)
+      {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), flags: true, content: false);email end)
     sorted_emails = Enum.sort(emails, &(&1["sortId"] > &2["sortId"]))
 
     selection = Enum.map(Enum.slice(sorted_emails, from_idx, to_idx-from_idx), &(&1["path"]))
