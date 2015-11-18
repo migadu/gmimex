@@ -1,0 +1,992 @@
+Return-Path: <blue@tester.ch>
+Delivered-To: mjb@migadu.ch
+Received: from imap.migadu.com ([78.47.71.6])
+        by imap.migadu.com (Dovecot) with LMTP id y42rKbxZBFYMRgAA53dlqA
+        for <mjb@migadu.ch>; Thu, 24 Sep 2015 22:14:52 +0200
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by imap.migadu.com (Postfix) with ESMTPS id 9AA40CC611
+        for <mjb@migadu.ch>; Thu, 24 Sep 2015 22:14:52 +0200 (CEST)
+Received: from o1678951x73.outbound-mail.sendgrid.net ([167.89.51.73]) by
+ mx-ha.gmx.net (mxgmx101) with ESMTPS (Nemesis) id 0MStp3-1a4kXc3QGr-00RmF1
+ for <blue@tester.ch>; Thu, 24 Sep 2015 22:14:50 +0200
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=rdsv1.net;
+        h=content-type:from:mime-version:reply-to:subject:to; s=s1;
+        bh=GR/7bvQPuwM/LquVsZAY/RTNcoA=; b=aagn8PQ7rPLb8HhPhA5+mWKiJ0BPR
+        80SsdXSZOAG/D/ZH2DWCU4q/an7vW7Y6r7nyY+fUg1aXPcGro+GvFrjqBjo/zgMT
+        e6VyldYYFe26UbvU+eJ8i1D0vEhB1q8wQ9/7Ms/8S+S4z3UBE7olrtm2mxvA3SIR
+        d0M6XNyKhqLJtk=
+Received: by filter0560p1mdw1.sendgrid.net with SMTP id filter0560p1mdw1.11144.5604599D34
+        2015-09-24 20:14:21.33129723 +0000 UTC
+Received: from MTY5MTgyMg (ec2-54-81-5-106.compute-1.amazonaws.com [54.81.5.106])
+        by ismtpd0002p1iad1.sendgrid.net (SG) with HTTP id 4Dpj79nxQ9y-tVONvDSzPw
+        for <elixir.radar@plataformatec.com.br>; Thu, 24 Sep 2015 20:14:20.969 +0000 (UTC)
+Content-Type: multipart/alternative; boundary=a4554484220a5f8a439bd5847410359cbb2c0b5d87310f54e83a3eb1cf33
+Date: Thu, 24 Sep 2015 20:14:20 +0000
+From: "Elixir Radar" <elixir.radar@plataformatec.com.br>
+Mime-Version: 1.0
+Precedence: bulk
+Reply-to: elixir.radar@plataformatec.com.br
+Subject: Latest Elixir news on the radar, issue 22
+To: blue@tester.ch
+Message-ID: <4Dpj79nxQ9y-tVONvDSzPw@ismtpd0002p1iad1.sendgrid.net>
+X-SG-EID: kHMWIZkkJAEUgV8k7a09VZGdSQqnIosUJspsPhoxnbtoM7K1BNfDeyterNEaLN7sq1HowBP2f5acw+
+ MpVJWVctwN7Iz7rmcyrPQarNbcwfUUpueOeAy65Kv8DL7yAZfnZw8C76DOESPfX2rV/K2do94kw47b
+ oQHaPUKygOQNDRE=
+X-SG-ID: zkrPYgZPgeebTIGDNt1CncMmBr5beS38XzefY+6Z1992GWgO9A6sGEOuuUQ9tP9jC+xFZUfXtGBJAo
+ i6dAoanfZqoQelEMVYxRH4H+Qc6zhxQCf0pEzlmB0PZCblfRKdxVdfuwA53b0VKBe0+TwFHEgHp1RX
+ /me1K0d98qbUUf8IcaCuGGf3x2mDNv9LX+UYNYYzcL/8i/YJCNh/63WHyIznhFbR0278wRpUqyVcHe
+ GeISB7g+eC5RA5Zxed+csWMLHI2FZ/1AwH9pS116N7xA==
+Envelope-To: <blue@tester.ch>
+X-GMX-Antispam: 0 (Mail was not recognized as spam); Detail=V3;
+X-GMX-Antivirus: 0 (no virus found)
+X-UI-Filterresults: notjunk:1;V01:K0:TmD9uCY0FsA=:k9o/3o7eC15MVVRQqjht5C0zZk
+ Pt4FXAf3GmwFA9gRqV1Mhf2jLTtki98swoQ9NbfzTfY66kouvy/CzUMOZF7ycVrx2jqHlbnZe
+ 4jLOmOzMWlb4KQdPzVh2TLeDdtJzUhgEAq9oRURWb7lV4POKRz10UMor2WBffsff7YbDX/log
+ DlrKM3Aot9pebCAXs8R59Nd+oQNL09EbUBMJXLxdgbusyLoLqe+K6f6e1aqqdvVF6FdP+a1fX
+ hs+anKyctRv9wNLNPgE/d2/voVcEc1Z7hO17gwApKPB3fO3BOE1rzI7keld0UiqqoKZA3sQtm
+ KFiFsGsrvHso3h0sTCBnwg7Tp9QnsNV4Gx40oK6wPEdeM1+j+D0Vf0eAZLKLhZDg+A1rhwMlx
+ /QsaAz5tgChAjc1EqfCWx0RXOCNu9MrJZv9wkS5INQRz1Wn1pCfHHjCf0X5Z1EiJGIrxAd2aj
+ l+gu3fVC7ETahTVSE8D4pEmdrGYIIUGSUqreg49tx+cGDDfwp10cnUEW4PI7FfnCzHlZj3YLn
+ Uz0o/9BxAQmRoYnQlzmDFJwS7d+Ym+4rWPjMP1QZB4E1DOCZ8uuds99yRWKerXW5ZxrhrGc7f
+ /IioiBdRfXljMQ/rTVocFRZwPCfE/4O1xOg8i3lPBVPBi3gGgxBpey01Ryhx+8oU+bKHURNXE
+ fNVsUH9U+u4G/uFqWzWFyRz94uxMrf5Fdvc4xZPfk0dmXZOPXnCUECXeHT5kpn5M7p41w1LQQ
+ uGAO02Bv5XrjF3F4tEZckF8PEHcWfjpUqaVpItpGFizN3Nam6dvOpHnYNVdnvO+Xlq/UCTHBJ
+ f9CBdfgXfe395qUMsdpg3zArPn+CXvlBRhyWLer3Sfhy8445RfSFXo+JFy5qyw3F6HOj6iv2u
+ TsRP68FQuGDxrWbO0tKUzxBsN2ftZmksfQlqqocPs2WiGfpoDDUYwqvL4jML9H89TdXhgetHa
+ 66jsn+va7MpYEjclAdh2KP4IR62+F7YgyPaT3tv5zKscd1SBu0QgJW7CECGmmHvD0P8MG6dga
+ qc+9X6HMvPyF+Ha4pEW6QjxWF7rnyL67wxWhgyt0erKMWWMJsRrIG/at4/MslUEudI/Bjy7ZN
+ gKTJDlGfQdtjBYyZtwrK3OVeQWxHOsU/gv6qPWkOgJ3diWlyD68yLdX7xYAVHN02wXPTEJelZ
+ 4eoM2DupJdChFuXM3+xrDupYz4VBX2+Whs6GVRyZWS6MD5990gQaD+l6JvsjTyP895P4p6Dbc
+ wXObDBf/F8/S4Zio/r6ptghRQsY5aHPi5ZT324BeS/8GPrYpQqlt5ZQBL1mq29qdgsd1S7iC7
+ gZyEQt8FDI8AJYhtB5mI22ghceJ7lVgYn9cWX6iatVAopq5XjUZeTYLK0pt2frZ5Kd1n
+X-UI-Loop:V01:8rkBIQNF6f0=:kmDtooi6XYfmvSRx1ZILTw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5ke/eXKAYBw=:ZQ4IhN+I1KJ2Ai0AD0GrgT
+ hNyKnBHeq8eWdZAmx6fREyYpyEAQc5jt4TtdS+TWFOfYOhbj5IvmGP3DtXMwL8T4AyNHdVFiY
+ 4TKPUX+flf4nBYsK4zFwm+8BSJpSP6Ayne1i0m7uRZi5fnYizCc54MAZJv24Q2a2XzWyjUcSw
+ RXGWU/B8avUryp7O27dIelNgn3E38t8vuTa0k74Csag/lFYX7KKFer3khN2TT6jrx987MaXdV
+ HWV3zNwp0hqmS/1hbx6FZHSpTW/wdthGSScxC3/buAec+MehqV4gR56wNyid4zclI20+ykFFh
+ q2uZ3HT9XM/sGbmwFAYnn08MQfMbXbuAFa5OQjREfJ8daYwor4kFaWQtT1Yy7FS1X/8dLPt/+
+ hc7nbMCqEHCOyqAasQQ==
+
+--a4554484220a5f8a439bd5847410359cbb2c0b5d87310f54e83a3eb1cf33
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+
+Elixir Radar=20
+Issue 22 - Sep 24, 2015=20
+=20
+Interoperability with C via Ports
+Josh Adams from ElixirSips [ http://elixirsips.com ] has released a free ep=
+isode on interoperability with C via Ports with the video and material avai=
+lable on GitHub.
+https://github.com/knewter/complex
+
+Diving into Ecto
+Lew Parker walks us through a non-trivial data domain with Ecto, showing ho=
+w to start a barebone project with Ecto up to migrating your database, sett=
+ing up your models and inserting data to the database.
+http://www.glydergun.com/diving-into-ecto/
+
+Testing callbacks in Elixir
+A straight to the point blog post by Henrik Nyh that shows how to test call=
+backs that rely on side-effects in Elixir.
+ http://thepugautomatic.com/2015/09/testing-callbacks-in-elixir/=20
+
+Phoenix for Railsies: Form Helpers and Models
+n this series of articles about Phoenix for Rails developers, Dhaivat Pandy=
+a shows how models and helpers work in Phoenix, detailing the workflow from=
+ setting up the model for insertion via changesets up to rendering the data=
+ in forms.
+http://www.sitepoint.com/phoenix-for-railsies-form-helpers-and-models/
+
+=46rom Functions |> Processes
+A great introduction to Elixir by Avinasha Shastry that takes developes fro=
+m single functions to a stack implementation using Elixir processes.
+http://avinasha.com/elixir-from-functions-processes/=20
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Jobs
+
+Backend developer (Elixir)
+Football Addicts - Gothenburg, Sweden
+We are looking for Elixir developers to join our team.
+You will be working on the backend that powers our mobile apps - from push =
+notification systems to video highlight systems and new, groundbreaking app=
+s.
+http://www.footballaddicts.com/jobs/backend-developer-elixir/
+
+Senior API developer [  ]=20
+Movement (Boombox, Qzzr, Pollcaster) - Lehi, UT, USA (Remote considered)
+Our products are enterprise-level in their abilities, and consumer-quality =
+in their polish. We value low latency, redundancy, distributed systems, ser=
+vice-oriented architecture, high fault tolerance, and scalability.
+https://movement.bamboohr.com/jobs/view.php?id=3D19
+
+Post a job listing here for free
+http://pages.plataformatec.com.br/post-your-job-listing-in-the-elixir-radar=
+-for-free
+
+=3D=3D=3D=3D=3D=3D=3D=3D
+Events
+
+Portland, ME -- Erlang & Elixir with Jean-Fran=C3=A7ois Cloutier=20=20=20
+Monday, September 28, 2015
+http://www.meetup.com/Maine-Server-Side-Engineering-and-Performance-Meetup/=
+events/224317378/
+
+London, United Kingdom -- Hack Night=20=20=20
+Tuesday, September 29, 2015=20
+http://www.meetup.com/Elixir-London/events/224687829/
+
+Charlotte, NC
+Wednesday, September 30, 2015
+http://www.meetup.com/Charlotte-Elixir-Meetup/events/224281600/
+
+Irvine, CA
+Thursday, October 1, 2015
+http://www.meetup.com/Orange-County-Elixir/events/225267480/
+
+Austin, Texas -- ElixirConf=20=20=20
+Thursday to Saturday, October 1 to 3, 2015
+http://elixirconf.com/
+
+Bangalore, India
+Saturday, October 3, 2015
+http://www.meetup.com/Bangalore-Elixir-Meetup/events/225439897/
+
+New Orleans, LA
+Tuesday, October 6, 2015
+http://www.meetup.com/no-fun/events/224929078/
+
+Austin, TX -- Ch 1 & 2 of Elixir In Action=20
+Wednesday, October 7, 2015
+http://www.meetup.com/Austin-Elixir/events/225090836/
+
+Lehi, UT
+Thursday, October 8, 2015
+http://www.meetup.com/utah-elixir/events/224633468/
+
+San Francisco, CA -- Improving RPC calls in Erlang and Elixir=20=20=20
+Thursday, October 8, 2015
+http://www.meetup.com/ErlangSF/events/225123831/
+
+M=C3=A9xico City, Mexico -- Erlang Factory Lite=20=20=20
+Saturday, October 10, 2015
+http://www.erlang-factory.com/mexico2015
+
+Washington, D.C. -- Elixir Mastery
+Wednesday to Friday, November 4 to 6, 2015
+http://www.elixirmastery.com/
+
+Send a meetup: elixir.radar@plataformatec.com.br
+
+Do you have something to share? Let us know by tweeting @plataformatec.=
+
+--a4554484220a5f8a439bd5847410359cbb2c0b5d87310f54e83a3eb1cf33
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset=UTF-8
+Mime-Version: 1.0
+
+<!DOCTYPE html>
+<html bgcolor=3D"#F3F3F3" style=3D"margin: 0; padding: 0; background-color:=
+ #F3F3F3">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8">
+        <title>Latest Elixir news on the radar, issue 22</title>
+        <meta property=3D"og:title" content=3D"Latest Elixir news on the ra=
+dar, issue 22">
+        <meta name=3D"twitter:title" content=3D"Latest Elixir news on the r=
+adar, issue 22">
+=20=20=20=20=20=20=20=20
+        <style type=3D"text/css">
+        /*<![CDATA[*/
+            /* iOS automatically adds a link to addresses */
+            /* Style the footer with the same color as the footer text */
+            #footer a {
+                color: #98A7AF;
+                -webkit-text-size-adjust: none;
+                text-decoration: underline;
+                font-weight: normal
+            }
+
+=20=20=20=20=20=20=20=20=20=20=20=20
+            #main_body {
+                box-shadow: 0px 1px rgba(0, 0, 0, 0.1);
+            }
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+
+            /* Hide preview text on rendering */
+            #preview_text {
+                display: none;
+            }
+
+        /*]]>*/
+        </style>
+    </head>
+    <body bgcolor=3D"#F3F3F3" style=3D"margin: 0; padding: 0;  background-c=
+olor: #F3F3F3" marginheight=3D"0" marginwidth=3D"0" topmargin=3D"0">
+
+        <!-- Preview text (text which appears right after subject) -->
+        <div id=3D"preview_text" style=3D"display:none!important"></div>
+
+        <!-- start container -->
+        <table bgcolor=3D"#F3F3F3" style=3D"background-color: #F3F3F3; -web=
+kit-font-smoothing: antialiased; -webkit-text-size-adjust: none" cellpaddin=
+g=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%">
+             <tbody>
+            <tr>
+                <td bgcolor=3D"#F3F3F3" style=3D"padding: 10px 20px; backgr=
+ound-color: #F3F3F3">
+                    <div align=3D"center">
+                        <table cellpadding=3D"0" width=3D"600" cellspacing=
+=3D"0" border=3D"0">
+                            <tbody>
+<tr>
+                                <td id=3D"main_body" width=3D"600" bgcolor=
+=3D"#ffffff" style=3D"padding: 30px; background-color: #ffffff; border: 1px=
+ solid #cdcdcd; border-bottom: 1px solid #adadad; border-radius: 4px">
+                                    <div align=3D"center">
+                                        <table cellpadding=3D"0" width=3D"6=
+00" cellspacing=3D"0" border=3D"0">
+                                            <!-- start content -->
+                                            <tbody>
+<tr>
+                                                <td style=3D"padding: 0; ba=
+ckground-color: #ffffff">
+                                                    <div align=3D"center">
+                                                        <table cellpadding=
+=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%" style=3D"font-family: =
+'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-heigh=
+t: 1.5em; color: #333333">
+                                                            <tbody>
+<tr>
+                                                                <td>
+                                                                    <div al=
+ign=3D"center">
+                                                                        <!-=
+- start body section -->
+                                                                        <di=
+v class=3D"body-container-wrapper">
+    <table class=3D"wrappertable" cellpadding=3D"0" cellspacing=3D"0" borde=
+r=3D"0" width=3D"600">
+<tbody>
+        <tr>
+            <td valign=3D"top" colspan=3D"12" width=3D"100.0%" class=3D"#23=
+79A0" style=3D"width:100.0%; text-align: left; padding: 0; font-family: 'He=
+lvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: =
+1.5em; color: #333333; border-top: 4px solid #2379A0; border-bottom: 1px so=
+lid #cccccc; padding-left: 50px; padding-right: 50px; padding-top: 35px; pa=
+dding-bottom: 25px;">
+                <table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" wid=
+th=3D"100%">
+                    <tbody>
+<tr>
+                        <td valign=3D"top" colspan=3D"6" width=3D"50.0%" cl=
+ass=3D"" style=3D"width:50.0%; text-align: left; padding: 0; font-family: '=
+Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height=
+: 1.5em; color: #333333; ">
+                            <div class=3D"widget-span widget-type-logo ptec=
+-logo-in-elixir-radar" style=3D"" data-widget-type=3D"logo">
+                                <div class=3D"layout-widget-wrapper">
+                                    <div id=3D"hs_cos_wrapper_module_137676=
+876813115" class=3D"hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_typ=
+e_logo" style=3D"color: inherit; font-size: inherit; line-height: inherit; =
+margin: inherit; padding: inherit" data-hs-cos-general-type=3D"widget" data=
+-hs-cos-type=3D"logo"><a href=3D"http://t.rdsv1.net/wf/click?upn=3DcZlSFrOj=
+2vzeOcTPB8GP6OmlShMbSecl04fuu6-2Fn1e9SvT1jLPYfHHP-2FtWqsakljie2TzKc27ANFgSS=
+y0qjxohDbC2Ucyx5OLuNmr-2FkCVwe0n3ly1OOCK8p88tfol7yWzLVOTm4u65oyvPV-2BAju4-2=
+BA-3D-3D_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2=
+BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EX=
+tXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FO=
+LLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0=
+B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8Y8qwVjrJsT1Vr9TY7RmPbnrd=
+w1NrrPUqAReQtVy5C8UefZKfq9wMRHTEpqdrJMV-2Bi5L2Xo-2BhYBwdLg1aQZQTDbZ-2BY8Xeu=
+qRv7V-2B5NFuwkuunoJrOZm0CADIySjaukI55Dtp22Xxsc69-2FdGXntZdxHg-3D-3D" id=3D"=
+hs-link-module_137676876813115" style=3D"border-width:0px;border:0px;"><img=
+ src=3D"http://blog.plataformatec.com.br/wp-content/uploads/2015/05/logo-pl=
+ataformatec.png" style=3D"max-height:54px; max-width:140px; border-width:0p=
+x;border:0px;" width=3D"140" alt=3D"Plataformatec" title=3D"Plataformatec">=
+</a></div>
+                                </div>
+<!--end layout-widget-wrapper -->
+                            </div>
+<!--end widget-span -->
+                        </td>
+                        <td valign=3D"top" colspan=3D"6" width=3D"50.0%" cl=
+ass=3D"" style=3D"width:50.0%; text-align: left; padding: 0; font-family: '=
+Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height=
+: 1.5em; color: #333333; ">
+                            <div class=3D"widget-span widget-type-social_sh=
+aring " style=3D"text-align: right;" data-widget-type=3D"social_sharing">
+                                <div class=3D"layout-widget-wrapper">
+<!-- Go to www.addthis.com/dashboard to generate a new set of sharing butto=
+ns -->
+<a href=3D"http://t.rdsv1.net/wf/click?upn=3DBNP9UTiYvn78kUCiiXTtchBpjZqZ1l=
+pxu-2Fy94VvmmSEIChcGN3Ab2OZMeu27DHOHks8JdceP1yRAPU-2Fp-2F-2F-2FprW2gShcUfvM=
+XK3ZlZDe5SOEjQIWN2SUJxY63MGATZP-2FL-2F4tovCpqIm0SYOvhJkoPXv3SAm1NXDOYZZ3jgr=
+DW9cYPNhNftjFwuK8De3OjRw9zmQtwSkgCaLIMa-2BkfbzSoUqQWzbKsGfamgVYnEZJTS3MQD1i=
+XpFoEopb-2Bvtnc9lMxxY92pC0qzJsm-2BIsX2vvg8acVwxffnjlg1vuc-2B40-2BA58jGy7-2F=
+YF4TZwO3kHZF7g3bFuak4iVpnsZpa25i4KFzyZqCHJcKaWnOMkWkY-2BGmip77N6lklCNu-2FTr=
+C27G-2FvHA8_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2d=
+T-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn=
+3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN2=
+1FOLLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4=
+xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8l6j50jGoWSl-2FqDEFS5k=
+RFnDw679ZIehcUoyqY-2BHd-2B-2F9wCb-2BXgOKqzxYK6b1vgCIaV27Pv9TgnaJ9jGgWhGkxcU=
+2ExK9gZc-2Ft-2BBcg9LQJsFl6ATHVA4HVxPrjm8FQguXDtsI2l86U7feQP-2BzExeaRpw-3D-3=
+D" target=3D"_blank"><img src=3D"https://cache.addthiscdn.com/icons/v2/thum=
+bs/32x32/twitter.png" border=3D"0" alt=3D"Twitter"></a>
+<a href=3D"http://t.rdsv1.net/wf/click?upn=3DBNP9UTiYvn78kUCiiXTtchBpjZqZ1l=
+pxu-2Fy94VvmmSEIChcGN3Ab2OZMeu27DHOHlyFjd3pmKX1K3V-2B3jjls5jse8qSmUAF5GOrWl=
+0-2B4iAna1uWQY1Ix1oON7WKWwIBkb-2BRTTqSH5b14IMBK5zbDbqfQJZ56wfNQEI3lJQDnMw82=
+Ca0nuHuBBVahOJV-2FM8obUt-2B41tJE5tu5x40-2B2nQCbM9N-2FTQ0lMQWfqvJVc1asHF0lST=
+cXHZuqehWBpKtAW1e_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2=
+FUvE2dT-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOk=
+pMCthn3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-=
+2F6iN21FOLLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao=
+6Vv1t4xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8qKClvJSdSCe-2Fk=
+htIYAQPuFI7-2Fcxevs5lOavVCqB4b54cU2HxqO5bLPMBUwY9tRmXrfuzd-2FekqKRpJXxaYhVF=
+fFYogr8B6CGPy9Axhh4TXRlKNLbFZ7z9GH-2FMLaqLUgGL-2BUb3-2BcRb-2B9Wk4TxY4LIOIA-=
+3D-3D" target=3D"_blank"><img src=3D"https://cache.addthiscdn.com/icons/v2/=
+thumbs/32x32/linkedin.png" border=3D"0" alt=3D"LinkedIn"></a>
+<a href=3D"http://t.rdsv1.net/wf/click?upn=3DBNP9UTiYvn78kUCiiXTtchBpjZqZ1l=
+pxu-2Fy94VvmmSEIChcGN3Ab2OZMeu27DHOH6bUeYx-2Ftazj-2BO69Tn77deYZS81Wp7bIt6P5=
+0MuB70mXzgI20vM225r94lxr0uE5mKVIzPi7D-2FkT6Avpzi4Xdpy8BUcS-2FE5tn-2Fe7AfCzH=
+BYrCKP9lxiVpfI2bW8im6O-2FQx4KO-2FI3SoGAjoLaXmWztTWg0snyPcCCa1ga-2BYucy4nmlL=
+AilHsXVECYQRS1TH2KQ_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr=
+-2FUvE2dT-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7F=
+OkpMCthn3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5f=
+k-2F6iN21FOLLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQ=
+ao6Vv1t4xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8xLxXXF6SbBa-2=
+BOTLF9t-2ByNoREp1FLz-2FPXWR3ndaAfnt5uhotSbF-2F96h2Rye8oqWox3m8c6fnE8djrq3xE=
+9gSYdOvE-2F8Au-2FZxsK-2Fl1J-2FYEatRL9k2bV6AdmGcE988WufUXaDlfCfqyH1nNX0GQs08=
+Hng-3D-3D" target=3D"_blank"><img src=3D"https://cache.addthiscdn.com/icons=
+/v2/thumbs/32x32/facebook.png" border=3D"0" alt=3D"Facebook"></a>
+<a href=3D"http://t.rdsv1.net/wf/click?upn=3DBNP9UTiYvn78kUCiiXTtchBpjZqZ1l=
+pxu-2Fy94VvmmSEIChcGN3Ab2OZMeu27DHOH-2FgFA7Q5XBey4UfzuJYA2XYudBXpHMQcuaiNHC=
+Eko25s6yKow9YPUan3zw9tBqjx0fBvl6HzP-2FT7Zd9Gvm-2FHdda8vxreIq4NA0uZFjxT2f0fW=
+z6WzcwwBQGa6WOGrwLnbJZ7cIU-2F7jOThbvYuHpO89X1zTqzxdyeEZiIRtFdvxjEy3tDLq0EFU=
+b3YMJWgLv5wX928WBNSZkQwhZXZUiU9-2FnXrFSVfOUmAlHVw48ghsc6SIhQEdVDWM40h3Vq3SZ=
+MhaF-2BT1xXvVcB909VL0NPcKjRWE-2FZFpXS2R-2FBD493YJCO8-2BoHNZD7bsPK9UKkm4vTL_=
+AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2BRyqe8bEZ=
+0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EXtXYeh-2Fa=
+LgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FOLLEH-2FK2=
+hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0B2Epe0Yvj=
+W6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8BJmH7J6Q8V96tEGkC4nLatQYJbNMyscX4=
+aX21XMT85RSe0GhJFaFAEF-2Br596sE1JM8UWW9-2BLFKwcnB-2B6jbrUryEax6oNYLBw9AchFy=
+Wrn1sDvIIZxUKlGhLnipdupdntSTyPyuQXVr7qFj3MSCrKTg-3D-3D" target=3D"_blank"><=
+img src=3D"https://cache.addthiscdn.com/icons/v2/thumbs/32x32/google_pluson=
+e_share.png" border=3D"0" alt=3D"Google+"></a>
+<a href=3D"http://t.rdsv1.net/wf/click?upn=3DBNP9UTiYvn78kUCiiXTtchBpjZqZ1l=
+pxu-2Fy94VvmmSEIChcGN3Ab2OZMeu27DHOHl9cd-2BVzWsQmlNTNirSJbIEQbJFU3nMyvdFiQo=
+cAkn-2FPckKjHG-2BxmHvQY2LHPKDrdLUQB3wPXBuUuN2BIjCIPv0TQSWMGGvF-2B2HKYyWsG2-=
+2BpjkrjbEvO5gaI6x9nnwXlQQadLbSsTw4z-2FuCdYBWqlwCOXxpRryNkLpVUf7stNakEJJgFWF=
+WK-2F4pXqgQRz5-2BqS69kvpxX2MJJmgLhlrVQbF0i9b62GU1Q0xJrdlCq2GqRbtKKexuWvzlhR=
+luH2W-2BPVUs19idr4x36IX2GmQHwAukr-2Fgg9hthKLobHpwFLNhFIdIh9JtRrzLabGI9zQ7Mg=
+t_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2BRyqe8b=
+EZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EXtXYeh-2=
+FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FOLLEH-2F=
+K2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0B2Epe0Y=
+vjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8ISxKMljJv92-2BHD0SZJBhPgyMYiiuj=
+PuirKUqVQOjAXZMOgV0OKUu-2BrLn1v70oeJ7CCWy4pHihtZ4yNTPGzipYtHfcxmHTqw-2FgN-2=
+F7Bauqx-2F6JLPk2GgPXHhcQ0kV0WPQnITOD9UargmuTZWo1Df7n0g-3D-3D" target=3D"_bl=
+ank"><img src=3D"https://cache.addthiscdn.com/icons/v2/thumbs/32x32/email.p=
+ng" border=3D"0" alt=3D"Email"></a>
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20
+
+                                </div>
+<!--end layout-widget-wrapper -->
+                            </div>
+<!--end widget-span -->
+                        </td>
+                    </tr>
+                </tbody>
+</table>
+            </td>
+        </tr>
+        <tr>
+            <td valign=3D"top" colspan=3D"12" width=3D"100.0%" class=3D"" s=
+tyle=3D"width:100.0%; text-align: left; padding: 0; font-family: 'Helvetica=
+ Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.5em; =
+color: #333333; padding:20px 0px 20px 0px">
+                <div class=3D"widget-span widget-type-rich_text " style=3D"=
+margin:20px 0px 20px 0px" data-widget-type=3D"rich_text">
+                    <div class=3D"layout-widget-wrapper">
+                        <div id=3D"hs_cos_wrapper_module_14237637261322768"=
+ class=3D"hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_rich_tex=
+t" style=3D"color: inherit; font-size: inherit; line-height: inherit; margi=
+n: inherit; padding: inherit" data-hs-cos-general-type=3D"widget" data-hs-c=
+os-type=3D"rich_text">
+                          <h1 style=3D"text-align: center; margin: 30px 0 -=
+15px; font-weight: initial;">Elixir Radar <br>
+                            <span class=3D"issue" style=3D"font-size: 22px;=
+">Issue 22 - Sep 24, 2015</span>
+</h1>
+                        </div>
+                    </div>
+<!--end layout-widget-wrapper -->
+                </div>
+<!--end widget-span -->
+=09=09=09=09
+            </td>
+        </tr>
+        <tr>
+            <td valign=3D"top" colspan=3D"12" width=3D"100.0%" class=3D"" s=
+tyle=3D"width:100.0%; text-align: left; padding: 0; font-family: 'Helvetica=
+ Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.5em; =
+color: #333333; border-bottom: 4px solid #2379A0; padding-bottom: 35px;">
+                <table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" wid=
+th=3D"100%">
+                    <tbody>
+                                          <tr>
+                        <td valign=3D"top" colspan=3D"12" width=3D"100.0%" =
+class=3D"" style=3D"width:100.0%; text-align: left; padding: 0; font-family=
+: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-hei=
+ght: 1.5em; color: #333333;">
+                            <div class=3D"widget-span widget-type-email_bod=
+y " style=3D"" data-widget-type=3D"email_body">
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20
+<div id=3D"hs_cos_wrapper_hs_email_body" class=3D"hs_cos_wrapper hs_cos_wra=
+pper_widget hs_cos_wrapper_type_rich_text" style=3D"color: inherit; font-si=
+ze: inherit; line-height: inherit; margin: inherit; padding: inherit" data-=
+hs-cos-general-type=3D"widget" data-hs-cos-type=3D"rich_text">
+<h2 style=3D"margin: 40px 0 0; line-height: 20px; font-weight: initial;">
+<a style=3D"font-size: 18px; color: #14485b;" href=3D"http://t.rdsv1.net/wf=
+/click?upn=3DBNP9UTiYvn78kUCiiXTtcqttWNInGlzGi-2Fc8slbrXK3IgQGabfKlWPsEtLoT=
+8vMWUZy7Sx9-2F9YlA6AT6aQpA5kqqp2bVuxdHOhNQF9nHcv9iS0DjWqbjVs86K-2FmOen4bcJs=
+HZTObqdCMSfk7UvCLlA-3D-3D_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZM=
+RJNsdr-2FUvE2dT-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F=
+238f7FOkpMCthn3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwX=
+zzMD5fk-2F6iN21FOLLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdT=
+pqo5kQao6Vv1t4xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8RhMwjTS=
+6nJjDZCExTuoYqJCZebAFMZriaZ4jhbDPiv8DSAyaHAVg09y8BkdNSm8wcd-2BRGjyW3k74aVSv=
+CCxLPH2D5L9131PW-2FH0pzmPq4G02aIosXEYLUXCar4wDT0SjlL87J7KH6f9w7J0dPFgYMQ-3D=
+-3D">Interoperability with C via Ports<br></a><span style=3D"font-size: 14p=
+x; color: #8a8a8a;">github.com</span>
+</h2>
+<p style=3D"margin-bottom: 1em; margin-top: 0.3em;">Josh Adams from <a href=
+=3D"http://t.rdsv1.net/wf/click?upn=3DfpJJ3d258NGtfcW3-2BBsDzrARzZ0ULMQdWXR=
+6smGr6V5XWHYukRNuB5JiT0gHHohdd7AUw-2FnvOMByluVEBeZY4f8Rp42E6yJRwBpK2cBJpd0y=
+qjruGCpUeo9gcj2j6aDLzdk3CKaBjCn-2FgYX4QKeSYw-3D-3D_AAl3dI4PdfWG-2FIifHkIg8d=
+Kma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxz=
+hanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1N=
+hrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FOLLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ=
+9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8=
+Oh8qf3RjkXwMq8ZZs8-2FjcgeEz67vBw5C-2BYWGHDBkvrDBCtuHim5DzbP8eWhEuNY249eiwIa=
+X-2BB-2FKoLgFV6Lbvd5I9fGSRzADSzkxMFsH2cYLNZQ8fGGHuTwozGs42Vnmz3wxp1nRmzYuZD=
+Lrhdpr1uEq0k7-2Buz41T9qdZoKQ-3D-3D">ElixirSips</a> has released a free epis=
+ode on interoperability with C via Ports with the video and material availa=
+ble on GitHub.</p>
+<h2 style=3D"margin: 40px 0 0; line-height: 20px; font-weight: initial;">
+<a style=3D"font-size: 18px; color: #14485b;" href=3D"http://t.rdsv1.net/wf=
+/click?upn=asdfasdfx; color: #8a8a8a;">www.glydergun.com</span>
+</h2>
+<p style=3D"margin-bottom: 1em; margin-top: 0.3em;">Lew Parker walks us thr=
+ough a non-trivial data domain with Ecto, showing how to start a barebone p=
+roject with Ecto up to migrating your database, setting up your models and =
+inserting data to the database.</p>
+<h2 style=3D"margin: 40px 0 0; line-height: 20px; font-weight: initial;">
+<a style=3D"font-size: 18px; color: #14485b;" href=3D"http://t.rdsv1.net/wf=
+/click?upn=3Dz0-2BR26ksq1ozkTGWLHknYxNL92l5XBMebcRLzAj-2FQ8YypnN4JEz6l5u9vP=
+8jGvnF2rNAm3zIgoUyxiO7P4tc-2Fl-2BKsl3cjvWIOldI8-2BncyF8XhZG62eI1ZNwSAJHYiTm=
+w22Eq-2FZGaA0Nu5x4zbUwqy9Pjfb4v8irfkVjaVxOOSxgYU68LbDP-2F4epHvuQ3U6DV_AAl3d=
+I4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2BRyqe8bEZ0WpRt=
+bsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EXtXYeh-2FaLgjMo=
+qMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FOLLEH-2FK2hpMyQ=
+73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0B2Epe0YvjW6qpE=
+eIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs88p7SD7v5kxiuGbYqtkQHFfGoaBnnsB-2B19s5c=
+CJPUPrRXIfiYMTXU-2BuQ-2BQG5NXKspMIZjvZMEZij10ehBr05P0q-2FEkCysJn1WPW4kThbjk=
+zFPKZLPjSD8PUh5SQdlkCBLk4XxH-2BKT-2B3q4DhgEAsNvsw-3D-3D">Testing callbacks =
+in Elixir<br></a><span style=3D"font-size: 14px; color: #8a8a8a;">thepugaut=
+omatic.com</span>
+</h2>
+<p style=3D"margin-bottom: 1em; margin-top: 0.3em;">A straight to the point=
+ blog post by Henrik Nyh that shows how to test callbacks that rely on side=
+-effects in Elixir.</p>
+<h2 style=3D"margin: 40px 0 0; line-height: 20px; font-weight: initial;">
+<a style=3D"font-size: 18px; color: #14485b;" href=3D"http://t.rdsv1.net/wf=
+/click?upn=3Dasdfasdf3D">Phoenix for Railsies: Form Helpers and Models<br>=
+</a><span style=3D"font-size: 14px; color: #8a8a8a;">www.sitepoint.com</spa=
+n>
+</h2>
+<p style=3D"margin-bottom: 1em; margin-top: 0.3em;">In this series of artic=
+les about Phoenix for Rails developers, Dhaivat Pandya shows how models and=
+ helpers work in Phoenix, detailing the workflow from setting up the model =
+for insertion via changesets up to rendering the data in forms.</p>
+<h2 style=3D"margin: 40px 0 0; line-height: 20px; font-weight: initial;">
+<a style=3D"font-size: 18px; color: #14485b;" href=3D"http://t.rdsv1.net/wf=
+/click?upn=3DhhhK2-2FD0rnQ-2BWGzE-2FWP14Y-2F8Whi76MLNzX9ATj-2FgX8qRUm0FZ6iD=
+kyHA5Bt0DF76DGhEUxivpcOjz4KVuVjZ4JZ7ampXF8jbw6lGTdxOd-2BkGIsavsEmRSF4He-2FC=
+RAVeLbs9WNqY0mIBfLfKCXKNK3Z-2BL0q8PXs6qQzL-2BpCGTWTE-3D_AAl3dI4PdfWG-2FIifH=
+kIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUU=
+Z9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-=
+2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FOLLEH-2FK2hpMyQ73evyB27WFtQ6p=
+1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA=
+3w6r8Oh8qf3RjkXwMq8ZZs8xWZc8Z76vo1sNnLKDaxmF07OfR39VidQNIbu-2F23u46Z3JTpm1V=
+9AlDc4bo7s-2BkKmmqB0QWjHltpeQBEaZ4jSjBCnJfOeqoikkLPxWABsYGE3Tjz6mtAOmELTT9N=
+4KJUDgcSjIeWTvNUoNlDACkn4JcZ7luer2Im3Vwhoq-2BS-2FvIM-3D">From Functions |&g=
+t; Processes<br></a><span style=3D"font-size: 14px; color: #8a8a8a;">avinas=
+ha.com</span>
+</h2>
+<p style=3D"margin-bottom: 1em; margin-top: 0.3em;">A great introduction to=
+ Elixir by Avinasha Shastry that takes developes from single functions to a=
+ stack implementation using Elixir processes.</p>
+</div>
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+
+                            </div>
+<!--end widget-span -->
+                        </td>
+                    </tr>
+                </tbody>
+</table>
+<!-- JOB LISTINGS -->
+<table width=3D"100%" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" styl=
+e=3D"margin-top:15px; border-top:dotted 1px #ccc;">
+    <tr>
+      <td style=3D"padding:30px 0;">
+        <span style=3D"font:normal 22px 'Helvetica Neue', Helvetica, Arial,=
+ sans-serif; color: #333333; line-height:.9em;">Jobs</span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table width=3D"100%" border=3D"0" cellspacing=3D"0" cellpadding=3D"=
+0" style=3D"background:none; ">
+                <tr>
+              <td style=3D"padding: 12px 0px">
+                <span style=3D"background-color:#ffb605;border-radius:2px;p=
+adding:1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-=
+right:5px;">
+                    JOB
+                </span>
+                <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdfDm-2F1TM-3D" style=3D"font-size: 18px; color: #14485b=
+;">
+                    Backend developer (Elixir)
+                </a>
+                <br>
+                <strong style=3D"font-size:14px; color:#666;">
+                        Football Addicts - Gothenburg, Sweden
+                </strong>
+                <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: =
+1.5em;">
+                        We are looking for Elixir developers to join our team.<br>
+You will be working on the backend that powers our mobile apps - from push =
+notification systems to video highlight systems and new, groundbreaking app=
+s.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style=3D"padding: 12px 0px">
+                <span style=3D"background-color:#ffb605;border-radius:2px;p=
+adding:1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-=
+right:5px;">
+                    JOB
+                </span>
+                <a href=3D"http://t.rdsv1.net/wf/click?upn=3DBNP9UTiYvn78kUC=
+iiXTtcvBHWtoE5Z-2B5LNeHAA8L-2FJKDwAhjDmChROMxjgVBCa8FKyGyCNb2Lnj3Kx20mZvqlI=
+fgLWqapO-2BqywEnscQa0fQ2hTi8XH4nPbzHT3q6AHRVMfce5zdTN-2BZPBBv4XaGo1yEQ134xg=
+ofW1JqI5-2FF1TVs-3D_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr=
+-2FUvE2dT-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7F=
+OkpMCthn3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5f=
+k-2F6iN21FOLLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQ=
+ao6Vv1t4xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8UpqjjzHabq3C5=
+-2F40oAejGD4TGCnx2tt0z3a455EMx6WxvagxreiNouuh-2FgNc8lXL-2BlGJBvaUGEvktMIuVU=
+Jg3NyLlIgjv4aM98KLhWxZ0wlezdJiZKHR6nWCQhsKwn5pnNA1uztJ-2FZa4Lsp3uptdEHBjdqA=
+02Zp-2B0o6-2FPdrlduE-3D" style=3D"font-size: 18px; color: #14485b;">
+                    Senior API developer
+                </a>
+                <br>
+                <strong style=3D"font-size:14px; color:#666;">
+                        Movement (Boombox, Qzzr, Pollcaster) - Lehi, UT, USA (Remo=
+te considered)
+                </strong>
+                <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: =
+1.5em;">
+                        Our products are enterprise-level in their abilities, and =
+consumer-quality in their polish. We value low latency, redundancy, distrib=
+uted systems, service-oriented architecture, high fault tolerance, and scal=
+ability.</p>
+              </td>
+            </tr>
+            <tr>
+                <td style=3D"padding: 20px 0 0 0; text-align: center;">
+                        <a href=3D"http://t.rdsv1.net/wf/click?upn=3DcZlSFrOj2vzeO=
+cTPB8GP6LPW4PbXFqiLZawREdBoShhnl6Kt04WWtNXQ7Pqw14nANzaozlpdbopTEVw3uGx1DvaU=
+lJegY5vPwNAtt6jI-2Bgv4MEFZr7R9XL1KoPZ4QYwYqgQD40SNH06rCm6AMOzL9gsoNOy6vYkpm=
+KypPoKA1a5ncNE81vGMAw05gObmdnG0-2B58BZlHOD4fB1lpekQxwjhS49hTbXGpBREeZ9U07JL=
+dUDHs2I1ereeZCHZltibjw_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJN=
+sdr-2FUvE2dT-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238=
+f7FOkpMCthn3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzM=
+D5fk-2F6iN21FOLLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo=
+5kQao6Vv1t4xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8hJLzwIgLO8=
+AaMvgFKV9ifevM4saeOyRQXAKk8GwT22cbljgP-2FFZxD0CGZl0AhgJYpX57Di0b7UBEAZZO7ui=
+RsLMMxdqwtxVHp-2B092t1XQbgWXecv0D7lxSG74rjpxzKPTN5Q8CG6fQZPrrN-2BBA9nKkI8Bl=
+O96GAalJXgCLyzgJY-3D" style=3D"padding: 5px 20px;color: white;font-size: 13=
+px;text-shadow: 0 -1px 0 rgba(0,0,0,0.25);background-color: #17678a;backgro=
+und-image: linear-gradient(#1e88b6,#17678a);border: 1px solid #14485b;borde=
+r-radius: 3px;box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); text-decorat=
+ion:none; font-weight:bold; text-align:center; display:block; width:40%; ma=
+rgin:1px auto;">Post a job listing here for free</a>
+                </td>
+            </tr>
+        </table>
+      </td>
+    </tr>
+</table>
+<!-- / JOB LISTINGS -->
+<!-- MEETUPS -->
+<table width=3D"100%" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" styl=
+e=3D"margin-top:15px; border-top:dotted 1px #ccc;">
+        <tr>
+      <td style=3D"padding:30px 0;">
+        <span style=3D"font:normal 22px 'Helvetica Neue', Helvetica, Arial,=
+ sans-serif; color: #333333; line-height:.9em;">Events</span>
+      </td>
+    </tr>
+    <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdfWUnrGs3gEWPqFTvzgK2QK5bP4iZGe0arSwhV25LlNLPJ2ceg-2BUI=
+uA3ziZ8-3D" style=3D"font-size: 18px; color: #14485b;">
+                Portland, ME
+           </a>
+           <br>
+           <span style=3D"font-size: 14px; color: #8a8a8a;">
+                Erlang &amp; Elixir with Jean-Fran=C3=A7ois Cloutier
+            </span>
+           <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em=
+;">
+           Monday, September 28, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdf4aBMnp3Y-3D" style=3D"font-size: 18px; color: #14485b=
+;">
+           London, United Kingdom
+         </a>
+         <br>
+         <span style=3D"font-size: 14px; color: #8a8a8a;">
+            Hack Night
+         </span>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Tuesday, September 29, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdf-2FGg-2F9BRAyCvgXE-3D" style=3D"font-size: 18px; colo=
+r: #14485b;">
+           Charlotte, NC</a>
+           <br>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Wednesday, September 30, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdfdBOcCZN4uRAU-3D" style=3D"font-size: 18px; color: #14=
+485b;">
+           Irvine, CA
+         </a>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Thursday, October 1, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            CONFERENCE
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=3DfpJJ3d258NGtfcW3-2BBs=
+DztUbZfinC6xcTgX1Ti4gEr0TV-2Bno4cO4Ib93tGTbgMBIINElN9PFAfCQtWBkeXe-2BYuM5ha=
+V7Mjuh7zqsHFb-2BwE9VoF173-2BNbrdumyyN3DyhbF36sBns5dCxcWLRjCqbVEQ-3D-3D_AAl3=
+dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2BRyqe8bEZ0WpR=
+tbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EXtXYeh-2FaLgjM=
+oqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FOLLEH-2FK2hpMy=
+Q73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0B2Epe0YvjW6qp=
+EeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8k9nLlSuBemvkHgJwK14FNOHnQv4litgNOh5iV=
+I1Vu-2B7qjLFI4hQaGPkiaiuy4rNsIKwPMI9h6dgGga6AOCSiBpQ4jcdSyAksSGz2RMgfA-2Fsz=
+S4Rt9SmpjIb6yhg7WnzqReTDRBCWJHfkJdj8VJ6-2F-2FJDt42SYka2Ywjyxg0Ggw74-3D" sty=
+le=3D"font-size: 18px; color: #14485b;">
+           Austin, Texas</a>
+           <br>
+         <span style=3D"font-size: 14px; color: #8a8a8a;">
+           ElixirConf
+         </span>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Thursday to Saturday, October 1 to 3, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdfmHOwT8gQjo-3D" style=3D"font-size: 18px; color: #1448=
+5b;">
+           Bangalore, India</a>
+           <br>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Saturday, October 3, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdfD"font-size: 18px; color: #14485b;">
+           New Orleans, LA</a>
+           <br>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Tuesday, October 6, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdf8voOxQzfPbMRI3zviY-3D" style=3D"font-size: 18px; colo=
+r: #14485b;">
+           Austin, TX
+         </a>
+         <br>
+         <span style=3D"font-size: 14px; color: #8a8a8a;">
+            Ch 1 &amp; 2 of Elixir In Action
+         </span>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Wednesday, October 7, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdfD" style=3D"font-size: 18px; color: #14485b;">
+           Lehi, UT</a>
+           <br>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Thursday, October 8, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            MEETUP
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdflSws-3D" style=3D"font-size: 18px; color: #14485b;">
+           San Francisco, CA
+         </a>
+         <br>
+         <span style=3D"font-size: 14px; color: #8a8a8a;">
+            Improving RPC calls in Erlang and Elixir
+         </span>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Thursday, October 8, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            CONFERENCE
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdf=3D"font-size: 18px; color: #14485b;">
+           M=C3=A9xico City, Mexico</a>
+           <br>
+         <span style=3D"font-size: 14px; color: #8a8a8a;">
+           Erlang Factory Lite
+         </span>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Saturday, October 10, 2015
+         </p>
+       </td>
+     </tr>
+          <tr>
+       <td>
+         <span style=3D"background-color:#00c0ff;border-radius:2px;padding:=
+1px 0px 2px 3px;font-size:11px; font-weight:bold;color:#fff; margin-right:5=
+px;">
+            CLASS
+         </span>
+         <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdf: #14485b;">
+           Washington, D.C.</a>=20
+           <br>
+         <span style=3D"font-size: 14px; color: #8a8a8a;">
+           Elixir Mastery
+         </span>
+         <p style=3D"margin-bottom: 1em; margin-top: 0;line-height: 1.5em;">
+           Wednesday to Friday, November 4 to 6, 2015
+         </p>
+       </td>
+     </tr>
+     <tr>
+        <td style=3D"padding: 20px 0 0 0; text-align: center; font-size:.85=
+em;">
+          <a href=3D"mailto:elixir.radar@plataformatec.com.br?utm_campaign=
+=3Delixir_radar_22&amp;utm_medium=3Demail&amp;utm_source=3DRD+Station" styl=
+e=3D"padding: 5px 20px;color: white;font-size: 13px;text-shadow: 0 -1px 0 r=
+gba(0,0,0,0.25);background-color: #ccc;background-image: linear-gradient(#a=
+aa,#999);border: 1px solid #777;border-radius: 3px;box-shadow: inset 0 1px =
+0 rgba(255,255,255,0.4); text-decoration:none; font-weight:bold; text-align=
+:center; display:block; width:40%; margin:1px auto;">Send a meetup</a>
+        </td>
+    </tr>
+</table>
+<!-- / MEETUPS -->
+            </td>
+        </tr>
+        <tr>
+            <td valign=3D"top" colspan=3D"12" width=3D"100.0%" class=3D"" s=
+tyle=3D"width:100.0%; text-align: left; padding: 0; font-family: 'Helvetica=
+ Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.5em; =
+color: #333333; ">
+                <div class=3D"widget-span widget-type-rich_text " style=3D"=
+" data-widget-type=3D"rich_text">
+                    <div class=3D"layout-widget-wrapper">
+                        <div id=3D"hs_cos_wrapper_module_14248589702263146"=
+ class=3D"hs_cos_wrapper hs_cos_wrapper_widget hs_cos_wrapper_type_rich_tex=
+t" style=3D"color: inherit; font-size: inherit; line-height: inherit; margi=
+n: inherit; padding: inherit" data-hs-cos-general-type=3D"widget" data-hs-c=
+os-type=3D"rich_text"><p style=3D"margin-bottom: 1em; margin: 1.3em 0 -1em;=
+ font-size: 13px; text-align: center;">Do you have something to share? Let =
+us know by tweeting <a href=3D"http://t.rdsv1.net/wf/click?upn=3Dz0-2BR26ks=
+q1ozkTGWLHknY98VqGxRWhu6rp6oKqKMUl1Is1THZFGbqHMJz09xcmYR-2B2NZVR-2BfYazDQRl=
+9vtKnk6j9R6a5Wb2kGGxbzTRkjgTcvXAoCPaYd1QD1kFx51wSWy9yKh6jDeiPRBpoT0N-2Bhg-3=
+D-3D_AAl3dI4PdfWG-2FIifHkIg8dKma-2BcvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2BRyq=
+e8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6pYsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EXtXYe=
+h-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EEX3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FOLLEH=
+-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0B2Ep=
+e0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3RjkXwMq8ZZs8S5eqsPMaXghqXykU5bPLF0Uw3D4O=
+N3cd-2FD1niyrAQ110s-2BApWcb0PJVayjaL5Pm9fbOkyVhbVm-2Bc2hcD5IhEI2Bcv-2Fla4Dm=
+7gASIv5YruogVy457MiRS9ds-2FEjRTEjNm4Wkowvdurgwjd-2FGto3OPK087YeK-2B-2Bo7fNt=
+ufllHqF48-3D">@plataformatec</a>.</p></div>
+                    </div>
+<!--end layout-widget-wrapper -->
+                </div>
+<!--end widget-span -->
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<!--end body wrapper -->
+                                                                        <!-=
+- end body section -->
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+</table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- end content -->
+                                        </tbody>
+</table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+</table>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+</table>
+        <!-- end container -->
+=20=20=20=20
+<!-- end coded_template: id:2457756205 path:generated_layouts/2457756195.ht=
+ml -->
+<table width=3D"100%" border=3D"0" cellspacing=3D"0" cellpadding=3D"10">
+  <tr>
+    <td align=3D"center" valign=3D"top">
+=20=20=20=20=20=20
+=20=20=20=20=20=20
+      <p style=3D"color:#888888;font-size:80%;font-family:Helvetica,Arial,s=
+ans-serif;line-height:16px;text-align:center">
+        <span class=3D"js-footer-preview">
+          Sent by <b>Plataformatec</b><br>Rua Mar=C3=ADlia, 40 - Jardins - =
+S=C3=A3o Paulo, SP, Brazil <br> If you wish to unsubscribe please <a href=
+=3D"http://t.rdsv1.net/wf/click?upn=asdfasdfere</a>.
+        </span>
+      </p>
+      <p style=3D"color:#888888;font-size:80%;font-family:Helvetica,Arial,s=
+ans-serif;line-height:16px;text-align:center">
+        <span class=3D"js-header-preview">
+          View in your <a href=3D"http://t.rdsv1.net/wf/click?upn=asdfasdf>web browser</a>.
+        </span>
+      </p>
+    </td>
+  </tr>
+</table>
+
+<img src=3D"http://t.rdsv1.net/wf/open?upn=3DAAl3dI4PdfWG-2FIifHkIg8dKma-2B=
+cvG7pgg-2FKQG0fNWZMRJNsdr-2FUvE2dT-2BRyqe8bEZ0WpRtbsFB3kLMtsfGUUZ9fxzhanx6p=
+YsKDxNnzAuolYwjx-2F238f7FOkpMCthn3EXtXYeh-2FaLgjMoqMooVA7Dpsmky-2Bj1Nhrc7EE=
+X3BAsDZ1ZfQTBoFDwwXzzMD5fk-2F6iN21FOLLEH-2FK2hpMyQ73evyB27WFtQ6p1uYLJ9Ac5x8=
+YzA46F-2FFBEuMaSQdTpqo5kQao6Vv1t4xV0B2Epe0YvjW6qpEeIiRNNtYrdc0aA3w6r8Oh8qf3=
+RjkXwMq8ZZs8J3M4K6JoR5xUBZJpNAtFK35VQSPwTd3j5HyXw7snCihfcUFZ-2FDaHVcn5LVast=
+mn-2FatXDOId2gvqIRQqcQXWs7663jTMDqkOVJoz-2Bo3FdzwpX5j9QOOGXodNtjxytJcudwy2N=
+niIIXDzpHc65G0N0vsuGDlt3erNWQ2aFtwv5ar0-3D" alt=3D"" width=3D"1" height=3D"=
+1" border=3D"0" style=3D"height:1px !important;width:1px !important;border-=
+width:0 !important;margin-top:0 !important;margin-bottom:0 !important;margi=
+n-right:0 !important;margin-left:0 !important;padding-top:0 !important;padd=
+ing-bottom:0 !important;padding-right:0 !important;padding-left:0 !importan=
+t;"/>
+</body>
+</html>
+
+
+--a4554484220a5f8a439bd5847410359cbb2c0b5d87310f54e83a3eb1cf33--

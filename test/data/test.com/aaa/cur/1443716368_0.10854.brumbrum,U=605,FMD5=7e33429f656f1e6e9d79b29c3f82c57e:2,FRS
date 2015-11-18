@@ -1,0 +1,1108 @@
+Return-Path: <blue@tester.ch>
+Delivered-To: blue@tester.ch
+Received: from imap.migadu.com ([78.47.71.6])
+        by imap.migadu.com (Dovecot) with LMTP id dOhsKMnkA1YpOQAA53dlqA
+        for <other@tester.ch>; Thu, 24 Sep 2015 13:55:53 +0200
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by imap.migadu.com (Postfix) with ESMTPS id 9557ACC6CD
+        for <other@tester.ch>; Thu, 24 Sep 2015 13:55:53 +0200 (CEST)
+Received: from revd68.neolane.net ([195.154.153.68]) by mx-ha.gmx.net
+ (mxgmx011) with ESMTP (Nemesis) id 0Lbz4G-1aO0Ca1ZH2-00jK0F for
+ <blue@tester.ch>; Thu, 24 Sep 2015 13:55:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        s=neolane;
+        d=newsletter.voyages-sncf.com;
+        h=domainkey-signature:from:date:subject:to:reply-to:mime-version:x-mailer:message-id:precedence:content-type;
+        bh=b6v2OeilrKH7W0t5VG4gMvBFogTitBAAZc5tHLfyV1o=;
+        b=AN4pMCLG+/owshhyJYoPc5WSfDk+4FJlvhVAqmSZ+Fzbehp6nCW3OaCUlTAgBDQo5wtQPpTV5rWl/WbnFvvwbaHyaRx7d8np5Q+SNOFNQZq9tOY54CGIhbdE0nNjMa3FBZXTBRq/qQryTjixCYy/j3yMVJ/Co1tpFxf5QyoUakU=
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns;
+        s=neolane;
+        d=newsletter.voyages-sncf.com;
+        h=From:Date:Subject:To:Reply-To:MIME-Version:X-mailer:Message-ID:Precedence:Content-Type;
+        b=kTqWC9GGxozBfs17MJxT5qoCQR8/flz/aZ9OpggFj4HR4llAIepRhhyy1B9hnoixza3gms56Z5t2OABzRq0mxbZaRacrwqzxJb6rPU8+l/suRcAznDkuwEcE9D4H2aH8q2lm7Xy43tXcCHlTx8F7MOIY/phvLPii2QqC/eG9GE0=
+From: "Voyages-sncf.com" <bonsplans@newsletter.voyages-sncf.com>
+Date: Thu, 24 Sep 2015 13:55:49 +0200
+Subject: PETITS PRIX : 2 millions de billets a prix Prem's avec TGV et Intercites !
+To: <blue@tester.ch>
+Reply-To: "Voyages-sncf.com" <bonsplans@newsletter.voyages-sncf.com>
+MIME-Version: 1.0
+X-mailer: nlserver, Build 6.0.2.6923
+Message-ID: <NM658B0B631029381DDvsncf@newsletter.voyages-sncf.com>
+Precedence: bulk
+Content-Type: multipart/alternative;
+        boundary="----=_NextPart_974_D7A1E9FE.D7A1E9FE"
+Envelope-To: <blue@tester.ch>
+X-GMX-Antispam: 0 (Mail was not recognized as spam); Detail=V3;
+X-GMX-Antivirus: 0 (no virus found)
+X-UI-Filterresults: notjunk:1;V01:K0:f+LFiIX4h/g=:z5snEW0vnSvEhB6IeQnJSXGAOw
+ Udeu8yuKhLfeb9TVkmLMdG231wcVfSpvrCca4+tFdrfN+V+MggZVGy6HAxTaAdw4JfAPh8gs+
+ Upmgn+zTbt5kxOnpKV2JqaYg4Y1IzQbKgGmgmVSREes06NiiiNE9/HA7/nkgIQddqdx8G8MA1
+ AcW1i/LqWsbVk4jWpCh3GqbOGRtn9eWeIfmsCAz/UDH50lWva6J4Dbp+2ELrTDNUK+yPi04iK
+ E6+4n6RU1czpDhOsPnuH95I8QpVePYDfe5Y/EbjUP5c3VLmUE/D2E44M2gnWdy3Z90868xFhk
+ tVOeCfzVMrsIcsWaYNko5d9obaj79h8M56czSogE4fyLkY4eExm1Oc4VDgN8ZFUNpg6GN8j2G
+ dzc95sKdiipTLAr1qyIUq8QcksM8VNMW0A7EUb+I8dyc1qmRdjYwB3KUOtknhKs05qcziLF35
+ qqQBYFCBZwcXa+ekXxpr0ybLr7exYFm27fYRbQ94hDcW0Ii6pEq+C/NWtUtSqBxM8Yrn1vOB/
+ 73vQHGXzC3u6N3rFyx6k746lh1GU3dCZ5hVfrI28r5AmMkY5N6PwKfSZltRAIRuyuOfG5RfFs
+ cnpaVoW+ao8+k55Y3dJMuD2RRRs+1JDuMDfE+pVGSDzBUMjZdDNbwyMNdWpRY5aTv1gbR4QV5
+ zbWXF2S7a3AvfkHDmWL9qgDe22jdF+BgoNlJrpnJQAfLawSBe//ya5B8+9vyV3SeWLLk8LuHy
+ TXeHkIzZN5Q5ys49XnCznLm0JfyzpCE7leZhU+70RuqrizloHutSBBSNGTEgm+uj3/VhJ4wSd
+ f9xPkKiZntqvm476TMTltZKaNksXl+dMdEKJGg5ihzfD02sLmjLf955FVsty1L5ue4ZJsLttb
+ 0xaY9Hqf/farICMF+8x/ktU2ar/nI+3CodAEbpVvNVHbqXb9sOkcTUqUqYX7qMkHYFVP8VKab
+ 1Sbjxo8Y3VebJaqWUeExo3Wx1m0hM46dEUt2CmMB+2OaiFjDtbvGEEJLCTq8zCSt+to7UPSBW
+ SUfKxXg2Spx9oKYEHzcGPfs8TtezHrXMsExxwj29pBCFNZHuTfto6HJOOGmwr608vTMbt/5Ti
+ NHgsvDX4JzeIqB2A8I5irlRSnJWgnoQKpIJD2LSp+8MFpKAAK0KXq1Ah/fN2aB8iXKHNhkHJB
+ 9AW3TncFlP2ThNDyx8tQ1PfLoTRNMCdhiLjSFVt3WmVR5gduhWomamvPKhaF+hq//PLDZ8vch
+ l8AT/7JKBgl6GPOTk9iH1/mceZ103xhy352Zr3og/4REKcg38Qze4Iz3bkGJ7jd4tjQGgBfeK
+ mE+EOL9DsQf8StiXT6tKcNC5z4X6xAGh/zIFpFqVDnGTlfFqMapyjguBmni3bZD4RFJ9L6UCm
+ /QpnZHxZ1kBvysY5vLc6yLyxWHcOard/yVbA+74CWIkcp7EX7d/rDmcJQQh6NpRbPqdkBamqK
+ wpH90KItN96iygHNyZX9wqOzBh3CA=
+X-UI-Loop:V01:sE5KOQLStjY=:hBllxOpjiKymGw6MBMTEkA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qX9akZ+QX14=:48vZgtgCHWQMhkYb6+RKUB
+ yzqNZsikOoy39CFqaA+BqV0C8Sm4+qdMqSzzQjtRW1BwjRjfzT0AttDU7L3F5SUuG9u16Gbaf
+ jUpBMOCKjNdxWpPfpMazoKv3Kvec3GFF8vRJc8KYx1qVPPzvOdw3DSezvilgGr59yyOMxEwx3
+ RWPeJJ65HpkEDttt7YH4HjmLHl/Ivs0kAJqVx6k22kLA8SM+Am5svdvo1d55zrYqW6tquwT/f
+ Jr0/XUiWfdEl/b67YoUmG28jOLlvl0sTZrGW0JV/jMPBtN5c2d9NtTnMNn4c5f8QsX8Bpm+xg
+ In8hRbCW8l0bxieHubwNbTQJAro2V9iOhXbQrWECAf2T1ZWTWJeiv8yWVpljw1Id1RBVQzesq
+ 1yv/zu9Ax3lrwP0XLXPSECqBHkBL++0WKavcbdxnX1Iypt1CAzTJ3e533+ohV2KnOkEzkXO9P
+ clh6IDtlreSaz73Mn1o3hy5i4+5kkXfHLCNxMNZxCfiLGj4fwW/c
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_974_D7A1E9FE.D7A1E9FE
+Content-Type: text/plain;
+        charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+
+2 MILLIONS DE BILLETS(1) PREM'S AVEC TGV ET INTERCITÉS
+
+DÉCOUVREZ TOUTES NOS OFFRES http://t.voyages-sncf.com/dynclick/vsc-fr/?eml-publisher=neolane&eml-name=T_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eemail=1579affcacc9dab6498ee2f227fe74b9040b144b&eml-mediaplan=NL_commerciales_Train&eurl=http://neo.voyages-sncf.com/r/?id=t3506b21d,aa545f61,aa7dfaab&prex=T_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=1579affcacc9dab6498ee2f227fe74b9040b144b
+
+(1) Prix TGV Prem's TTC, à partir de et par personne, pour un aller simple uniquement en 2nde classe, au départ de certaines villes, sur une sélection de destinations en France et dans la limite des places disponibles à ces tarifs. Pour des voyages du 28 septembre au 12 décembre. Billets non échangeables et non remboursables. Paiement en ligne obligatoire avec billet à imprimer soi-même, envoi gratuit du billet à domicile, retrait en borne libre-service, en gares françaises, ou en boutique SNCF Rail Europe (frais de 10 euros par référence de dossier). Offre non cumulable avec toute autre promotion en cours ou tarif réduit SNCF.
+
+(2) Prix Prem's TTC avec INTERCITÉS, à partir de et par personne, pour un aller simple 2nde classe, certains jours et dans certains trains, sur une sélection de destinations en France et dans la limite des places disponibles à ce tarif. Pour des voyages du 28 septembre au 12 décembre. Billets non échangeables et non remboursables. Paiement en ligne avec envoi gratuit du billet à domicile, retrait en borne libre-service, confirmation e-billet ou billet imprimé. Offre non cumulable avec toute autre promotion en cours ou tarif réduit SNCF.
+
+
+Voyages-sncf.com - 2, place de la Défense, CNIT 1, BP 440, 92 053 Paris la Défense Cedex - RCS Nanterre B 431 810 621 - S.A.S au capital de 10.672.000 euros - Licence d'agence de voyages n° LI 092 01 0002 - Garantie financière : APS - R.C. : GAN - Récépissé CNIL n° 745549
+
+
+
+
+
+------=_NextPart_974_D7A1E9FE.D7A1E9FE
+Content-Type: text/html;
+        charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=
+/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns=3D"http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+15" />
+<meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D1.=
+0"/>
+<title>Newsletter Voyages-Sncf.com</title>
+<style type=3D"text/css">
+#outlook a {padding:0}
+body{width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjus=
+t:100%;margin:0;padding:0;color:#000000}
+=2EExternalClass {width:100%}
+=2EExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass fo=
+nt, .ExternalClass td, .ExternalClass div {line-height:100%}
+img {outline:none;text-decoration:none; -ms-interpolation-mode: bicubic}
+a img {border:none}
+table td {border-collapse: collapse}
+table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0p=
+t}
+a {color:inherit;text-decoration:underline}
+=2EappleLinks a {text-decoration:none!important;}
+*:not(#outlook) *[class~=3D"w654"]{width:655px!important;}
+*{line-height:110%!important;}
+@media only screen and (max-width:1024px), (max-device-width:1024px) {
+body{width:auto!important;}
+*[class~=3D"top"]{width:50%!important;}
+*[class~=3D"top"] img{width:100%!important;}
+img[class~=3D"fw"]{width:100%!important;}
+*[class~=3D"mw"]{width:100%!important;}
+*[class~=3D"marge_bloc"]{display:none!important;}
+*[class~=3D"fi"] img{display:none!important;} /* ajout MJA 20.04.2015 */
+*[class~=3D"fi1"]{background-image:url(http://www.voyages-sncf.com/ext/news=
+letter/Vsc/DF/Responsive/15ansVsc_G_D1P2_1504_316585/fond_1.jpg);background=
+-repeat:no-repeat;background-position:top right;} /* ajout MJA 20.04.2015 *=
+/
+*[class~=3D"fi3"]{background-image:url(http://www.voyages-sncf.com/ext/news=
+letter/Vsc/DF/Responsive/15ansVsc_G_D1P2_1504_316585/fond_3.jpg);background=
+-repeat:no-repeat;background-position:top left;} /* ajout MJA 20.04.2015 */
+}
+@media only screen and (max-width:720px), (max-device-width:720px) {
+*[class~=3D"fw"]{width:100%!important;margin:auto!important;float:none!impo=
+rtant;}
+*[class~=3D"w"]{width:96.75%!important;height:auto!important;margin:0 auto;=
+}
+*[class~=3D"f"]{width:93.75%!important;}
+*[class~=3D"b660"]{width:100%!important;padding-left:1%;}
+*[class~=3D"b660"] img{width:100%!important;height:auto!important;max-width=
+:660px!important}
+*[class~=3D"ta_c"]{text-align:center!important;padding:10px 0;}
+*[class~=3D"abo"]{padding-top:15px;}
+*[class~=3D"abo"] table{width:50%!important;text-align:center;}
+}
+@media only screen and (max-width:700px), (max-device-width:700px) {
+*:not(#outlook) [class~=3D"w654"]{width:100%!important;}
+* { -webkit-text-size-adjust:none; }
+*[class~=3D"w"], *[class~=3D"th_c"]{width:93.75%!important;height:auto!impo=
+rtant;margin:0 auto}
+*[class~=3D"uCase"]{text-transform:uppercase}
+*[class~=3D"b"]{display:none!important;}
+*[class~=3D"w100"]{width:100%!important;}
+*[class~=3D"tdn"] a{text-decoration:none!important;}
+*[class~=3D"pl_pr2"]{padding-left:6.25%!important;padding-right:6.25%!impor=
+tant;}
+*[class~=3D"pl_pr"]{padding-left:3.125%!important;padding-right:3.125%!impo=
+rtant;}
+*[class~=3D"pt0"]{padding-top:0px!important;}
+*[class~=3D"pt5"]{padding-top:5px!important;}
+*[class~=3D"pt10"]{padding-top:10px!important;}
+*[class~=3D"pt20"]{padding-top:20px!important;}
+*[class~=3D"ptb10"]{padding-top:10px!important;padding-bottom:10px!importan=
+t;}
+*[class~=3D"pb0"]{padding-bottom:0px!important;}
+*[class~=3D"pb5"]{padding-bottom:5px!important;}
+*[class~=3D"pb10"]{padding-bottom:10px!important;}
+*[class~=3D"pb20"]{padding-bottom:20px!important;}
+*[class~=3D"pr0"]{padding-right:0!important;}
+*[class~=3D"fs13"]{font-size:13px!important;}
+*[class~=3D"menu_items"]{width:auto}
+*[class~=3D"pre_h"]{font-size:13px!important;line-height:16px!important;fon=
+t-weight:bold!important;}
+*[class~=3D"logo"]{width:150px!important;}
+*[class~=3D"logo"] img{width:150px;height:auto}
+*[class~=3D"bg"] img{height:34px}
+*[class~=3D"th_v"]{width:48%!important;}
+*[class~=3D"th"]{width:100%!important;text-align:center}
+*[class~=3D"t"]{width:100%!important;float:left}
+*[class~=3D"app"]{height:auto!important;padding-top:10px;padding-bottom:14p=
+x}
+*[class~=3D"ag_i"]{float:left;margin-right:3.125%;width:40%;max-width:200px=
+}
+*[class~=3D"ag_2"], *[class~=3D"ag_3"], *[class~=3D"ag_4"]{border-top: soli=
+d 1px #ededed!important;}
+*[class~=3D"ag_t"]{width:55%;float:left}
+*[class~=3D"ag_p"], *[class~=3D"ag_1"] *[class~=3D"ag_l"]{width:53.125%;flo=
+at:left}
+*[class~=3D"ag_t"] td, *[class~=3D"ag_p"] td{line-height:100%!important;tex=
+t-align:left!important;padding:3px 0!important;}
+*[class~=3D"ag_l"], *[class~=3D"ag_1"] *[class~=3D"cta"]{float:left;}
+*[class~=3D"ag_l"] table, *[class~=3D"ag_l"] a{min-width:145px!important;}
+*[class~=3D"pref_i"]{width:100px!important;}
+*[class~=3D"avis_t"] tr, *[class~=3D"avis_t"] td{height:auto!important;}
+*[class~=3D"ag_i"] img, *[class~=3D"pref_i"] img{width:100%!important;heigh=
+t:auto!important;}
+*[class~=3D"social"] a{ padding:0!important;}
+*[class~=3D"social"] img{ margin:auto!important;}
+*[class~=3D"ban100_i"] img{width:95%!important;height:auto!important;margin=
+:0!important;}
+*[class~=3D"ban100_p"]{width:100%!important;text-align:center!important;}
+*[class~=3D"prevTit"]{width:55%!important;} /* ajout MJA 20.04.2015 */
+*[class~=3D"prevTit"] a{font-size:28px!important;} /* ajout MJA 20.04.2015 =
+*/
+*[class~=3D"prevTit"] sup{font-size:14px!important;} /* ajout MJA 20.04.201=
+5 */
+*[class~=3D"prevImg"]{float:right!important;} /* ajout MJA 20.04.2015 */
+}
+@media only screen and (max-width:760px) and (min-width:650px) {
+*[class~=3D"pre_h"]{line-height:18px!important;}
+*[class~=3D"pref"]{width:49%!important;margin-top:0!important;}
+*[class~=3D"pref_s"]{width:10px!important;}
+*[class~=3D"logo"]{width:198px!important;}
+*[class~=3D"logo"] img{width:198px;height:auto}
+*[class~=3D"bg"] img{height:45px}
+*[class~=3D"avis_t"]{height:96px}
+}
+@media only screen and (max-width:650px), (max-device-width:650px) {
+*[class~=3D"center_t"]{float:left!important;text-align:center;}
+*[class~=3D"pref_i"]{width:130px!important;}
+*[class~=3D"pref_s"]{width:10px!important;}
+*[class~=3D"pl_pr2"]{padding-left:3.125%!important;padding-right:3.125%!imp=
+ortant;}
+*[class~=3D"fs15"]{font-size:15px!important;}
+*[class~=3D"fs20"]{font-size:20px!important;}
+*[class~=3D"t"]{height:58px;width:100%!important;float:none;border:solid 1p=
+x #008bd0;background-color:#008bd0;background-size:26px 7px;margin-bottom:5=
+px;}
+*[class~=3D"t"] a, *[class~=3D"t"] span{color:#fff!important;}
+*[class~=3D"t"] img, *[class~=3D"h"] img{display:none!important;}
+*[class~=3D"t"] td, *[class~=3D"h"] td{padding-top:0!important;}
+*[class~=3D"h"]{height:58px;border:solid 1px #009aa6;width:100%!important;f=
+loat:none;}
+*[class~=3D"t"] a, *[class~=3D"h"] a{display:block!important;margin:auto!im=
+portant;background-position:0 center;background-repeat:no-repeat;text-align=
+:center;}
+*[class~=3D"t"] a{background-size: 26px 7px;width:100%!important;}
+*[class~=3D"h"] a{background-size: 21px 13px;width:72px!important;}
+*[class~=3D"db"]{display:block!important;}
+*[class~=3D"fs30"]{font-size:30px!important;}
+*[class~=3D"fs45"]{font-size:40px!important;}
+*[class~=3D"ban100_i"] img{width:80%!important;margin:0 auto!important;}
+}
+@media only screen and (device-width:720px), (device-height:1280px) {
+*[class~=3D"t"] a{width:100%!important;}
+*[class~=3D"h"] a{width:85px!important;padding-left:15px!important;}
+}
+@media only screen and (max-width:560px), (max-device-width:560px) {
+*[class~=3D"b1"]{width:100%!important;padding:0 4%!important;}
+*[class~=3D"b1"] img{margin:0 auto!important;}
+*[class~=3D"ag_i"]{margin-bottom:5px;max-width:180px;}
+*[class~=3D"ag_t"] tr, *[class~=3D"ag_t"] td{height:auto!important;}
+*[class~=3D"ag_l"]{clear: both;margin-top:40px;margin:0 auto!important;floa=
+t:none!important;}
+*[class~=3D"ag_1"] *[class~=3D"ag_l"]{width:100%;float:left}
+*[class~=3D"cta"], *[class~=3D"cta"] a{margin:auto!important;float:none!imp=
+ortant;width:280px!important;font-size:20px!important;text-transform:upperc=
+ase;}
+*[class~=3D"cta"] td{padding-top:10px!important;padding-bottom:9px!importan=
+t;}
+*[class~=3D"mirror"]{display:block;}
+*[class~=3D"bt"]{display:none!important;}
+*[class~=3D"center_t"]{float:none!important;margin:0 auto;}
+*[class~=3D"abo"] table{width:100%!important;}
+*[class~=3D"tdPrev"] table{float:center!important;width:100%!important;} /*=
+ ajout MJA 20.04.2015 */
+*[class~=3D"tdPrev"] td{width:100%!important;text-align:center!important;} =
+/* ajout MJA 20.04.2015 */
+}
+@media only screen and (max-width:510px), (max-device-width:510px) {
+*[class~=3D"fi2"]{width:100%!important;} /* ajout MJA 20.04.2015 */
+*[class~=3D"fi2"] img{width:100%!important;height:auto!important;} /* ajout=
+ MJA 20.04.2015 */
+}
+@media only screen and (max-width:450px), (max-device-width:450px) {
+*[class~=3D"th_v"]{width:100%!important;float:none!important;}
+*[class~=3D"t"]{width:100%!important;float:left;}
+*[class~=3D"s1"]{margin-bottom:20px!important;}
+*[class~=3D"ag_i"]{margin-top:0!important;}
+*[class~=3D"ag_p"]{width:100%!important;}
+*[class~=3D"ag_p"] a{width:100%!important;text-align:center!important;displ=
+ay:block;}
+*[class~=3D"ban100"]{width:100%!important;margin:auto!important;float:none!=
+important;}
+*[class~=3D"ban100_c"], *[class~=3D"ban100_c"] tr, *[class~=3D"ban100_c"] t=
+d{height:auto!important;}
+*[class~=3D"ban100_t"]{padding:10px 0!important;}
+}
+@media only screen and (max-width:360px), (max-device-width:360px) {
+*[class~=3D"prevTit"] a{font-size:27px!important;} /* ajout MJA 20.04.2015 =
+*/
+}
+</style>
+</head>
+
+<body style=3D"background-color:#ffffff;color:#3e3d40;">
+<table align=3D"center" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" wi=
+dth=3D"1024" class=3D"mw" style=3D"background-color:#ffffff">
+<tr>
+<td style=3D"background-color:#ffffff;">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"center" wi=
+dth=3D"700" class=3D"fw" style=3D"background-color:#ffffff;margin:auto;">
+<tr>
+<td style=3D"line-height:10px;font-size:10px;">&nbsp;</td>
+</tr>
+
+
+<tr>
+<td style=3D"color:#3e3d40;font-size:12px;font-family:arial,sans-serif;text=
+-align:center;">
+<span class=3D"b">Pour visualiser correctement cette lettre d'information, =
+consultez la </span>
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defa1&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b&p1=3DptpUpIzUUwJsPe1yua5LmHgvdGbGE=
+M07" style=3D"color:#158fe5;" title=3D"Consulter la version en ligne" class=
+=3D"fs13 mirror"><strong style=3D"font-weight:normal;" class=3D"uCase">v</s=
+trong>ersion en ligne</a>
+<img width=3D"1" height=3D"1" border=3D"0" alt=3D"" name=3D"s_i_voyagessncf=
+commailprod" src=3D"http://stats.voyages-sncf.com/b/ss/voyagessncfcommailpr=
+od/1/H23.3--NS/s45440070862693=3F%5BAQB%5D&amp;AQB=3D1&amp;ndh=3D1&amp;ns=
+=3Dvoyagessncf&amp;pageName=3DPixNeoTrackMobile&amp;cc=3DEUR&amp;ch=3DLoisi=
+r&amp;c1=3DMR&amp;h1=3DVSC%2CLoisir%2CMR%2CMail%2CPixNeoTrackMobile&amp;c2=
+=3DMail&amp;c3=3DVisite&amp;c4=3DMR%3AVisite&amp;c5=3DMR&amp;c6=3DMR%3AVisi=
+te&amp;c40=3D-1796484175&amp;v20=3D-1796484175&amp;v0=3DT_D1P2_1509_322702_=
+EVENEMENT_15_ANS_CERTIF_-1437311135&amp;c15=3DT_D1P2_1509_322702_EVENEMENT_=
+15_ANS_CERTIF_-1437311135&amp;AQE=3D1" />
+</td>
+</tr>
+
+<tr class=3D"b">
+<td style=3D"color:#3e3d40;font-size:12px;font-family:arial,sans-serif;text=
+-align:center;">Pour vous assurer de recevoir notre lettre d'information, n=
+ous vous recommandons d'ajouter l'adresse <a href=3D"mailto:bonsplans@newsl=
+etter.voyages-sncf.com" style=3D"color:#158fe5;" title=3D"Ajoutez cette adr=
+esse &agrave; votre carnet d'adresse pour vous assurer de recevoir nos proc=
+hains lettes d'information.">bonsplans@newsletter.voyages-sncf.com</a> &agr=
+ave; votre carnet d'adresses.</td>
+</tr>
+<tr class=3D"b">
+<td style=3D"line-height:20px;font-size:10px;">&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+<table align=3D"center" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" st=
+yle=3D"background-color:#ffffff;" width=3D"1024" class=3D"mw">
+<tr>
+<td style=3D"width:100%;background-color:#ffffff;">
+<table cellpadding=3D"0" cellspacing=3D"0" class=3D"fw">
+<tr>
+<td class=3D"top b" valign=3D"bottom" width=3D"16.79%">
+<img src=3D"http://www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/15=
+ansVsc_G_D1P2_1504_316585/header_g.jpg" alt=3D"-" style=3D"display:block;bo=
+rder:none;" width=3D"100%" height=3D"111" />
+</td>
+<td class=3D"logo" valign=3D"bottom">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defa2&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b"><img src=3D"http://www.voyages-sn=
+cf.com/ext/newsletter/Vsc/DF/Responsive/15ansVsc_G_D1P2_1504_316585/header_=
+logo.jpg" alt=3D"Voyages-SNCF.com" style=3D"border:none;display:block;" wid=
+th=3D"198" height=3D"111" /></a>
+</td>
+<td class=3D"menu_items" valign=3D"bottom">
+<table cellpadding=3D"0" cellspacing=3D"0" style=3D"width:100%">
+<tr>
+<td style=3D"font-size:10px;line-height:10px;">&nbsp;</td>
+</tr>
+<tr>
+<td>
+<table cellpadding=3D"0" cellspacing=3D"0" style=3D"width:100%" class=3D"b"=
+>
+<tr>
+<td style=3D"text-align:center; padding-left:16px; padding-right:15px;"><a =
+href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneolan=
+e&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eemail=
+=asdfsadfsadfsadf&eml-mediaplan=3DNL_commerciales=
+_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa7d=
+efa3&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D15=
+79affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Train" style=3D"text-decor=
+ation:none; color:#353535;"><img src=3D"http://www.voyages-sncf.com/ext/new=
+sletter/Vsc/DF/auto/commun/train.png" alt=3D"Train" width=3D"29" height=3D"=
+29" style=3D"display:block; font-family:arial,sans-serif; font-size:12px; b=
+order:none; text-align:center; text-transform:uppercase; line-height:29px; =
+border:none;"/></a></td>
+<td style=3D"text-align:center; padding-left:10px; padding-right:10px; bord=
+er-left:1px solid #e7e7e7"><img src=3D"http://www.voyages-sncf.com/ext/news=
+letter/Vsc/DF/auto/commun//volVoitureGris.png" alt=3D"Vol, Voiture" width=
+=3D"71" height=3D"29" style=3D"display:block; font-family:arial,sans-serif;=
+ font-size:12px; border:none; text-align:center; text-transform:uppercase; =
+line-height:29px; border:none;"/></td>
+<td style=3D"text-align:center; padding-left:16px; padding-right:16px; bord=
+er-left:1px solid #e7e7e7"><img src=3D"http://www.voyages-sncf.com/ext/news=
+letter/Vsc/DF/auto/commun//hotelGris.png" alt=3D"H&ocirc;tel" width=3D"33" =
+height=3D"29" style=3D"display:block; font-family:arial,sans-serif; font-si=
+ze:12px; border:none; text-align:center; text-transform:uppercase; line-hei=
+ght:29px; border:none;"/></td>
+<td style=3D"text-align:center; padding-left:8px; padding-right:8px; border=
+-left:1px solid #e7e7e7"><img src=3D"http://www.voyages-sncf.com/ext/newsle=
+tter/Vsc/DF/auto/commun/epackGris.png" alt=3D"Train / Vol + H&ocirc;tel" wi=
+dth=3D"98" height=3D"29" style=3D"display:block; font-family:arial,sans-ser=
+if; font-size:12px; border:none; text-align:center; text-transform:uppercas=
+e; line-height:29px; border:none;"/></td>
+<td style=3D"text-align:center; padding-left:10px; padding-right:10px; bord=
+er-left:1px solid #e7e7e7"><img src=3D"http://www.voyages-sncf.com/ext/news=
+letter/Vsc/DF/auto/commun/sejourGris.png" alt=3D"S&eacute;jour" width=3D"41=
+" height=3D"29" style=3D"display:block; font-family:arial,sans-serif; font-=
+size:12px; border:none; text-align:center; text-transform:uppercase; line-h=
+eight:29px; border:none;"/></td>
+<td style=3D"text-align:center; padding-left:8px; padding-right:10px; borde=
+r-left:1px solid #e7e7e7; border-right: solid 1px #e7e7e7"><img src=3D"http=
+://www.voyages-sncf.com/ext/newsletter/Vsc/DF/auto/commun/bonsPlansGris.png=
+" alt=3D"Bons Plans" width=3D"66" height=3D"29" style=3D"display:block; fon=
+t-family:arial,sans-serif; font-size:12px; border:none; text-align:center; =
+text-transform:uppercase; line-height:29px; border:none;"/></td>
+</tr>
+<tr>
+<td style=3D"line-height:5px;" colspan=3D"6">&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr class=3D"fw bg">
+<td style=3D"padding-top:8px;">
+<img src=3D"http://www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/15=
+ansVsc_G_D1P2_1504_316585/header_b.jpg" alt=3D"--" style=3D"display:block;b=
+order:none;" width=3D"501" height=3D"45" class=3D"fw" />
+</td>
+</tr>
+</table>
+</td>
+<td class=3D"top b" valign=3D"bottom" width=3D"16.79%">
+<img src=3D"http://www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/15=
+ansVsc_G_D1P2_1504_316585/header_d.jpg" alt=3D"--" style=3D"display:block;b=
+order:none;" width=3D"100%" height=3D"111" />
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+
+
+
+<table align=3D"center" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" st=
+yle=3D"background-color:#3c5272;" width=3D"1024" class=3D"mw">
+<tr>
+<td style=3D"vertical-align:top;">
+<table align=3D"center" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" st=
+yle=3D"margin:auto;" width=3D"700" class=3D"w">
+
+<tr>
+<td class=3D"tdPrev">
+
+<table align=3D"left" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" clas=
+s=3D"prevTit" width=3D"480">
+<tr>
+<td style=3D"text-align:left;padding-top:10px;padding-bottom:10px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defa4&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" style=3D"text-decoration:none;fon=
+t-family:arial,sans-serif;font-size:42px;color:#ffffff;line-height:120%!imp=
+ortant;"><strong>2 MILLIONS DE&nbsp;BILLETS<sup style=3D"font-size:22px">(1=
+)</sup> PREM'S</STRONG>&nbsp;AVEC TGV ET INTERCIT=C9S </a>
+</td>
+
+</tr>
+</table>
+
+<table align=3D"left" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" clas=
+s=3D"prevImg" width=3D"">
+<tr>
+<td style=3D"padding-bottom:10px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defa5&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b"><img src=3D"http://www.voyages-sn=
+cf.com/ext/newsletter/Vsc/DF/Responsive/15ansVsc_G_D1P2_1504_316585/anniv.j=
+pg" width=3D"203" height=3D"162" alt=3D"15 ANS VOYAGES-SNCF.COM" style=3D"d=
+isplay:inline-block;border:none;" />
+</a>
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+
+
+
+<tr>
+<td align=3D"center" style=3D"padding-top:25px;" class=3D"pb10">
+<table class=3D"cta" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=
+=3D"center" width=3D"430" style=3D"background-color:#dd2d38;border-radius:2=
+px;text-align:center;-webkit-text-size-adjust:none;">
+<tr>
+<td style=3D"padding-top:10px;padding-bottom:10px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defa6&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" style=3D"width:430px;color:#fffff=
+f;font-family:arial,sans-serif;font-size:21px;font-weight:normal;text-align=
+:center;text-decoration:none;-webkit-text-size-adjust:none;"><span class=3D=
+"bt">D&Eacute;COUVREZ </span>TOUTES NOS OFFRES&nbsp;&#9658;
+</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+
+</table>
+</td>
+</tr>
+</table>
+
+
+<table align=3D"center" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" st=
+yle=3D"background-color:#3c5272;" width=3D"1024" class=3D"mw">
+<tr>
+<td class=3D"fi fi1" align=3D"right" style=3D"width:258px;vertical-align:to=
+p">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defa7&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b"><img src=3D"http://www.voyages-sn=
+cf.com/ext/newsletter/Vsc/DF/Responsive/Evenement_15ans_G_D1P2_1507_319542/=
+fond_1.jpg" width=3D"258" height=3D"437" alt=3D"-" style=3D"display:block;b=
+order:none;" />
+</a>
+</td>
+<td class=3D"fi2" align=3D"center">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defa8&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b"><img src=3D"http://www.voyages-sn=
+cf.com/ext/newsletter/Vsc/DF/Responsive/Evenement_15ans_G_D1P2_1507_319542/=
+fond_2.jpg" width=3D"500" height=3D"437" alt=3D"-" style=3D"display:block;b=
+order:none;" />
+</a>
+</td>
+<td class=3D"fi fi3" align=3D"left" style=3D"width:266px;vertical-align:top=
+">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defa9&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b"><img src=3D"http://www.voyages-sn=
+cf.com/ext/newsletter/Vsc/DF/Responsive/Evenement_15ans_G_D1P2_1507_319542/=
+fond_3.jpg" width=3D"266" height=3D"437" alt=3D"-" style=3D"display:block;b=
+order:none;" />
+</a>
+</td>
+</tr>
+</table>
+<table align=3D"center" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" st=
+yle=3D"background-color:#e5e6e2;" width=3D"1024" class=3D"mw">
+<tr>
+<td style=3D"width:162px; vertical-align:top" class=3D"marge_bloc marge_blo=
+c_g">&nbsp;</td>
+
+<!-- BLOC BLANC -->
+<td style=3D"padding-bottom:30px; padding-top:20px;">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" class=3D"w" width=
+=3D"700" align=3D"center" style=3D"background:#ffffff;">
+<tr>
+<td width=3D"100%" style=3D"padding-left:20px;padding-right:20px;" class=3D=
+"pl_pr">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"660" align=
+=3D"center" class=3D"w654">
+<tr>
+<td>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%">
+<tr>
+<td class=3D"title" style=3D"border-bottom:solid 1px #e9e9e9;padding-top:15=
+px;padding-bottom:5px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defaa&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" style=3D"text-decoration:none;fon=
+t-family:arial,sans-serif;font-size:20px;color:#3e3d40;"> OUVERTURE
+DES VENTES<span style=3D"color:#c84905;"> #TGVpop</span></a>
+</td>
+</tr>
+<tr>
+<td style=3D"padding-top:12px;" valign=3D"center">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%">
+<tr>
+<td>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" class=3D"ban100" al=
+ign=3D"left">
+<tr>
+<td class=3D"ban100_i" valign=3D"top">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defab&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b"><img src=3D"http://www.voyages-sn=
+cf.com/ext/newsletter/Vsc/DF/Gestion_Contenu/Visuels_Ponctuels/2015/NL_Trai=
+n/07_JUILLET/20160702_DM_PONT_14JUILLET/600x330pop.jpg" alt=3D"-" width=3D"=
+300" height=3D"165" style=3D"display:block;border:0;" />
+</a>
+</td>
+</tr>
+</table>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" class=3D"ban100" wi=
+dth=3D"52%" align=3D"right">
+<tr>
+<td height=3D"140" class=3D"ban100_c" valign=3D"middle">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"100%">
+<tr height=3D"70">
+<td height=3D"70" valign=3D"top" class=3D"ban100_t">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defac&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" style=3D"text-decoration:none;fon=
+t-family:arial,sans-serif;color:#3e3d40;font-size:13px;"><span style=3D"fon=
+t-weight:bold;color:#c84905;">R&eacute;servez d&egrave;s maintenant
+vos billets en derni&egrave;re minute</span> sur une s&eacute;lection de de=
+stinations
+avec <span style=3D"font-weight:bold;color:#c84905;">#TGVpop.</span></a></t=
+d>
+</tr>
+</table>
+<table class=3D"ban100_p" align=3D"right" cellpadding=3D"0" cellspacing=3D"=
+0" border=3D"0">
+<tr>
+<td><a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=
+=3Dneolane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-143731113=
+5&eemail=asdfsadfsadfsadf&eml-mediaplan=3DNL_comm=
+erciales_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545=
+f61,aa7defad&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&=
+pid=asdfsadfsadfsadf" style=3D"text-decoration:no=
+ne;font-family:arial,sans-serif;color:#c84905;font-size:13px;"><span style=
+=3D"font-size:12px;color:#3e3d40;">&Agrave;</span> <span class=3D"fs45" sty=
+le=3D"font-weight:bold;font-size:30px;">25
+                                ou 35</span><span class=3D"fs30" style=3D"f=
+ont-weight:bold;font-size:20px;">&euro;</span><span style=3D"font-size:9px;=
+">(2)</span><span style=3D"font-size:13px;">&nbsp;AS</span></a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class=3D"pt5" colspan=3D"3">
+<table align=3D"right" class=3D"center_t" cellpadding=3D"0" cellspacing=3D"=
+0" border=3D"0">
+<tr>
+<td>
+<table class=3D"cta" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=
+=3D"center" width=3D"130" style=3D"display:block;background-color:#c84905;b=
+order-radius:2px;text-align:center;-webkit-text-size-adjust:none;">
+<tr>
+<td style=3D"padding-top:4px;padding-bottom:5px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defae&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" style=3D"display:inline-block;wid=
+th:130px;color:#ffffff;font-family:arial,sans-serif;font-size:13px;text-ali=
+gn:center;text-decoration:none;-webkit-text-size-adjust:none;"> Pop d&eacut=
+e;part&nbsp;!&nbsp;&#9658;</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style=3D"background:#ffffff;line-height:20px;font-size:20px;height:20px=
+" width=3D"700" class=3D"fw">&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style=3D"background-color:#e5e6e2;line-height:6px;padding-bottom:15px;"=
+><img src=3D"http://www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/c=
+ommun/ombre_transparent.png" class=3D"fw" alt=3D"-" width=3D"700" height=3D=
+"5" style=3D"display:block;" /></td>
+</tr>
+</table>
+</td>
+<!-- / BLOC BLANC -->
+
+<td style=3D"width:162px; vertical-align:top" class=3D"marge_bloc marge_blo=
+c_d">&nbsp;</td>
+
+</tr>
+</table>
+
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"center" st=
+yle=3D"background-color:#626367;" width=3D"1024" class=3D"b mw">
+<tr>
+<td valign=3D"top">
+<img src=3D"http://www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/co=
+mmun/footer_t.png" alt=3D"-" width=3D"100%" height=3D"6" style=3D"display:b=
+lock;" />
+</td>
+</tr>
+<tr>
+<td align=3D"center" width=3D"1024" class=3D"fw">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"700" class=
+=3D"f">
+<tr>
+<td colspan=3D"4" style=3D"color:#ffffff;font-family:arial,sans-serif;font-=
+size:18px;border-bottom:1px solid #a1a1a4;text-align:left;padding-top:14px;=
+padding-bottom:5px;">NOS ENGAGEMENTS</td>
+</tr>
+<tr>
+<td style=3D"text-align:center;padding-top:20px;padding-bottom:20px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7defaf&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Paiement s=E9curis=E9" s=
+tyle=3D"text-decoration:underline;color:#ffffff;font-family:arial,sans-seri=
+f;font-size:11px;">PAIEMENT S&Eacute;CURIS&Eacute;</a>
+</td>
+<td style=3D"text-align:center;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfa9e&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Meilleurs prix garantis"=
+ style=3D"text-decoration:underline;color:#ffffff;font-family:arial,sans-se=
+rif;font-size:11px;">MEILLEURS PRIX GARANTIS</a>
+</td>
+<td style=3D"text-align:center;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfa9f&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Contact 7J/7" style=3D"t=
+ext-decoration:underline;color:#ffffff;font-family:arial,sans-serif;font-si=
+ze:11px;">CONTACT 7J/7</a>
+</td>
+<td style=3D"text-align:center;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa0&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Voyage responsable" styl=
+e=3D"text-decoration:underline;color:#ffffff;font-family:arial,sans-serif;f=
+ont-size:11px;">VOYAGE RESPONSABLE</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td valign=3D"top">
+<img src=3D"http://www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/co=
+mmun/footer_b.png" alt=3D"-" width=3D"100%" height=3D"6" style=3D"display:b=
+lock;" />
+</td>
+</tr>
+</table>
+
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"center" st=
+yle=3D"background-color:#333333;" width=3D"1024" class=3D"mw">
+<tr>
+<td align=3D"center" style=3D"border-top:1px solid #242424;">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" width=3D"700" class=
+=3D"f">
+<tr>
+<td style=3D"color:#ffffff;font-family:arial,sans-serif;font-size:18px;bord=
+er-bottom:1px solid #a1a1a4;text-align:left;padding-top:20px;padding-bottom=
+:5px;">REJOIGNEZ-NOUS</td>
+</tr>
+<tr>
+<td width=3D"100%" style=3D"padding-top:25px;padding-bottom:20px;" class=3D=
+"social">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"left" widt=
+h=3D"24%" class=3D"s1">
+<tr>
+<td>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"center">
+<tr>
+<td>
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa1&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Facebook" style=3D"paddi=
+ng-left:6px;display:block;width:100%;text-align:center;"><img src=3D"http:/=
+/www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/commun/footer_sl_1.p=
+ng" alt=3D"Facebook" style=3D"border:none;display:block;" width=3D"40" heig=
+ht=3D"40" />
+</a>
+</td>
+</tr>
+<tr>
+<td style=3D"padding-top:5px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa2&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Facebook" style=3D"text-=
+align:center;text-decoration:none;color:#ffffff;font-family:arial,sans-seri=
+f;font-size:11px;font-weight:bold;line-height:16px;display:block;">Facebook
+</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"left" widt=
+h=3D"25%" class=3D"s1">
+<tr>
+<td>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"center">
+<tr>
+<td>
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa3&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Twitter" style=3D"displa=
+y:block;width:100%;text-align:center;"><img src=3D"http://www.voyages-sncf.=
+com/ext/newsletter/Vsc/DF/Responsive/commun/footer_sl_2.png" alt=3D"Twitter=
+" style=3D"border:none;display:block;" width=3D"40" height=3D"40" />
+</a>
+</td>
+</tr>
+<tr>
+<td style=3D"padding-top:5px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa4&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Twitter" style=3D"text-a=
+lign:center;text-decoration:none;color:#ffffff;font-family:arial,sans-serif=
+;font-size:11px;font-weight:bold;line-height:16px;display:block;">Twitter
+</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"left" widt=
+h=3D"25%">
+<tr>
+<td>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"center">
+<tr>
+<td>
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa5&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Google +" style=3D"displ=
+ay:block;width:100%;text-align:center;"><img src=3D"http://www.voyages-sncf=
+=2Ecom/ext/newsletter/Vsc/DF/Responsive/commun/footer_sl_3.png" alt=3D"Goo=
+gle +" style=3D"border:none;display:block;" width=3D"40" height=3D"40" />
+</a>
+</td>
+</tr>
+<tr>
+<td style=3D"padding-top:5px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa6&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Google +" style=3D"text-=
+align:center;text-decoration:none;color:#ffffff;font-family:arial,sans-seri=
+f;font-size:11px;font-weight:bold;line-height:16px;display:block;">Google +
+</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"left" widt=
+h=3D"24%">
+<tr>
+<td>
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=3D"center">
+<tr>
+<td>
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa7&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Site SNCF" style=3D"disp=
+lay:block;width:100%;text-align:center;"><img src=3D"http://www.voyages-snc=
+f.com/ext/newsletter/Vsc/DF/Responsive/commun/footer_sl_4.png" alt=3D"Site =
+SNCF" style=3D"border:none;display:block;" width=3D"64" height=3D"38" />
+</a>
+</td>
+</tr>
+<tr>
+<td style=3D"padding-top:5px;">
+<a href=3D"http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-publisher=3Dneo=
+lane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&eema=
+il=asdfsadfsadfsadf&eml-mediaplan=3DNL_commercial=
+es_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506b21d,aa545f61,aa=
+7dfaa8&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1437311135&pid=3D=
+1579affcacc9dab6498ee2f227fe74b9040b144b" title=3D"Site SNCF" style=3D"text=
+-align:center;text-decoration:none;color:#ffffff;font-family:arial,sans-ser=
+if;font-size:11px;font-weight:bold;line-height:16px;display:block;">Sncf.co=
+m
+</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style=3D"border-bottom:1px solid #a1a1a4;line-height:0;font-size:0;">&n=
+bsp;</td>
+</tr>
+<tr>
+<td style=3D"padding-top:10px;font-size:11px;font-weight:bold;font-family:a=
+rial,sans-serif;color:#ffffff;text-align:left;">
+Pour toute question ou remarque sur nos offres et services, cliquez ici exc=
+lusivement.<br/>
+En r&eacute;pondant directement &agrave; cette lettre d'information, votre =
+message ne pourrait &ecirc;tre trait&eacute;.
+</td>
+</tr>
+<tr>
+<td style=3D"padding-top:15px;padding-bottom:15px;" class=3D"abo">
+<table width=3D"180" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=
+=3D"left">
+<tr>
+<td style=3D"text-align:left" class=3D"ta_c">
+<a class=3D"fs13" href=3D'http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-=
+publisher=3Dneolane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-=
+1437311135&eemail=asdfsadfsadfsadf&eml-mediaplan=
+=3DNL_commerciales_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506=
+b21d,aa545f61,aa7dfaa9&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1=
+437311135&pid=asdfsadfsadfsadf&p1=3Dblue@tester.ch&p=
+2=3D-1796484175' title=3D"G=E9rer votre abonnement" style=3D"font-weight:bo=
+ld;font-size:11px;color:#ffffff;color:#ffffff;font-family:arial,sans-serif;=
+text-decoration:underline;text-align:left">G&eacute;rer votre abonnement <i=
+mg src=3D"http://www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/comm=
+un/footer_p.png" alt=3D"-" width=3D"4" height=3D"7" style=3D"padding-left:4=
+px" />
+</a>
+</td>
+</tr>
+</table>
+<table width=3D"500" cellpadding=3D"0" cellspacing=3D"0" border=3D"0" align=
+=3D"right">
+<tr>
+<td style=3D"text-align:left" class=3D"ta_c">
+<a class=3D"fs13" href=3D'http://t.voyages-sncf.com/dynclick/vsc-fr/=3Feml-=
+publisher=3Dneolane&eml-name=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-=
+1437311135&eemail=asdfsadfsadfsadf&eml-mediaplan=
+=3DNL_commerciales_Train&eurl=3Dhttp://neo.voyages-sncf.com/r/=3Fid=3Dh3506=
+b21d,aa545f61,aa7dfaaa&prex=3DT_D1P2_1509_322702_EVENEMENT_15_ANS_CERTIF_-1=
+437311135&pid=asdfsadfsadfsadf&p1=3Dblue@tester.ch&p=
+2=3D-1796484175' title=3D"Vous d=E9sabonner" style=3D"font-weight:bold;font=
+-size:11px;color:#ffffff;color:#ffffff;font-family:arial,sans-serif;text-de=
+coration:underline;text-align:left">Vous d&eacute;sabonner <img src=3D"http=
+://www.voyages-sncf.com/ext/newsletter/Vsc/DF/Responsive/commun/footer_p.pn=
+g" alt=3D"-" width=3D"4" height=3D"7" style=3D"padding-left:4px" />
+</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style=3D"border-bottom:1px solid #a1a1a4;"></td>
+</tr>
+<tr>
+<td style=3D"padding-top:15px;padding-bottom:5px;font-size:9px;color:#fffff=
+f;font-family:arial,sans-serif;text-align:left;">
+Cr&eacute;dit photo : &copy;Photononstop
+</td>
+</tr>
+<tr>
+<td style=3D"padding-top:10px;font-size:9px;color:#ffffff;font-family:arial=
+,sans-serif;text-align:left;">
+(1) Prix TGV Prem's TTC, &agrave; partir de et par personne, pour un aller =
+simple uniquement en 2nde classe, au d&eacute;part de certaines villes, sur=
+ une s&eacute;lection de destinations en France et dans la limite des place=
+s disponibles &agrave; ces tarifs. Pour des voyages du 28 septembre au 12 d=
+&eacute;cembre. Billets non &eacute;changeables et non remboursables. Paiem=
+ent en ligne obligatoire avec billet &agrave; imprimer soi-m&ecirc;me, envo=
+i gratuit du billet &agrave; domicile, retrait en borne libre-service, en g=
+ares fran&ccedil;aises, ou en boutique SNCF Rail Europe (frais de 10 euros =
+par r&eacute;f&eacute;rence de dossier). Offre non cumulable avec toute aut=
+re promotion en cours ou tarif r&eacute;duit SNCF.<br /></td>
+</tr>
+<td style=3D"padding-top:10px;font-size:9px;color:#ffffff;font-family:arial=
+,sans-serif;text-align:left;">
+Prix Prem's TTC avec INTERCIT&Eacute;S, &agrave; partir de et par personne,=
+ pour un aller simple 2nde classe, certains jours et dans certains trains, =
+sur une s&eacute;lection de destinations en France et dans la limite des pl=
+aces disponibles &agrave; ce tarif. Pour des voyages du 28 septembre au 12 =
+d&eacute;cembre. Billets non &eacute;changeables et non remboursables. Paie=
+ment en ligne avec envoi gratuit du billet &agrave; domicile, retrait en bo=
+rne libre-service, confirmation e-billet ou billet imprim&eacute;. Offre no=
+n cumulable avec toute autre promotion en cours ou tarif r&eacute;duit SNCF=
+=2E<br /></td>
+</tr>
+<tr>
+<td style=3D"padding-top:10px;font-size:9px;color:#ffffff;font-family:arial=
+,sans-serif;text-align:left;">
+(2) Offre #TGVpop. Prix TTC, par personne, pour un aller simple en 2nde cla=
+sse,
+  sur un trajet direct au d&eacute;part de certaines villes, sur une s&eacu=
+te;lection de destinations
+  en France et dans la limite des places disponibles &agrave; ce tarif. Off=
+re disponible
+  certains jours et dans certains trains. Billets non &eacute;changeables e=
+t non remboursables.
+  En vente en ligne sur voyages-sncf.com et sur le site de votre agence de =
+voyage
+  agr&eacute;&eacute;e. Paiement en ligne obligatoire. Offre non cumulable =
+avec toute autre
+  promotion en cours ou tarif r&eacute;duit SNCF.</td>
+</tr>
+<tr>
+<td style=3D"line-height:5px;font-size:5px;">&nbsp;</td>
+</tr>
+<tr>
+<td style=3D"padding-top:10px;font-size:9px;color:#ffffff;font-family:arial=
+,sans-serif;text-align:left;">
+Voyages-sncf.com - 2, place de la D=E9fense, CNIT 1, BP 440, 92 053 Paris l=
+a D&eacute;fense Cedex - RCS Nanterre <span class=3D"appleLinks">B&nbsp;431=
+&nbsp;810&nbsp;621</span> - S.A.S au capital de 10.672.000&nbsp;&euro; - Li=
+cence d'agence de voyages n&deg;&nbsp;LI <span class=3D"appleLinks">092&nbs=
+p;01&nbsp;0002</span> - Garantie financi&egrave;re&nbsp;:&nbsp;APS - R.C.&n=
+bsp;:&nbsp;GAN - R&eacute;c&eacute;piss&eacute; CNIL n&deg;&nbsp;745549
+</td>
+</tr>
+<tr>
+<td style=3D"line-height:15px;font-size:15px;">&nbsp;</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<img height=3D'0' width=3D'0' alt=3D'' src=3D'http://neo.voyages-sncf.com/r=
+/=3Fid=3Dh3506b21d,aa545f61,1'><img src=3D"http://t.voyages-sncf.com/dynvie=
+w/vsc-fr/pix.gif=3Feml-publisher=3Dneolane&eml-name=3DT_D1P2_1509_322702_EV=
+ENEMENT_15_ANS_CERTIF_-1437311135&eemail=3D1579affcacc9dab6498ee2f227fe74b9=
+040b144b&eml-mediaplan=3DNL_commerciales_Train&ea-rnd=3D65063162" width=3D"=
+1" height=3D"1" border=3D"0" style=3D"display:none;" NOSEND /></body>
+</html>
+
+------=_NextPart_974_D7A1E9FE.D7A1E9FE--
