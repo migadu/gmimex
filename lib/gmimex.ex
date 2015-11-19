@@ -65,8 +65,10 @@ defmodule Gmimex do
   Read the emails within a folder.
   Base_dir is the root directory of the mailbox, email the email of the currently
   logged in webmail-user, and folder the folder which defaults to Inbox.
+  If from_idx and to_idx is given, the entries in the list of emails is replaced
+  with the full email (and thus the preview).
   """
-  def read_folder(base_dir, email, folder \\ ".", from_idx \\ 0, to_idx \\ 10) do
+  def read_folder(base_dir, email, folder \\ ".", from_idx \\ 0, to_idx \\ 0) do
     mailbox_path = mailbox_path(base_dir, email, folder)
     move_new_to_cur(mailbox_path)
     cur_path = Path.join(mailbox_path, "cur")
@@ -75,10 +77,17 @@ defmodule Gmimex do
       {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), flags: true, content: false);email end)
     sorted_emails = Enum.sort(emails, &(&1["sortId"] > &2["sortId"]))
 
-    selection = Enum.map(Enum.slice(sorted_emails, from_idx, to_idx-from_idx), &(&1["path"]))
-    complete_emails = get_json_list(selection, content: true)
+    selection_count = to_idx - from_idx
+    if selection_count > 0 do
+      selection = Enum.map(Enum.slice(sorted_emails, from_idx, to_idx-from_idx), &(&1["path"]))
+      complete_emails = get_json_list(selection, flags: true, content: true)
+      nr_elements = Enum.count(sorted_emails)
+      {part_1, part_2} = Enum.split(sorted_emails, from_idx)
+      {part_2, part_3} = Enum.split(part_2, to_idx - from_idx)
+      sorted_emails = part_1 |> Enum.concat(complete_emails) |> Enum.concat(part_3)
+    end
 
-    {sorted_emails, complete_emails}
+    sorted_emails
   end
 
 

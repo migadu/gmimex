@@ -117,16 +117,24 @@ defmodule GmimexTest do
   end
 
 
-  test "read folder" do
+  test "read folder and count the number of emails" do
     base_dir = Path.expand("test/data")
     email = "aaa@test.com"
     folder = "."
-    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder)
+    sorted_emails = Gmimex.read_folder(base_dir, email, folder)
+    {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/cur")
+    assert Enum.count(new_file_listings) == Enum.count(sorted_emails)
+    GmimexTest.Helpers.restore_from_backup
+  end
+
+
+  test "read folder and check that new is now empty" do
+    base_dir = Path.expand("test/data")
+    email = "aaa@test.com"
+    folder = "."
+    sorted_emails = Gmimex.read_folder(base_dir, email, folder)
     {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
     assert new_file_listings == [".gitignore"]
-    first_email =  List.first(sorted_emails)
-    assert first_email["subject"] == "Atrachment"
-    assert first_email["flags"]["attachments"] == true
     GmimexTest.Helpers.restore_from_backup
   end
 
@@ -137,8 +145,8 @@ defmodule GmimexTest do
     folder = "."
     # Read the folder twice! Because the new emails are moved around,
     # to see if it also works with an empty new directory
-    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder)
-    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder)
+    sorted_emails = Gmimex.read_folder(base_dir, email, folder)
+    sorted_emails = Gmimex.read_folder(base_dir, email, folder)
     {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
     assert new_file_listings == [".gitignore"]
     first_email =  List.first(sorted_emails)
@@ -152,32 +160,16 @@ defmodule GmimexTest do
     base_dir = Path.expand("test/data")
     email = "aaa@test.com"
     folder = "."
-    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder, 0, 2)
-    {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
-    assert new_file_listings == [".gitignore"]
-    assert Enum.count(complete_emails) == 2
-    first_complete_email =  List.first(complete_emails)
-    first_sorted_email =  List.first(sorted_emails)
-    assert first_complete_email["subject"] == first_sorted_email["subject"]
-    assert Map.has_key?(first_complete_email["text"], "preview")
-    GmimexTest.Helpers.restore_from_backup
-  end
-
-
-  test "the previews of the selected emails, sliced" do
-    base_dir = Path.expand("test/data")
-    email = "aaa@test.com"
-    folder = "."
-    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder, 2, 4)
-    {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
-    assert new_file_listings == [".gitignore"]
-    assert Enum.count(complete_emails) == 2
-    first_complete_email  =  Enum.at(complete_emails, 0)
-    first_sorted_email    =  Enum.at(sorted_emails, 2)
-    second_complete_email =  Enum.at(complete_emails, 1)
-    second_sorted_email   =  Enum.at(sorted_emails, 3)
-    assert first_complete_email["subject"] == first_sorted_email["subject"]
-    assert second_complete_email["subject"] == second_sorted_email["subject"]
+    sorted_emails_without_preview = Gmimex.read_folder(base_dir, email, folder)
+    sorted_emails = Gmimex.read_folder(base_dir, email, folder, 0, 2)
+    Enum.each(Enum.with_index(sorted_emails_without_preview), fn({x, idx}) ->
+      y=Enum.at(sorted_emails, idx);
+      assert(x["subject"] == y["subject"])
+    end)
+    assert List.first(sorted_emails)["text"] |> Map.has_key?("preview")
+    assert Enum.at(sorted_emails, 1) |> Map.has_key?("text")
+    assert Enum.at(sorted_emails, 1)["text"] |> Map.has_key?("preview")
+    refute Enum.at(sorted_emails, 2) |> Map.has_key?("text")
     GmimexTest.Helpers.restore_from_backup
   end
 end
