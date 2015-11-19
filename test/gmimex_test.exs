@@ -162,4 +162,22 @@ defmodule GmimexTest do
     assert Map.has_key?(first_complete_email["text"], "preview")
     GmimexTest.Helpers.restore_from_backup
   end
+
+
+  test "the previews of the selected emails, sliced" do
+    base_dir = Path.expand("test/data")
+    email = "aaa@test.com"
+    folder = "."
+    {sorted_emails, complete_emails} = Gmimex.read_folder(base_dir, email, folder, 2, 4)
+    {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
+    assert new_file_listings == [".gitignore"]
+    assert Enum.count(complete_emails) == 2
+    first_complete_email  =  Enum.at(complete_emails, 0)
+    first_sorted_email    =  Enum.at(sorted_emails, 2)
+    second_complete_email =  Enum.at(complete_emails, 1)
+    second_sorted_email   =  Enum.at(sorted_emails, 3)
+    assert first_complete_email["subject"] == first_sorted_email["subject"]
+    assert second_complete_email["subject"] == second_sorted_email["subject"]
+    GmimexTest.Helpers.restore_from_backup
+  end
 end
