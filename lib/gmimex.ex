@@ -55,6 +55,11 @@ defmodule Gmimex do
   end
 
 
+  def index_mailbox(base_dir, email) do
+    mailbox_path = mailbox_path(base_dir, email, ".")
+    index_mailbox(mailbox_path)
+  end
+
   def index_mailbox(mailbox_path) do
     GmimexNif.index_mailbox(mailbox_path)
   end
@@ -234,20 +239,20 @@ defmodule Gmimex do
   /bbb.com/aaa/{INBOX,Drafts,...}
   mailbox_path converts the email to such a path.
   ## Example
-      iex> Gmimex.mailbox_path("/x/", "aaa@bbb.com")
-      "/x/bbb.com/aaa"
-      iex> Gmimex.mailbox_path("/x/", "aaa@bbb.com", "Draft")
-      "/x/bbb.com/aaa/Draft"
+      iex> File.exists?(Gmimex.mailbox_path("test/data/", "aaa@test.com", "."))
+      true
 
   """
   def mailbox_path(base_path, email, folder \\ ".") do
     [user_name, domain] = String.split(email, "@")
 
-    base_path
+    path = base_path
       |> Path.join(domain)
       |> Path.join(user_name)
       |> Path.join(folder)
       |> Path.expand
+    unless File.dir?(path), do: raise "No such directory: #{path}"
+    path
   end
 
 

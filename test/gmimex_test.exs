@@ -201,4 +201,12 @@ defmodule GmimexTest do
     refute Enum.at(sorted_emails, 2) |> Map.has_key?("text")
     GmimexTest.Helpers.restore_from_backup
   end
+
+
+  test "index" do
+    base_dir = Path.expand("test/data")
+    email = "aaa@test.com"
+    Gmimex.index_mailbox(base_dir, email)
+    GmimexTest.Helpers.restore_from_backup
+  end
 end
