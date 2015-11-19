@@ -25,7 +25,11 @@ defmodule Gmimex do
     else
       {:ok, data} = Poison.Parser.parse(json_bin)
       if opts[:flags] do
-        flags = get_flags(email_path) |> Map.put_new("attachments", data["attachments"] != [])
+        flags = get_flags(email_path)
+        if data["attachments"] != [] do
+          flags = flags ++ [:attachments]
+        end
+
         data
           |> Map.put_new("path", email_path)
           |> Map.put_new("flags", flags)
@@ -246,20 +250,20 @@ defmodule Gmimex do
 
   defp get_flags(path) do
     flags = Path.basename(path) |> String.split(":2,") |> List.last
-    Enum.reduce(to_char_list(flags), %{}, fn(x, acc) ->
+    Enum.reduce(to_char_list(flags), [], fn(x, acc) ->
       case x do
-        80  -> Map.put_new(acc, "passed", true)
-        112 -> Map.put_new(acc, "passed", true)
-        82  -> Map.put_new(acc, "replied", true)
-        114 -> Map.put_new(acc, "replied", true)
-        83  -> Map.put_new(acc, "seen", true)
-        115 -> Map.put_new(acc, "seen", true)
-        84  -> Map.put_new(acc, "trashed", true)
-        116 -> Map.put_new(acc, "trashed", true)
-        68  -> Map.put_new(acc, "draft", true)
-        100 -> Map.put_new(acc, "draft", true)
-        70  -> Map.put_new(acc, "flagged", true)
-        102 -> Map.put_new(acc, "flagged", true)
+        80  -> acc ++ [:passed]
+        112 -> acc ++ [:passed]
+        82  -> acc ++ [:replied]
+        114 -> acc ++ [:replied]
+        83  -> acc ++ [:seen]
+        115 -> acc ++ [:seen]
+        84  -> acc ++ [:trashed]
+        116 -> acc ++ [:trashed]
+        68  -> acc ++ [:draft]
+        100 -> acc ++ [:draft]
+        70  -> acc ++ [:flagged]
+        102 -> acc ++ [:flagged]
         _ -> acc
       end
     end)

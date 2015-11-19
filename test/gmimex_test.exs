@@ -24,10 +24,10 @@ defmodule GmimexTest do
     assert json["date"] == "Thu, 24 Sep 2015 13:55:49 +0200"
     assert json["from"] == %{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}
     assert json["subject"] == "PETITS PRIX : 2 millions de billets a prix Prem's avec TGV et Intercites !"
-    assert json["flags"]["flagged"] == true
-    assert json["flags"]["replied"] == true
-    assert json["flags"]["seen"] == true
-    assert json["flags"]["attachments"] == true
+    assert Enum.any?(json["flags"], &(&1 == :flagged))
+    assert Enum.any?(json["flags"], &(&1 == :replied))
+    assert Enum.any?(json["flags"], &(&1 == :seen))
+    assert Enum.any?(json["flags"], &(&1 == :attachments))
   end
 
 
@@ -151,7 +151,7 @@ defmodule GmimexTest do
     assert new_file_listings == [".gitignore"]
     first_email =  List.first(sorted_emails)
     assert first_email["subject"] == "Atrachment"
-    assert first_email["flags"]["attachments"] == true
+    assert Enum.any?(first_email["flags"], &(&1 == :attachments))
     GmimexTest.Helpers.restore_from_backup
   end
 
