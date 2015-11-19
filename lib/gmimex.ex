@@ -188,6 +188,21 @@ defmodule Gmimex do
   def flagged!(path, toggle \\ true), do: set_flag(path, "F", toggle)
 
 
+  @doc ~S"""
+  Checks if a flag is present in the flags list. Examples:
+  ## Example
+
+      iex> Gmimex.has_flag? [:aa, :bb], :aa
+      true
+
+      iex> Gmimex.has_flag? [:aa, :bb], :cc
+      false
+  """
+  def has_flag?(flaglist, flag) do
+    Enum.any?(flaglist, &(&1 == flag))
+  end
+
+
   @doc """
   On a mailserver, the email is often stored as followes for
   the user aaa@bbb.com
