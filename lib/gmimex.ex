@@ -50,42 +50,34 @@ defmodule Gmimex do
   end
 
 
-  def index_message(mailbox_path, message_path) do
-    GmimexNif.index_message(mailbox_path, message_path)
+  def index_message(maildir_path, message_path) do
+    GmimexNif.index_message(maildir_path, message_path)
+  end
+
+  def index_mailbox(maildir_path) do
+    GmimexNif.index_mailbox(maildir_path)
   end
 
 
-  def index_mailbox(base_dir, email) do
-    mailbox_path = mailbox_path(base_dir, email, ".")
-    index_mailbox(mailbox_path)
-  end
-
-  def index_mailbox(mailbox_path) do
-    GmimexNif.index_mailbox(mailbox_path)
-  end
-
-
-  def search_mailbox(mailbox_path, query, max_results \\ 10) do
-    GmimexNif.search_mailbox(mailbox_path, query, max_results)
+  def search_mailbox(maildir_path, query, max_results \\ 10) do
+    GmimexNif.search_mailbox(maildir_path, query, max_results)
   end
 
 
   @doc """
   Read the emails within a folder.
-  Base_dir is the root directory of the mailbox, email the email of the currently
-  logged in webmail-user, and folder the folder which defaults to Inbox.
+  Maildir_path is the root directory of the mailbox.
   If from_idx and to_idx is given, the entries in the list of emails is replaced
   with the full email (and thus the preview).
   """
-  def read_folder(base_dir, email, folder \\ ".", from_idx \\ 0, to_idx \\ 0)
-  def read_folder(base_dir, email, folder, from_idx, to_idx) when from_idx < 0 do
-    read_folder(base_dir, email, folder, 0, to_idx)
+  def read_folder(maildir_path, from_idx \\ 0, to_idx \\ 0)
+  def read_folder(maildir_path, from_idx, to_idx) when from_idx < 0 do
+    read_folder(maildir_path, 0, to_idx)
   end
 
-  def read_folder(base_dir, email, folder, from_idx, to_idx) do
-    mailbox_path = mailbox_path(base_dir, email, folder)
-    move_new_to_cur(mailbox_path)
-    cur_path = Path.join(mailbox_path, "cur")
+  def read_folder(maildir_path, from_idx, to_idx) do
+    move_new_to_cur(maildir_path)
+    cur_path = Path.join(maildir_path, "cur")
     cur_email_names = files_ordered_by_time_desc(cur_path)
     emails = Enum.map(cur_email_names, fn(x) ->
       {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), flags: true, content: false);email end)
@@ -109,9 +101,9 @@ defmodule Gmimex do
 
 
   # move all files from 'new' to 'cur'
-  defp move_new_to_cur(mailbox_path) do
-    {:ok, new_emails} = File.ls(Path.join(mailbox_path, "new"))
-    Enum.each(new_emails, fn(x) -> filepath = Path.join(Path.join(mailbox_path, "new"), x); move_to_cur(filepath) end)
+  defp move_new_to_cur(maildir_path) do
+    {:ok, new_emails} = File.ls(Path.join(maildir_path, "new"))
+    Enum.each(new_emails, fn(x) -> filepath = Path.join(Path.join(maildir_path, "new"), x); move_to_cur(filepath) end)
   end
 
 
@@ -233,27 +225,6 @@ defmodule Gmimex do
   end
 
 
-  @doc """
-  On a mailserver, the email is often stored as followes for
-  the user aaa@bbb.com
-  /bbb.com/aaa/{INBOX,Drafts,...}
-  mailbox_path converts the email to such a path.
-  ## Example
-      iex> File.exists?(Gmimex.mailbox_path("test/data/", "aaa@test.com", "."))
-      true
-
-  """
-  def mailbox_path(base_path, email, folder \\ ".") do
-    [user_name, domain] = String.split(email, "@")
-
-    path = base_path
-      |> Path.join(domain)
-      |> Path.join(user_name)
-      |> Path.join(folder)
-      |> Path.expand
-    unless File.dir?(path), do: raise "No such directory: #{path}"
-    path
-  end
 
 
   defp set_flag(path, flag, set_toggle) do

@@ -118,10 +118,8 @@ defmodule GmimexTest do
 
 
   test "read folder and count the number of emails" do
-    base_dir = Path.expand("test/data")
-    email = "aaa@test.com"
-    folder = "."
-    sorted_emails = Gmimex.read_folder(base_dir, email, folder)
+    path = Path.expand(Path.expand("test/data/test.com/aaa"))
+    sorted_emails = Gmimex.read_folder(path)
     {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/cur")
     assert Enum.count(new_file_listings) == Enum.count(sorted_emails)
     GmimexTest.Helpers.restore_from_backup
@@ -129,10 +127,8 @@ defmodule GmimexTest do
 
 
   test "read folder and check that new is now empty" do
-    base_dir = Path.expand("test/data")
-    email = "aaa@test.com"
-    folder = "."
-    sorted_emails = Gmimex.read_folder(base_dir, email, folder)
+    path = Path.expand(Path.expand("test/data/test.com/aaa"))
+    sorted_emails = Gmimex.read_folder(path)
     {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
     assert new_file_listings == [".gitignore"]
     GmimexTest.Helpers.restore_from_backup
@@ -140,10 +136,8 @@ defmodule GmimexTest do
 
 
   test "read folder with to_idx > number of emails present" do
-    base_dir = Path.expand("test/data")
-    email = "aaa@test.com"
-    folder = "."
-    sorted_emails = Gmimex.read_folder(base_dir, email, folder, 0, 10000)
+    path = Path.expand(Path.expand("test/data/test.com/aaa"))
+    sorted_emails = Gmimex.read_folder(path, 0, 10000)
     {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/cur")
     assert Enum.count(new_file_listings) == Enum.count(sorted_emails)
     GmimexTest.Helpers.restore_from_backup
@@ -151,13 +145,11 @@ defmodule GmimexTest do
 
 
   test "read folder twice" do
-    base_dir = Path.expand("test/data")
-    email = "aaa@test.com"
-    folder = "."
+    path = Path.expand(Path.expand("test/data/test.com/aaa"))
     # Read the folder twice! Because the new emails are moved around,
     # to see if it also works with an empty new directory
-    sorted_emails = Gmimex.read_folder(base_dir, email, folder)
-    sorted_emails = Gmimex.read_folder(base_dir, email, folder)
+    sorted_emails = Gmimex.read_folder(path)
+    sorted_emails = Gmimex.read_folder(path)
     {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/tmp")
     assert new_file_listings == [".gitignore"]
     first_email =  List.first(sorted_emails)
@@ -168,11 +160,9 @@ defmodule GmimexTest do
 
 
   test "the previews of the selected emails" do
-    base_dir = Path.expand("test/data")
-    email = "aaa@test.com"
-    folder = "."
-    sorted_emails_without_preview = Gmimex.read_folder(base_dir, email, folder)
-    sorted_emails = Gmimex.read_folder(base_dir, email, folder, 0, 2)
+    path = Path.expand(Path.expand("test/data/test.com/aaa"))
+    sorted_emails_without_preview = Gmimex.read_folder(path)
+    sorted_emails = Gmimex.read_folder(path, 0, 2)
     Enum.each(Enum.with_index(sorted_emails_without_preview), fn({x, idx}) ->
       y=Enum.at(sorted_emails, idx);
       assert(x["subject"] == y["subject"])
@@ -186,11 +176,9 @@ defmodule GmimexTest do
 
 
   test "the previews of the selected emails, compare the two" do
-    base_dir = Path.expand("test/data")
-    email = "aaa@test.com"
-    folder = "."
-    sorted_emails_without_preview = Gmimex.read_folder(base_dir, email, folder)
-    sorted_emails = Gmimex.read_folder(base_dir, email, folder, 0, 2)
+    path = Path.expand(Path.expand("test/data/test.com/aaa"))
+    sorted_emails_without_preview = Gmimex.read_folder(path)
+    sorted_emails = Gmimex.read_folder(path, 0, 2)
     Enum.each(Enum.with_index(sorted_emails_without_preview), fn({x, idx}) ->
       y=Enum.at(sorted_emails, idx);
       assert(x["subject"] == y["subject"])
@@ -203,10 +191,32 @@ defmodule GmimexTest do
   end
 
 
-  test "index" do
+  test "index the mailbox" do
     path = Path.expand(Path.expand("test/data/test.com/aaa"))
     assert File.exists?(path)
+    # File.mkdir Path.join(path, ".gmimexindex")
     Gmimex.index_mailbox(path)
     GmimexTest.Helpers.restore_from_backup
   end
+
+
+  test "index the mailbox individually" do
+    path = Path.expand(Path.expand("test/data/test.com/aaa/"))
+    cur_path = Path.join(path, "cur")
+    {:ok, cur_file_list} = File.ls(cur_path)
+    Enum.each(cur_file_list, fn(x) ->
+      email_path = Path.join(cur_path, x)
+      IO.puts email_path
+      Gmimex.index_message(cur_path, email_path)
+    end)
+    GmimexTest.Helpers.restore_from_backup
+  end
+
+
+  # test "index the mailbox with an inexisting file should be ok (not throwing up)" do
+  #   path = Path.expand(Path.expand("test/data/test.com/aaa/"))
+  #   cur_path = Path.join(path, "cur")
+  #   assert catch_throw(Gmimex.index_message(cur_path, "/aaa/bbb/ccc/ddd")) == 1
+  #   GmimexTest.Helpers.restore_from_backup
+  # end
 end
