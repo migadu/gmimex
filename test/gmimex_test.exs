@@ -204,9 +204,9 @@ defmodule GmimexTest do
 
 
   test "index" do
-    base_dir = Path.expand("test/data")
-    email = "aaa@test.com"
-    Gmimex.index_mailbox(base_dir, email)
+    path = Path.expand(Path.expand("test/data/test.com/aaa"))
+    assert File.exists?(path)
+    Gmimex.index_mailbox(path)
     GmimexTest.Helpers.restore_from_backup
   end
 end
