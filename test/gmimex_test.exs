@@ -139,6 +139,17 @@ defmodule GmimexTest do
   end
 
 
+  test "read folder with to_idx > number of emails present" do
+    base_dir = Path.expand("test/data")
+    email = "aaa@test.com"
+    folder = "."
+    sorted_emails = Gmimex.read_folder(base_dir, email, folder, 0, 10000)
+    {:ok, new_file_listings} =  File.ls("test/data/test.com/aaa/cur")
+    assert Enum.count(new_file_listings) == Enum.count(sorted_emails)
+    GmimexTest.Helpers.restore_from_backup
+  end
+
+
   test "read folder twice" do
     base_dir = Path.expand("test/data")
     email = "aaa@test.com"
@@ -157,6 +168,24 @@ defmodule GmimexTest do
 
 
   test "the previews of the selected emails" do
+    base_dir = Path.expand("test/data")
+    email = "aaa@test.com"
+    folder = "."
+    sorted_emails_without_preview = Gmimex.read_folder(base_dir, email, folder)
+    sorted_emails = Gmimex.read_folder(base_dir, email, folder, 0, 2)
+    Enum.each(Enum.with_index(sorted_emails_without_preview), fn({x, idx}) ->
+      y=Enum.at(sorted_emails, idx);
+      assert(x["subject"] == y["subject"])
+    end)
+    assert List.first(sorted_emails)["text"] |> Map.has_key?("preview")
+    assert Enum.at(sorted_emails, 1) |> Map.has_key?("text")
+    assert Enum.at(sorted_emails, 1)["text"] |> Map.has_key?("preview")
+    refute Enum.at(sorted_emails, 2) |> Map.has_key?("text")
+    GmimexTest.Helpers.restore_from_backup
+  end
+
+
+  test "the previews of the selected emails, compare the two" do
     base_dir = Path.expand("test/data")
     email = "aaa@test.com"
     folder = "."

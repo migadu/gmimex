@@ -72,7 +72,12 @@ defmodule Gmimex do
   If from_idx and to_idx is given, the entries in the list of emails is replaced
   with the full email (and thus the preview).
   """
-  def read_folder(base_dir, email, folder \\ ".", from_idx \\ 0, to_idx \\ 0) do
+  def read_folder(base_dir, email, folder \\ ".", from_idx \\ 0, to_idx \\ 0)
+  def read_folder(base_dir, email, folder, from_idx, to_idx) when from_idx < 0 do
+    read_folder(base_dir, email, folder, 0, to_idx)
+  end
+
+  def read_folder(base_dir, email, folder, from_idx, to_idx) do
     mailbox_path = mailbox_path(base_dir, email, folder)
     move_new_to_cur(mailbox_path)
     cur_path = Path.join(mailbox_path, "cur")
@@ -80,6 +85,9 @@ defmodule Gmimex do
     emails = Enum.map(cur_email_names, fn(x) ->
       {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), flags: true, content: false);email end)
     sorted_emails = Enum.sort(emails, &(&1["sortId"] > &2["sortId"]))
+
+    if from_idx > (len = Enum.count(sorted_emails)), do: from_idx = len
+    if to_idx < 0, do: to_idx = 0
 
     selection_count = to_idx - from_idx
     if selection_count > 0 do
@@ -200,6 +208,23 @@ defmodule Gmimex do
   """
   def has_flag?(flaglist, flag) do
     Enum.any?(flaglist, &(&1 == flag))
+  end
+
+
+  @doc """
+  Returns the preview of the email, independent if it is in the
+  text or html part. Input: message map extracted via get_json.
+  """
+  def preview(message) do
+    if ["text"] && x["text"]["preview"] do
+      x["text"]["preview"]
+    else
+      if ["html"] && x["html"]["preview"] do
+        x["html"]["preview"]
+      else
+        ""
+      end
+    end
   end
 
 
