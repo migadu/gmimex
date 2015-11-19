@@ -216,11 +216,11 @@ defmodule Gmimex do
   text or html part. Input: message map extracted via get_json.
   """
   def preview(message) do
-    if ["text"] && x["text"]["preview"] do
-      x["text"]["preview"]
+    if message["text"] && message["text"]["preview"] do
+      message["text"]["preview"]
     else
-      if ["html"] && x["html"]["preview"] do
-        x["html"]["preview"]
+      if message["html"] && message["html"]["preview"] do
+        message["html"]["preview"]
       else
         ""
       end
