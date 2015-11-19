@@ -901,6 +901,7 @@ static void create_xapian_index_directory(const gchar *mailbox_path) {
       perror("mkdir");
     }
   }
+  g_free(index_path);
 }
 
 /*
