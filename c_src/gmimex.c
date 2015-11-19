@@ -7,6 +7,7 @@
 #include <fts.h>
 #include <glib.h>
 #include <glib/gprintf.h>
+#include <glib/gstdio.h>
 #include <gmime/gmime.h>
 #include <gumbo.h>
 
@@ -891,6 +892,16 @@ static GString *textize(const GumboNode* node) {
 }
 
 
+
+
+static void create_xapian_index_directory(const gchar *mailbox_path) {
+  gchar *index_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, NULL);
+  if (!g_file_test(index_path, G_FILE_TEST_EXISTS)) {
+    if (g_mkdir(index_path, 0755)==-1 && errno!=EEXIST) {
+      perror("mkdir");
+    }
+  }
+}
 
 /*
  *
@@ -1780,6 +1791,7 @@ static gchar *message_attachments_list_to_indexing_string(MessageAttachmentsList
  *
  */
 static IndexingMessage *indexing_message_from_path(const gchar *path) {
+
   MessageData *mdata = gmimex_message_from_path(path, TRUE);
   IndexingMessage *im = g_malloc(sizeof(IndexingMessage));
   im->path = g_strdup(path);
@@ -1863,14 +1875,23 @@ void gmimex_index_message(const gchar *mailbox_path, const gchar *message_path) 
   g_return_if_fail(mailbox_path != NULL);
   g_return_if_fail(message_path != NULL);
 
-  IndexingMessage *im = indexing_message_from_path(message_path);
+  if (!g_file_test(mailbox_path, G_FILE_TEST_IS_DIR))
+    perror("mailbox_path not_dir: %s");
+  else {
+    create_xapian_index_directory(mailbox_path);
+    if (!g_file_test(message_path, G_FILE_TEST_IS_REGULAR))
+      perror("message_path not found");
+    else {
+      IndexingMessage *im = indexing_message_from_path(message_path);
 
-  if (im) {
-    g_printf("Indexing: %s\n", message_path);
-    gchar *index_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, NULL);
-    xapian_index_message(index_path, im);
-    g_free(index_path);
-    free_indexing_message(im);
+      if (im) {
+        g_printf("Indexing: %s\n", message_path);
+        gchar *index_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, NULL);
+        xapian_index_message(index_path, im);
+        g_free(index_path);
+        free_indexing_message(im);
+      }
+    }
   }
 }
 
@@ -1981,6 +2002,8 @@ void gmimex_index_mailbox(const gchar *mailbox_path) {
     perror("fts_open");
     return;
   }
+
+  create_xapian_index_directory(mailbox_path);
 
   time_t last_run_at = get_last_indexed_at(mailbox_path);
   update_last_indexed_at(mailbox_path);
