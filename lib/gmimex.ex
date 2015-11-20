@@ -18,7 +18,7 @@ defmodule Gmimex do
 
   defp do_get_json(path, opts) do
     opts = Keyword.merge(@get_json_defaults, opts)
-    {:ok, email_path} = fetch_file(path)
+    {:ok, email_path} = find_email_path(path)
     json_bin = GmimexNif.get_json(email_path, opts[:content])
     if opts[:raw] do
       json_bin
@@ -61,7 +61,7 @@ defmodule Gmimex do
 
   @doc """
   Read the emails within a folder.
-  Maildir_path is the root directory of the mailbox.
+  Maildir_path is the root directory of the mailbox (without ending in cur,new).
   If from_idx and to_idx is given, the entries in the list of emails is replaced
   with the full email (and thus the preview).
   """
@@ -243,17 +243,34 @@ defmodule Gmimex do
   end
 
 
-  defp fetch_file(path) do
-    if File.exists? path do
+  @doc """
+  Finds an email in a directory.
+  The issue is that the filename of an email can change, because the filename also contains
+  flags set on the email.
+  Returns exactly one email.
+  ## Example
+      iex> Gmimex.find_email_path("test/data/test.com/aaa", "1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e")
+      {:ok, "test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"}
+      iex> Gmimex.find_email_path("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e")
+      {:ok, "test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"}
+  """
+  def find_email_path(path) do
+    maildir = path |> Path.dirname |> Path.dirname
+    filename = Path.basename(path)
+    find_email_path(maildir, filename)
+  end
+
+  def find_email_path(maildir, filename) do
+    path = Path.join(maildir, filename)
+    if File.exists?(path) do
+      # nothing to do
       {:ok, path}
     else
-      dirname = Path.dirname path
-      filename = Path.basename(path) |> String.split(":2") |> List.first
-      maildirname = Path.dirname dirname
-      case Path.wildcard("#{maildirname}/{cur,new}/#{filename}*") do
-        []  -> {:err, "Email: #{filename} not found in maildir: #{maildirname}"}
+      if String.contains?(filename, ":2"), do: filename = filename |> String.split(":2") |> List.first
+      case Path.wildcard("#{maildir}/{cur,new}/#{filename}*") do
+        []  -> {:err, "Email: #{filename} not found in maildir: #{maildir}"}
         [x] -> {:ok, x}
-        _   -> {:err, "Multiples copies of email: #{filename} not found in maildir: #{maildirname}"}
+        _   -> {:err, "Multiples copies of email: #{filename} found in maildir: #{maildir}"}
       end
     end
   end
