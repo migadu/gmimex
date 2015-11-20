@@ -1,6 +1,6 @@
 defmodule Gmimex do
 
-  @get_json_defaults [raw: false, content: true, flags: true]
+  @get_json_defaults [raw: false, content: true]
 
 
   def get_json(path, opts \\ [])
@@ -24,18 +24,13 @@ defmodule Gmimex do
       json_bin
     else
       {:ok, data} = Poison.Parser.parse(json_bin)
-      if opts[:flags] do
-        flags = get_flags(email_path)
-        if data["attachments"] != [] do
-          flags = flags ++ [:attachments]
-        end
-
-        data
-          |> Map.put_new("path", email_path)
-          |> Map.put_new("flags", flags)
-      else
-        data
-      end
+      flags = get_flags(email_path)
+      if opts[:content] && data["attachments"] != [], do:
+        flags = flags ++ [:attachments]
+      data
+        |> Map.put("filename", Path.basename(path))
+        |> Map.put("path",     email_path)
+        |> Map.put("flags",    flags)
     end
   end
 
@@ -80,7 +75,7 @@ defmodule Gmimex do
     cur_path = Path.join(maildir_path, "cur")
     cur_email_names = files_ordered_by_time_desc(cur_path)
     emails = Enum.map(cur_email_names, fn(x) ->
-      {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), flags: true, content: false);email end)
+      {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), content: false);email end)
     sorted_emails = Enum.sort(emails, &(&1["sortId"] > &2["sortId"]))
 
     if from_idx > (len = Enum.count(sorted_emails)), do: from_idx = len
@@ -89,7 +84,7 @@ defmodule Gmimex do
     selection_count = to_idx - from_idx
     if selection_count > 0 do
       selection = Enum.map(Enum.slice(sorted_emails, from_idx, to_idx-from_idx), &(&1["path"]))
-      complete_emails = get_json_list(selection, flags: true, content: true)
+      complete_emails = get_json_list(selection, content: true)
       nr_elements = Enum.count(sorted_emails)
       {part_1, part_2} = Enum.split(sorted_emails, from_idx)
       {part_2, part_3} = Enum.split(part_2, to_idx - from_idx)
