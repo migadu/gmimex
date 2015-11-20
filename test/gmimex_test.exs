@@ -10,7 +10,7 @@ defmodule GmimexTest do
 
 
   test "json of simple email" do
-    {:ok, json} = Gmimex.get_json Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"), flags: false
+    {:ok, json} = Gmimex.get_json Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
     assert json["to"] == [%{"address" => "blue@tester.ch"}]
     assert json["date"] == "Thu, 24 Sep 2015 13:55:49 +0200"
     assert json["from"] == %{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}
@@ -19,7 +19,7 @@ defmodule GmimexTest do
 
 
   test "extended json of simple email" do
-    {:ok, json} = Gmimex.get_json Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"), flags: true, content: false
+    {:ok, json} = Gmimex.get_json Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"), content: false
     assert json["to"] == [%{"address" => "blue@tester.ch"}]
     assert json["date"] == "Thu, 24 Sep 2015 13:55:49 +0200"
     assert json["from"] == %{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}
@@ -27,7 +27,7 @@ defmodule GmimexTest do
     assert Enum.any?(json["flags"], &(&1 == :flagged))
     assert Enum.any?(json["flags"], &(&1 == :replied))
     assert Enum.any?(json["flags"], &(&1 == :seen))
-    assert Enum.any?(json["flags"], &(&1 == :attachments))
+    assert !Enum.any?(json["flags"], &(&1 == :attachments))
   end
 
 
@@ -37,7 +37,7 @@ defmodule GmimexTest do
       Path.expand("test/data/test.com/aaa/new/1444073250_1.24235.brumbrum,U=1098,FMD5=7e33429f656f1e6e9d79b29c3f82c57e"),
       Path.expand("test/data/test.com/aaa/cur/1447089870_2.27636.brumbrum,U=1634,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,S")
     ]
-    {:ok, json_list} = Gmimex.get_json messages, flags: true, content: false
+    {:ok, json_list} = Gmimex.get_json messages, content: false
     assert Enum.count(messages) == Enum.count(json_list)
   end
 
@@ -47,7 +47,7 @@ defmodule GmimexTest do
     path = Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
     new_path = path |> String.replace("cur", "new")
 
-    {:ok, json} = Gmimex.get_json new_path, flags: true, content: false
+    {:ok, json} = Gmimex.get_json new_path, content: false
     assert json["path"] == path
   end
 
@@ -154,7 +154,6 @@ defmodule GmimexTest do
     assert new_file_listings == [".gitignore"]
     first_email =  List.first(sorted_emails)
     assert first_email["subject"] == "Atrachment"
-    assert Enum.any?(first_email["flags"], &(&1 == :attachments))
     GmimexTest.Helpers.restore_from_backup
   end
 
