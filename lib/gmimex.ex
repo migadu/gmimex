@@ -12,24 +12,26 @@ defmodule Gmimex do
 
 
   def get_json(paths, opts) when is_list(paths) do
-    {:ok, paths |> Enum.map(&(do_get_json(&1, opts)))}
+    {:ok, paths |> Enum.map(fn(x) ->
+      {:ok, email_path} = find_email_path(x)
+      do_get_json(email_path, opts) end)}
   end
 
 
   defp do_get_json(path, opts) do
     opts = Keyword.merge(@get_json_defaults, opts)
-    {:ok, email_path} = find_email_path(path)
-    json_bin = GmimexNif.get_json(email_path, opts[:content])
+    unless File.exists?(path), do: raise "Email path: #{path} not found"
+    json_bin = GmimexNif.get_json(path, opts[:content])
     if opts[:raw] do
       json_bin
     else
       {:ok, data} = Poison.Parser.parse(json_bin)
-      flags = get_flags(email_path)
+      flags = get_flags(path)
       if opts[:content] && data["attachments"] != [], do:
         flags = flags ++ [:attachments]
       data
         |> Map.put("filename", Path.basename(path))
-        |> Map.put("path",     email_path)
+        |> Map.put("path",     path)
         |> Map.put("flags",    flags)
     end
   end
