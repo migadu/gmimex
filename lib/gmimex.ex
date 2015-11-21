@@ -12,24 +12,26 @@ defmodule Gmimex do
 
 
   def get_json(paths, opts) when is_list(paths) do
-    {:ok, paths |> Enum.map(&(do_get_json(&1, opts)))}
+    {:ok, paths |> Enum.map(fn(x) ->
+      {:ok, email_path} = find_email_path(x)
+      do_get_json(email_path, opts) end)}
   end
 
 
   defp do_get_json(path, opts) do
     opts = Keyword.merge(@get_json_defaults, opts)
-    {:ok, email_path} = fetch_file(path)
-    json_bin = GmimexNif.get_json(email_path, opts[:content])
+    unless File.exists?(path), do: raise "Email path: #{path} not found"
+    json_bin = GmimexNif.get_json(path, opts[:content])
     if opts[:raw] do
       json_bin
     else
       {:ok, data} = Poison.Parser.parse(json_bin)
-      flags = get_flags(email_path)
+      flags = get_flags(path)
       if opts[:content] && data["attachments"] != [], do:
         flags = flags ++ [:attachments]
       data
         |> Map.put("filename", Path.basename(path))
-        |> Map.put("path",     email_path)
+        |> Map.put("path",     path)
         |> Map.put("flags",    flags)
     end
   end
@@ -61,7 +63,7 @@ defmodule Gmimex do
 
   @doc """
   Read the emails within a folder.
-  Maildir_path is the root directory of the mailbox.
+  Maildir_path is the root directory of the mailbox (without ending in cur,new).
   If from_idx and to_idx is given, the entries in the list of emails is replaced
   with the full email (and thus the preview).
   """
@@ -151,6 +153,21 @@ defmodule Gmimex do
 
 
   @doc """
+  Moves an email to a new folder. base_path is the root directory of
+  the mailbox on the email server, filename is the path to the email,
+  and folder is the new folder where the email should be moved to.
+  """
+  def move_message_to_folder(base_path, message_path, folder \\ ".") do
+    filename = Path.basename(message_path)
+    new_maildir = base_path |> Path.join(folder) |> Path.join('cur')
+    File.mkdir_p! new_maildir
+    new_path =  new_maildir |> Path.join(filename)
+      :ok = File.rename(message_path, new_path)
+      {:ok, new_path}
+  end
+
+
+  @doc """
   Un/Marks an email as passed, that is resent/forwarded/bounced.
   See http://cr.yp.to/proto/maildir.html for more information.
   """
@@ -204,6 +221,27 @@ defmodule Gmimex do
 
 
   @doc """
+  Adds the flags given in the list to the filename.
+  All existing flags are removed.
+  """
+  def flagged_filename(path, flags) do
+    filename = Path.basename(path)
+    dirname = Path.dirname(path)
+    filename = Enum.reduce(flags, fn(x, acc) ->
+      case x do
+        :passed   -> acc = Gmimex.passed!  filename, false
+        :replied  -> acc = Gmimex.replied! filename, false
+        :seen     -> acc = Gmimex.seen!    filename, false
+        :trashed  -> acc = Gmimex.trashed! filename, false
+        :draft    -> acc = Gmimex.draft!   filename, false
+        :flagged  -> acc = Gmimex.flagged! filename, false
+      end
+    end)
+    Path.join(dirname, filename)
+  end
+
+
+  @doc """
   Returns the preview of the email, independent if it is in the
   text or html part. Input: message map extracted via get_json.
   """
@@ -220,10 +258,7 @@ defmodule Gmimex do
   end
 
 
-
-
-  defp set_flag(path, flag, set_toggle) do
-    {:ok, path} = move_to_cur(path) # assure the email is in cur
+  def update_filename_with_flag(path, flag, set_toggle \\ true) do
     [filename, flags] = Path.basename(path) |> String.split(":2,")
     flag_present = String.contains?(flags, String.upcase(flag)) || String.contains?(flags, String.downcase(flag))
     new_flags = flags
@@ -235,25 +270,50 @@ defmodule Gmimex do
       if flag_present, do:
         new_flags = flags |> String.replace(String.upcase(flag),"") |> String.replace(String.downcase(flag), "")
     end
-    if new_flags !== flags do
-      new_path = Path.join(Path.dirname(path), "#{filename}:2,#{new_flags}")
+    new_path = Path.join(Path.dirname(path), "#{filename}:2,#{new_flags}")
+  end
+
+
+
+
+  defp set_flag(path, flag, set_toggle) do
+    {:ok, path} = move_to_cur(path) # assure the email is in cur
+    new_path = update_filename_with_flag(path, flag, set_toggle)
+    if path !== new_path do
       File.rename path, new_path
     end
     new_path
   end
 
 
-  defp fetch_file(path) do
-    if File.exists? path do
+  @doc """
+  Finds an email in a directory.
+  The issue is that the filename of an email can change, because the filename also contains
+  flags set on the email.
+  Returns exactly one email.
+  ## Example
+      iex> Gmimex.find_email_path("test/data/test.com/aaa", "1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e")
+      {:ok, "test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"}
+      iex> Gmimex.find_email_path("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e")
+      {:ok, "test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"}
+  """
+  def find_email_path(path) do
+    maildir = path |> Path.dirname |> Path.dirname
+    filename = Path.basename(path)
+    find_email_path(maildir, filename)
+  end
+
+  def find_email_path(maildir, filename) do
+    path = Path.join(maildir, filename)
+    if File.exists?(path) do
+      # nothing to do
       {:ok, path}
     else
-      dirname = Path.dirname path
-      filename = Path.basename(path) |> String.split(":2") |> List.first
-      maildirname = Path.dirname dirname
-      case Path.wildcard("#{maildirname}/{cur,new}/#{filename}*") do
-        []  -> {:err, "Email: #{filename} not found in maildir: #{maildirname}"}
+      if String.contains?(filename, ":2"), do: filename = filename |> String.split(":2") |> List.first
+      case Path.wildcard("#{maildir}/{cur,new}/#{filename}*") do
+        []  -> {:err, "Email: #{filename} not found in maildir: #{maildir}"}
         [x] -> {:ok, x}
-        _   -> {:err, "Multiples copies of email: #{filename} not found in maildir: #{maildirname}"}
+        _   -> {:err, "Multiples copies of email: #{filename} found in maildir: #{maildir}"}
       end
     end
   end

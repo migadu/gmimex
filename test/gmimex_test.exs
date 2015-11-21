@@ -42,13 +42,14 @@ defmodule GmimexTest do
   end
 
 
-  test "fetch file" do
+  test "find file" do
     # we take an existing email but, replace the 'cur' dir to 'new' to see if we still get the correct email
     path = Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
     new_path = path |> String.replace("cur", "new")
 
-    {:ok, json} = Gmimex.get_json new_path, content: false
-    assert json["path"] == path
+    {:ok, email_path} = Gmimex.find_email_path(new_path)
+
+    assert email_path == path
   end
 
 
@@ -67,6 +68,24 @@ defmodule GmimexTest do
     assert new_path, res_path
     assert File.exists? path
     refute File.exists? new_path
+  end
+
+
+  test "move to Drafts and back" do
+    GmimexTest.Helpers.restore_from_backup
+    base_path = Path.expand("test/data/test.com/aaa")
+    path = Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
+    expected_path = Path.expand("test/data/test.com/aaa/Drafts/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
+
+    {:ok, res_path} = Gmimex.move_message_to_folder(base_path, path, "Drafts")
+    assert expected_path, res_path
+    assert File.exists? expected_path
+    refute File.exists? path
+
+    {:ok, res_path} = Gmimex.move_message_to_folder(base_path, res_path, ".")
+    assert path, res_path
+    assert File.exists? path
+    refute File.exists? expected_path
   end
 
 
