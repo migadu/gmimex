@@ -153,6 +153,21 @@ defmodule Gmimex do
 
 
   @doc """
+  Moves an email to a new folder. base_path is the root directory of
+  the mailbox on the email server, filename is the path to the email,
+  and folder is the new folder where the email should be moved to.
+  """
+  def move_message_to_folder(base_path, message_path, folder \\ ".") do
+    filename = Path.basename(message_path)
+    new_maildir = base_path |> Path.join(folder) |> Path.join('cur')
+    File.mkdir_p! new_maildir
+    new_path =  new_maildir |> Path.join(filename)
+      :ok = File.rename(message_path, new_path)
+      {:ok, new_path}
+  end
+
+
+  @doc """
   Un/Marks an email as passed, that is resent/forwarded/bounced.
   See http://cr.yp.to/proto/maildir.html for more information.
   """
@@ -206,6 +221,27 @@ defmodule Gmimex do
 
 
   @doc """
+  Adds the flags given in the list to the filename.
+  All existing flags are removed.
+  """
+  def flagged_filename(path, flags) do
+    filename = Path.basename(path)
+    dirname = Path.dirname(path)
+    filename = Enum.reduce(flags, fn(x, acc) ->
+      case x do
+        :passed   -> acc = Gmimex.passed!  filename, false
+        :replied  -> acc = Gmimex.replied! filename, false
+        :seen     -> acc = Gmimex.seen!    filename, false
+        :trashed  -> acc = Gmimex.trashed! filename, false
+        :draft    -> acc = Gmimex.draft!   filename, false
+        :flagged  -> acc = Gmimex.flagged! filename, false
+      end
+    end)
+    Path.join(dirname, filename)
+  end
+
+
+  @doc """
   Returns the preview of the email, independent if it is in the
   text or html part. Input: message map extracted via get_json.
   """
@@ -222,10 +258,7 @@ defmodule Gmimex do
   end
 
 
-
-
-  defp set_flag(path, flag, set_toggle) do
-    {:ok, path} = move_to_cur(path) # assure the email is in cur
+  def update_filename_with_flag(path, flag, set_toggle \\ true) do
     [filename, flags] = Path.basename(path) |> String.split(":2,")
     flag_present = String.contains?(flags, String.upcase(flag)) || String.contains?(flags, String.downcase(flag))
     new_flags = flags
@@ -237,8 +270,16 @@ defmodule Gmimex do
       if flag_present, do:
         new_flags = flags |> String.replace(String.upcase(flag),"") |> String.replace(String.downcase(flag), "")
     end
-    if new_flags !== flags do
-      new_path = Path.join(Path.dirname(path), "#{filename}:2,#{new_flags}")
+    new_path = Path.join(Path.dirname(path), "#{filename}:2,#{new_flags}")
+  end
+
+
+
+
+  defp set_flag(path, flag, set_toggle) do
+    {:ok, path} = move_to_cur(path) # assure the email is in cur
+    new_path = update_filename_with_flag(path, flag, set_toggle)
+    if path !== new_path do
       File.rename path, new_path
     end
     new_path
