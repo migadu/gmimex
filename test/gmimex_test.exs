@@ -13,7 +13,7 @@ defmodule GmimexTest do
     {:ok, json} = Gmimex.get_json Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
     assert json["to"] == [%{"address" => "blue@tester.ch"}]
     assert json["date"] == "Thu, 24 Sep 2015 13:55:49 +0200"
-    assert json["from"] == %{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}
+    assert json["from"] == [%{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}]
     assert json["subject"] == "PETITS PRIX : 2 millions de billets a prix Prem's avec TGV et Intercites !"
   end
 
@@ -22,7 +22,7 @@ defmodule GmimexTest do
     {:ok, json} = Gmimex.get_json Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"), content: false
     assert json["to"] == [%{"address" => "blue@tester.ch"}]
     assert json["date"] == "Thu, 24 Sep 2015 13:55:49 +0200"
-    assert json["from"] == %{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}
+    assert json["from"] == [%{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}]
     assert json["subject"] == "PETITS PRIX : 2 millions de billets a prix Prem's avec TGV et Intercites !"
     assert Enum.any?(json["flags"], &(&1 == :flagged))
     assert Enum.any?(json["flags"], &(&1 == :replied))

@@ -98,7 +98,7 @@ typedef GPtrArray MessageAttachmentsList;
  */
 typedef struct MessageData {
   gchar                  *message_id;
-  Address                *from;
+  AddressesList          *from;
   AddressesList          *reply_to;
   AddressesList          *to;
   AddressesList          *cc;
@@ -348,7 +348,7 @@ static void free_message_data(MessageData *mdata) {
     g_free(mdata->message_id);
 
   if (mdata->from)
-    free_address(mdata->from);
+    free_addresses_list(mdata->from);
 
   if (mdata->reply_to)
     free_addresses_list(mdata->reply_to);
@@ -1293,17 +1293,12 @@ static AddressesList *collect_addresses(InternetAddressList *list) {
 }
 
 
-// Can there be multiple from addresses??
-static Address *get_from_address(GMimeMessage *message) {
+static Address *get_from_addresses(GMimeMessage *message) {
   Address *addr = NULL;
-  const gchar *from_str = g_mime_message_get_sender(message);
-  if (from_str) {
-    AddressesList *addresses_list = collect_str_addresses(from_str);
-    if (addresses_list) {
-      addr = addresses_list_get(addresses_list, 0);
-    }
-  }
-  return addr;
+  const gchar *from_str = g_mime_message_get_sender(message); // transfer-none
+  if (from_str)
+    return collect_str_addresses(from_str);
+  return NULL;
 }
 
 
@@ -1464,7 +1459,7 @@ static MessageData *convert_message(GMimeMessage *message, gboolean include_cont
   if (message_id)
     md->message_id = g_strdup(message_id);
 
-  md->from     = get_from_address(message);
+  md->from     = get_from_addresses(message);
   md->reply_to = get_reply_to_addresses(message);
   md->to       = get_to_addresses(message);
   md->cc       = get_cc_addresses(message);
@@ -1595,7 +1590,7 @@ static GString *gmime_message_to_json(GMimeMessage *message, gboolean include_co
   JSON_Value *root_value = json_value_init_object();
   JSON_Object *root_object = json_value_get_object(root_value);
 
-  json_object_set_value(root_object,  "from",        address_to_json(mdata->from));
+  json_object_set_value(root_object,  "from",        addresses_list_to_json(mdata->from));
   json_object_set_value(root_object,  "to",          addresses_list_to_json(mdata->to));
   json_object_set_value(root_object,  "replyTo",     addresses_list_to_json(mdata->reply_to));
   json_object_set_value(root_object,  "cc",          addresses_list_to_json(mdata->cc));
@@ -1802,11 +1797,12 @@ static IndexingMessage *indexing_message_from_path(const gchar *path) {
     im->i_content = g_strdup(mdata->text->text->str);
 
   GString *i_from_str = g_string_new(NULL);
-  g_string_append(i_from_str, mdata->from->address);
-  if (mdata->from->name) {
-    g_string_append_c(i_from_str, ' ');
-    g_string_append(i_from_str, mdata->from->name);
+  if (mdata->from) {
+    gchar *from_str = addresses_list_to_indexing_string(mdata->from);
+    g_string_append(i_from_str, from_str);
+    g_free(from_str);
   }
+
   if (mdata->reply_to) {
     gchar *reply_to_str = addresses_list_to_indexing_string(mdata->reply_to);
     g_string_append_c(i_from_str, ' ');
