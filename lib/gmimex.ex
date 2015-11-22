@@ -1,6 +1,6 @@
 defmodule Gmimex do
 
-  @get_json_defaults [raw: false, content: true]
+  @get_json_defaults [raw: false, content: false]
 
 
   def get_json(path, opts \\ [])
@@ -86,7 +86,7 @@ defmodule Gmimex do
     selection_count = to_idx - from_idx
     if selection_count > 0 do
       selection = Enum.map(Enum.slice(sorted_emails, from_idx, to_idx-from_idx), &(&1["path"]))
-      complete_emails = get_json_list(selection, content: true)
+      complete_emails = get_json_list(selection, content: false)
       nr_elements = Enum.count(sorted_emails)
       {part_1, part_2} = Enum.split(sorted_emails, from_idx)
       {part_2, part_3} = Enum.split(part_2, to_idx - from_idx)
