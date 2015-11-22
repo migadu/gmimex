@@ -594,25 +594,6 @@ static GString *get_tag_name(GumboNode *node) {
 }
 
 
-static GString *build_doctype(GumboNode *node) {
-  GString *results = g_string_new(NULL);
-  if (node->v.document.has_doctype) {
-    g_string_append(results, "<!DOCTYPE ");
-    g_string_append(results, node->v.document.name);
-    const gchar *pi = node->v.document.public_identifier;
-    if ((node->v.document.public_identifier != NULL) && strlen(pi) ) {
-        g_string_append(results, " PUBLIC \"");
-        g_string_append(results,node->v.document.public_identifier);
-        g_string_append(results,"\" \"");
-        g_string_append(results,node->v.document.system_identifier);
-        g_string_append(results,"\"");
-    }
-    g_string_append(results,">\n");
-  }
-  return results;
-}
-
-
 static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrArray *inlines_ary) {
   gchar *key = g_strjoin(NULL, "|", at->name, "|", NULL);
   gchar *key_pattern = g_regex_escape_string(key, -1);
@@ -772,7 +753,7 @@ static GString *sanitize_contents(GumboNode* node, GPtrArray *inlines_ary) {
 static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
   // special case the document node
   if (node->type == GUMBO_NODE_DOCUMENT) {
-    GString *results = build_doctype(node);
+    GString *results = g_string_new("<!DOCTYPE html>\n");
     GString *node_ser = sanitize_contents(node, inlines_ary);
     g_string_append(results, node_ser->str);
     g_string_free(node_ser, TRUE);
