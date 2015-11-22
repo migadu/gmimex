@@ -209,26 +209,26 @@ defmodule GmimexTest do
   end
 
 
-  test "index the mailbox" do
-    path = Path.expand(Path.expand("test/data/test.com/aaa"))
-    assert File.exists?(path)
-    # File.mkdir Path.join(path, ".gmimexindex")
-    Gmimex.index_mailbox(path)
-    GmimexTest.Helpers.restore_from_backup
-  end
+  # test "index the mailbox" do
+  #   path = Path.expand(Path.expand("test/data/test.com/aaa"))
+  #   assert File.exists?(path)
+  #   # File.mkdir Path.join(path, ".gmimexindex")
+  #   Gmimex.index_mailbox(path)
+  #   GmimexTest.Helpers.restore_from_backup
+  # end
 
 
-  test "index the mailbox individually" do
-    path = Path.expand(Path.expand("test/data/test.com/aaa/"))
-    cur_path = Path.join(path, "cur")
-    {:ok, cur_file_list} = File.ls(cur_path)
-    Enum.each(cur_file_list, fn(x) ->
-      email_path = Path.join(cur_path, x)
-      IO.puts email_path
-      Gmimex.index_message(cur_path, email_path)
-    end)
-    GmimexTest.Helpers.restore_from_backup
-  end
+  # test "index the mailbox individually" do
+  #   path = Path.expand(Path.expand("test/data/test.com/aaa/"))
+  #   cur_path = Path.join(path, "cur")
+  #   {:ok, cur_file_list} = File.ls(cur_path)
+  #   Enum.each(cur_file_list, fn(x) ->
+  #     email_path = Path.join(cur_path, x)
+  #     IO.puts email_path
+  #     Gmimex.index_message(cur_path, email_path)
+  #   end)
+  #   GmimexTest.Helpers.restore_from_backup
+  # end
 
 
   # test "index the mailbox with an inexisting file should be ok (not throwing up)" do
