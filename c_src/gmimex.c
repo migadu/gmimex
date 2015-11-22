@@ -1550,7 +1550,6 @@ static JSON_Value *message_body_to_json(MessageBody *mbody) {
   json_object_set_string(body_object, "type",    mbody->content_type);
   json_object_set_string(body_object, "content", mbody->content->str);
 
-
   gchar *preview = g_strndup(mbody->text->str, MAX_PREVIEW_LENGTH);
   json_object_set_string(body_object, "preview", preview);
   g_free(preview);
