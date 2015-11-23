@@ -532,14 +532,14 @@ static PartExtractorData *new_part_extractor_data(guint part_id) {
 }
 
 
-static void free_part_extractor_data(PartExtractorData *ped, gboolean release_data) {
- g_return_if_fail(ped != NULL);
+static void free_part_extractor_data(PartExtractorData *ped, gboolean release_content) {
+  g_return_if_fail(ped != NULL);
 
- if (ped->content_type)
+  if (ped->content_type)
     g_free(ped->content_type);
 
-  if (ped->content)
-    g_byte_array_free(ped->content, release_data);
+  if (ped->content && release_content)
+    g_byte_array_free(ped->content, TRUE);
 
   g_free(ped);
 }
@@ -1093,6 +1093,7 @@ static void collect_part(GMimeObject *part, PartCollectorData *fdata, gboolean m
     GMimeStream *attachment_mem_stream = g_mime_stream_mem_new();
     g_mime_stream_mem_set_owner (GMIME_STREAM_MEM(attachment_mem_stream), FALSE);
     g_mime_data_wrapper_write_to_stream(wrapper, attachment_mem_stream);
+    g_mime_stream_flush(attachment_mem_stream);
 
     c_part->content = g_mime_stream_mem_get_byte_array(GMIME_STREAM_MEM(attachment_mem_stream));
     g_object_unref(attachment_mem_stream);
@@ -1158,10 +1159,11 @@ static PartCollectorData *collect_parts(GMimeMessage *message) {
  *
  */
 static void extract_part(GMimeObject *part, PartExtractorData *a_data) {
-  GMimeDataWrapper *attachment_wrapper = g_mime_part_get_content_object (GMIME_PART(part));
+  GMimeDataWrapper *attachment_wrapper = g_mime_part_get_content_object(GMIME_PART(part));
   GMimeStream *attachment_mem_stream = g_mime_stream_mem_new();
   g_mime_stream_mem_set_owner(GMIME_STREAM_MEM(attachment_mem_stream), FALSE);
   g_mime_data_wrapper_write_to_stream(attachment_wrapper, attachment_mem_stream);
+  g_mime_stream_flush(attachment_mem_stream);
   a_data->content = g_mime_stream_mem_get_byte_array(GMIME_STREAM_MEM(attachment_mem_stream));
   g_object_unref(attachment_mem_stream);
 }
@@ -1179,7 +1181,7 @@ static void part_extractor_foreach_callback(GMimeObject *parent, GMimeObject *pa
     if (a_data->recursion_depth < RECURSION_LIMIT) {
       GMimeMessage *message = g_mime_message_part_get_message((GMimeMessagePart *) part); // transfer none
       if (message)
-        g_mime_message_foreach (message, part_extractor_foreach_callback, a_data);
+        g_mime_message_foreach(message, part_extractor_foreach_callback, a_data);
 
     } else {
       g_printerr("endless recursion detected: %d\r\n", a_data->recursion_depth);
@@ -1199,7 +1201,7 @@ static void part_extractor_foreach_callback(GMimeObject *parent, GMimeObject *pa
     a_data->part_id--;
 
   } else {
-    g_assert_not_reached ();
+    g_assert_not_reached();
   }
 }
 
@@ -1213,7 +1215,6 @@ static GByteArray *gmime_message_get_part_data(GMimeMessage* message, guint part
 
   PartExtractorData *a_data = new_part_extractor_data(part_id);
   g_mime_message_foreach(message, part_extractor_foreach_callback, a_data);
-
   GByteArray *content = a_data->content;
   free_part_extractor_data(a_data, FALSE);
 
@@ -1293,8 +1294,7 @@ static AddressesList *collect_addresses(InternetAddressList *list) {
 }
 
 
-static Address *get_from_addresses(GMimeMessage *message) {
-  Address *addr = NULL;
+static AddressesList *get_from_addresses(GMimeMessage *message) {
   const gchar *from_str = g_mime_message_get_sender(message); // transfer-none
   if (from_str)
     return collect_str_addresses(from_str);

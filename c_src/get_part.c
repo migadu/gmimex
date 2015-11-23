@@ -22,13 +22,13 @@ int main (int argc, char *argv[]) {
   if (!attachment)
     exit(EXIT_FAILURE);
 
-  FILE *fout = fopen(argv[4], "wb");
+  FILE *fout = fopen(argv[3], "wb");
   if (!fout) {
-    g_printerr("file could not be opened for writing: %s\r\n", argv[4]);
+    g_printerr("file could not be opened for writing: %s\r\n", argv[3]);
     exit(EXIT_FAILURE);
   }
 
-  g_printf("Written %d bytes to file %s\r\n", attachment->len, argv[4]);
+  g_printf("Written %d bytes to file %s\r\n", attachment->len, argv[3]);
   fwrite(attachment->data, attachment->len, 1, fout);
   fclose(fout);
 
