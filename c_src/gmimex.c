@@ -1801,6 +1801,7 @@ static IndexingMessage *indexing_message_from_path(const gchar *path) {
   IndexingMessage *im = g_malloc(sizeof(IndexingMessage));
   im->path = g_strdup(path);
 
+  /* ID */
   im->i_message_id = NULL;
   if (mdata->message_id)
     im->i_message_id = g_strdup(mdata->message_id);
@@ -1814,21 +1815,25 @@ static IndexingMessage *indexing_message_from_path(const gchar *path) {
     g_strfreev(fparts);
   }
 
+  /* Subject */
   im->i_subject = NULL;
   if (mdata->subject)
     im->i_subject = g_strdup(mdata->subject);
+  /* Content */
   im->i_content = NULL;
   if (mdata->html)
     im->i_content = g_strdup(mdata->html->text->str);
   else if (mdata->text)
     im->i_content = g_strdup(mdata->text->text->str);
 
+  /* From */
   GString *i_from_str = g_string_new(NULL);
   g_string_append(i_from_str, mdata->from->address);
   if (mdata->from->name) {
     g_string_append_c(i_from_str, ' ');
     g_string_append(i_from_str, mdata->from->name);
   }
+  /* Reply-to */
   if (mdata->reply_to) {
     gchar *reply_to_str = addresses_list_to_indexing_string(mdata->reply_to);
     g_string_append_c(i_from_str, ' ');
@@ -1838,14 +1843,15 @@ static IndexingMessage *indexing_message_from_path(const gchar *path) {
   im->i_from = i_from_str->str;
   g_string_free(i_from_str, FALSE);
 
+  /* To */
   GString *i_to_str = g_string_new(NULL);
-
   if (mdata->to) {
     gchar *to_str = addresses_list_to_indexing_string(mdata->to);
     g_string_append(i_to_str, to_str);
     g_free(to_str);
   }
 
+  /* CC */
   if (mdata->cc) {
     gchar *cc_str = addresses_list_to_indexing_string(mdata->cc);
     g_string_append_c(i_to_str, ' ');
@@ -1853,6 +1859,7 @@ static IndexingMessage *indexing_message_from_path(const gchar *path) {
     g_free(cc_str);
   }
 
+  /* BCC */
   if (mdata->bcc) {
     gchar *bcc_str = addresses_list_to_indexing_string(mdata->bcc);
     g_string_append_c(i_to_str, ' ');
@@ -1862,6 +1869,7 @@ static IndexingMessage *indexing_message_from_path(const gchar *path) {
   im->i_to = i_to_str->str;
   g_string_free(i_to_str, FALSE);
 
+  /* Attachment */
   im->i_attachments = NULL;
   if (mdata->attachments)
     im->i_attachments = message_attachments_list_to_indexing_string(mdata->attachments);
@@ -1922,8 +1930,6 @@ static void index_directory_messages(const gchar *mailbox_path, const gchar *dir
         struct stat attrib;
         if (stat(message_path, &attrib) != -1) {
           if (difftime(attrib.st_mtime, last_run_at) > 0) {
-            printf("Time file:     %s\n", ctime(&(attrib.st_mtime)));
-            printf("Time last_run: %s\n", ctime(&last_run_at));
             gmimex_index_message(mailbox_path, message_path);
           } else {
             /* g_printf("Skipping: %s\n", message_path); */
@@ -2002,15 +2008,18 @@ static void update_last_indexed_at(const gchar *mailbox_path) {
 
   time_t t;
 
+  time(&t);
   localtime(&t); /* Set time to current time */
 
   char *timestring = ctime(&t);
 
-  printf("update_last_indexed_at: %s\n", last_run_path);
   FILE *fout = fopen(last_run_path, "w");
-  if (NULL != fin) {
+  if (NULL != fout) {
+    printf("update_last_indexed_at: %s\n", last_run_path);
     fwrite(timestring, strlen(timestring)*sizeof(char)+1, 1, fout);
     fclose(fout);
+  } else {
+    printf("Could not write to last_run file: %s\n", last_run_path);
   }
 }
 
@@ -2035,7 +2044,6 @@ void gmimex_index_mailbox(const gchar *mailbox_path) {
   create_xapian_index_directory(mailbox_path);
 
   time_t last_run_at = get_last_indexed_at(mailbox_path);
-  update_last_indexed_at(mailbox_path);
 
   FTSENT *node;
   FTSENT *child;
@@ -2062,6 +2070,8 @@ void gmimex_index_mailbox(const gchar *mailbox_path) {
       }
     }
   }
+  /* Update the last_run_at only if everything was indexed correctly */
+  update_last_indexed_at(mailbox_path);
 
   if (errno)
     perror("fts_read");
