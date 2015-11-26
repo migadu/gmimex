@@ -13,7 +13,7 @@ defmodule GmimexTest do
     {:ok, json} = Gmimex.get_json Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
     assert json["to"] == [%{"address" => "blue@tester.ch"}]
     assert json["date"] == "Thu, 24 Sep 2015 13:55:49 +0200"
-    assert json["from"] == %{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}
+    assert json["from"] == [%{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}]
     assert json["subject"] == "PETITS PRIX : 2 millions de billets a prix Prem's avec TGV et Intercites !"
   end
 
@@ -22,7 +22,7 @@ defmodule GmimexTest do
     {:ok, json} = Gmimex.get_json Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS"), content: false
     assert json["to"] == [%{"address" => "blue@tester.ch"}]
     assert json["date"] == "Thu, 24 Sep 2015 13:55:49 +0200"
-    assert json["from"] == %{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}
+    assert json["from"] == [%{"address" => "bonsplans@newsletter.voyages-sncf.com", "name" => "Voyages-sncf.com"}]
     assert json["subject"] == "PETITS PRIX : 2 millions de billets a prix Prem's avec TGV et Intercites !"
     assert Enum.any?(json["flags"], &(&1 == :flagged))
     assert Enum.any?(json["flags"], &(&1 == :replied))
@@ -132,7 +132,7 @@ defmodule GmimexTest do
   test "get_json with list" do
     path = Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
     {:ok, [email]} = Gmimex.get_json([path])
-    assert Map.has_key?(email["text"], "preview")
+    # assert Map.has_key?(email["text"], "preview")
   end
 
 
@@ -177,58 +177,58 @@ defmodule GmimexTest do
   end
 
 
-  test "the previews of the selected emails" do
-    path = Path.expand(Path.expand("test/data/test.com/aaa"))
-    sorted_emails_without_preview = Gmimex.read_folder(path)
-    sorted_emails = Gmimex.read_folder(path, 0, 2)
-    Enum.each(Enum.with_index(sorted_emails_without_preview), fn({x, idx}) ->
-      y=Enum.at(sorted_emails, idx);
-      assert(x["subject"] == y["subject"])
-    end)
-    assert List.first(sorted_emails)["text"] |> Map.has_key?("preview")
-    assert Enum.at(sorted_emails, 1) |> Map.has_key?("text")
-    assert Enum.at(sorted_emails, 1)["text"] |> Map.has_key?("preview")
-    refute Enum.at(sorted_emails, 2) |> Map.has_key?("text")
-    GmimexTest.Helpers.restore_from_backup
-  end
+  # test "the previews of the selected emails" do
+  #   path = Path.expand(Path.expand("test/data/test.com/aaa"))
+  #   sorted_emails_without_preview = Gmimex.read_folder(path)
+  #   sorted_emails = Gmimex.read_folder(path, 0, 2)
+  #   Enum.each(Enum.with_index(sorted_emails_without_preview), fn({x, idx}) ->
+  #     y=Enum.at(sorted_emails, idx);
+  #     assert(x["subject"] == y["subject"])
+  #   end)
+  #   assert List.first(sorted_emails)["text"] |> Map.has_key?("preview")
+  #   assert Enum.at(sorted_emails, 1) |> Map.has_key?("text")
+  #   assert Enum.at(sorted_emails, 1)["text"] |> Map.has_key?("preview")
+  #   refute Enum.at(sorted_emails, 2) |> Map.has_key?("text")
+  #   GmimexTest.Helpers.restore_from_backup
+  # end
 
 
-  test "the previews of the selected emails, compare the two" do
-    path = Path.expand(Path.expand("test/data/test.com/aaa"))
-    sorted_emails_without_preview = Gmimex.read_folder(path)
-    sorted_emails = Gmimex.read_folder(path, 0, 2)
-    Enum.each(Enum.with_index(sorted_emails_without_preview), fn({x, idx}) ->
-      y=Enum.at(sorted_emails, idx);
-      assert(x["subject"] == y["subject"])
-    end)
-    assert List.first(sorted_emails)["text"] |> Map.has_key?("preview")
-    assert Enum.at(sorted_emails, 1) |> Map.has_key?("text")
-    assert Enum.at(sorted_emails, 1)["text"] |> Map.has_key?("preview")
-    refute Enum.at(sorted_emails, 2) |> Map.has_key?("text")
-    GmimexTest.Helpers.restore_from_backup
-  end
+  # test "the previews of the selected emails, compare the two" do
+  #   path = Path.expand(Path.expand("test/data/test.com/aaa"))
+  #   sorted_emails_without_preview = Gmimex.read_folder(path)
+  #   sorted_emails = Gmimex.read_folder(path, 0, 2)
+  #   Enum.each(Enum.with_index(sorted_emails_without_preview), fn({x, idx}) ->
+  #     y=Enum.at(sorted_emails, idx);
+  #     assert(x["subject"] == y["subject"])
+  #   end)
+  #   assert List.first(sorted_emails)["text"] |> Map.has_key?("preview")
+  #   assert Enum.at(sorted_emails, 1) |> Map.has_key?("text")
+  #   assert Enum.at(sorted_emails, 1)["text"] |> Map.has_key?("preview")
+  #   refute Enum.at(sorted_emails, 2) |> Map.has_key?("text")
+  #   GmimexTest.Helpers.restore_from_backup
+  # end
 
 
-  test "index the mailbox" do
-    path = Path.expand(Path.expand("test/data/test.com/aaa"))
-    assert File.exists?(path)
-    # File.mkdir Path.join(path, ".gmimexindex")
-    Gmimex.index_mailbox(path)
-    GmimexTest.Helpers.restore_from_backup
-  end
+  # test "index the mailbox" do
+  #   path = Path.expand(Path.expand("test/data/test.com/aaa"))
+  #   assert File.exists?(path)
+  #   # File.mkdir Path.join(path, ".gmimexindex")
+  #   Gmimex.index_mailbox(path)
+  #   GmimexTest.Helpers.restore_from_backup
+  # end
 
 
-  test "index the mailbox individually" do
-    path = Path.expand(Path.expand("test/data/test.com/aaa/"))
-    cur_path = Path.join(path, "cur")
-    {:ok, cur_file_list} = File.ls(cur_path)
-    Enum.each(cur_file_list, fn(x) ->
-      email_path = Path.join(cur_path, x)
-      IO.puts email_path
-      Gmimex.index_message(cur_path, email_path)
-    end)
-    GmimexTest.Helpers.restore_from_backup
-  end
+  # test "index the mailbox individually" do
+  #   path = Path.expand(Path.expand("test/data/test.com/aaa/"))
+  #   cur_path = Path.join(path, "cur")
+  #   {:ok, cur_file_list} = File.ls(cur_path)
+  #   Enum.each(cur_file_list, fn(x) ->
+  #     email_path = Path.join(cur_path, x)
+  #     IO.puts email_path
+  #     Gmimex.index_message(cur_path, email_path)
+  #   end)
+  #   GmimexTest.Helpers.restore_from_backup
+  # end
 
 
   # test "index the mailbox with an inexisting file should be ok (not throwing up)" do

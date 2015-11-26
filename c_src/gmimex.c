@@ -102,7 +102,7 @@ typedef GPtrArray MessageAttachmentsList;
  */
 typedef struct MessageData {
   gchar                  *message_id;
-  Address                *from;
+  AddressesList          *from;
   AddressesList          *reply_to;
   AddressesList          *to;
   AddressesList          *cc;
@@ -352,7 +352,7 @@ static void free_message_data(MessageData *mdata) {
     g_free(mdata->message_id);
 
   if (mdata->from)
-    free_address(mdata->from);
+    free_addresses_list(mdata->from);
 
   if (mdata->reply_to)
     free_addresses_list(mdata->reply_to);
@@ -536,14 +536,14 @@ static PartExtractorData *new_part_extractor_data(guint part_id) {
 }
 
 
-static void free_part_extractor_data(PartExtractorData *ped, gboolean release_data) {
- g_return_if_fail(ped != NULL);
+static void free_part_extractor_data(PartExtractorData *ped, gboolean release_content) {
+  g_return_if_fail(ped != NULL);
 
- if (ped->content_type)
+  if (ped->content_type)
     g_free(ped->content_type);
 
-  if (ped->content)
-    g_byte_array_free(ped->content, release_data);
+  if (ped->content && release_content)
+    g_byte_array_free(ped->content, TRUE);
 
   g_free(ped);
 }
@@ -595,25 +595,6 @@ static GString *get_tag_name(GumboNode *node) {
   }
 
   return tagname;
-}
-
-
-static GString *build_doctype(GumboNode *node) {
-  GString *results = g_string_new(NULL);
-  if (node->v.document.has_doctype) {
-    g_string_append(results, "<!DOCTYPE ");
-    g_string_append(results, node->v.document.name);
-    const gchar *pi = node->v.document.public_identifier;
-    if ((node->v.document.public_identifier != NULL) && strlen(pi) ) {
-        g_string_append(results, " PUBLIC \"");
-        g_string_append(results,node->v.document.public_identifier);
-        g_string_append(results,"\" \"");
-        g_string_append(results,node->v.document.system_identifier);
-        g_string_append(results,"\"");
-    }
-    g_string_append(results,">\n");
-  }
-  return results;
 }
 
 
@@ -776,7 +757,7 @@ static GString *sanitize_contents(GumboNode* node, GPtrArray *inlines_ary) {
 static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
   // special case the document node
   if (node->type == GUMBO_NODE_DOCUMENT) {
-    GString *results = build_doctype(node);
+    GString *results = g_string_new("<!DOCTYPE html>\n");
     GString *node_ser = sanitize_contents(node, inlines_ary);
     g_string_append(results, node_ser->str);
     g_string_free(node_ser, TRUE);
@@ -1116,6 +1097,7 @@ static void collect_part(GMimeObject *part, PartCollectorData *fdata, gboolean m
     GMimeStream *attachment_mem_stream = g_mime_stream_mem_new();
     g_mime_stream_mem_set_owner (GMIME_STREAM_MEM(attachment_mem_stream), FALSE);
     g_mime_data_wrapper_write_to_stream(wrapper, attachment_mem_stream);
+    g_mime_stream_flush(attachment_mem_stream);
 
     c_part->content = g_mime_stream_mem_get_byte_array(GMIME_STREAM_MEM(attachment_mem_stream));
     g_object_unref(attachment_mem_stream);
@@ -1181,10 +1163,11 @@ static PartCollectorData *collect_parts(GMimeMessage *message) {
  *
  */
 static void extract_part(GMimeObject *part, PartExtractorData *a_data) {
-  GMimeDataWrapper *attachment_wrapper = g_mime_part_get_content_object (GMIME_PART(part));
+  GMimeDataWrapper *attachment_wrapper = g_mime_part_get_content_object(GMIME_PART(part));
   GMimeStream *attachment_mem_stream = g_mime_stream_mem_new();
   g_mime_stream_mem_set_owner(GMIME_STREAM_MEM(attachment_mem_stream), FALSE);
   g_mime_data_wrapper_write_to_stream(attachment_wrapper, attachment_mem_stream);
+  g_mime_stream_flush(attachment_mem_stream);
   a_data->content = g_mime_stream_mem_get_byte_array(GMIME_STREAM_MEM(attachment_mem_stream));
   g_object_unref(attachment_mem_stream);
 }
@@ -1202,7 +1185,7 @@ static void part_extractor_foreach_callback(GMimeObject *parent, GMimeObject *pa
     if (a_data->recursion_depth < RECURSION_LIMIT) {
       GMimeMessage *message = g_mime_message_part_get_message((GMimeMessagePart *) part); // transfer none
       if (message)
-        g_mime_message_foreach (message, part_extractor_foreach_callback, a_data);
+        g_mime_message_foreach(message, part_extractor_foreach_callback, a_data);
 
     } else {
       g_printerr("endless recursion detected: %d\r\n", a_data->recursion_depth);
@@ -1222,7 +1205,7 @@ static void part_extractor_foreach_callback(GMimeObject *parent, GMimeObject *pa
     a_data->part_id--;
 
   } else {
-    g_assert_not_reached ();
+    g_assert_not_reached();
   }
 }
 
@@ -1236,7 +1219,6 @@ static GByteArray *gmime_message_get_part_data(GMimeMessage* message, guint part
 
   PartExtractorData *a_data = new_part_extractor_data(part_id);
   g_mime_message_foreach(message, part_extractor_foreach_callback, a_data);
-
   GByteArray *content = a_data->content;
   free_part_extractor_data(a_data, FALSE);
 
@@ -1316,17 +1298,11 @@ static AddressesList *collect_addresses(InternetAddressList *list) {
 }
 
 
-// Can there be multiple from addresses??
-static Address *get_from_address(GMimeMessage *message) {
-  Address *addr = NULL;
-  const gchar *from_str = g_mime_message_get_sender(message);
-  if (from_str) {
-    AddressesList *addresses_list = collect_str_addresses(from_str);
-    if (addresses_list) {
-      addr = addresses_list_get(addresses_list, 0);
-    }
-  }
-  return addr;
+static AddressesList *get_from_addresses(GMimeMessage *message) {
+  const gchar *from_str = g_mime_message_get_sender(message); // transfer-none
+  if (from_str)
+    return collect_str_addresses(from_str);
+  return NULL;
 }
 
 
@@ -1487,7 +1463,7 @@ static MessageData *convert_message(GMimeMessage *message, gboolean include_cont
   if (message_id)
     md->message_id = g_strdup(message_id);
 
-  md->from     = get_from_address(message);
+  md->from     = get_from_addresses(message);
   md->reply_to = get_reply_to_addresses(message);
   md->to       = get_to_addresses(message);
   md->cc       = get_cc_addresses(message);
@@ -1578,7 +1554,6 @@ static JSON_Value *message_body_to_json(MessageBody *mbody) {
   json_object_set_string(body_object, "type",    mbody->content_type);
   json_object_set_string(body_object, "content", mbody->content->str);
 
-
   gchar *preview = g_strndup(mbody->text->str, MAX_PREVIEW_LENGTH);
   json_object_set_string(body_object, "preview", preview);
   g_free(preview);
@@ -1618,7 +1593,7 @@ static GString *gmime_message_to_json(GMimeMessage *message, gboolean include_co
   JSON_Value *root_value = json_value_init_object();
   JSON_Object *root_object = json_value_get_object(root_value);
 
-  json_object_set_value(root_object,  "from",        address_to_json(mdata->from));
+  json_object_set_value(root_object,  "from",        addresses_list_to_json(mdata->from));
   json_object_set_value(root_object,  "to",          addresses_list_to_json(mdata->to));
   json_object_set_value(root_object,  "replyTo",     addresses_list_to_json(mdata->reply_to));
   json_object_set_value(root_object,  "cc",          addresses_list_to_json(mdata->cc));
@@ -1828,11 +1803,12 @@ static IndexingMessage *indexing_message_from_path(const gchar *path) {
 
   /* From */
   GString *i_from_str = g_string_new(NULL);
-  g_string_append(i_from_str, mdata->from->address);
-  if (mdata->from->name) {
-    g_string_append_c(i_from_str, ' ');
-    g_string_append(i_from_str, mdata->from->name);
+  if (mdata->from) {
+    gchar *from_str = addresses_list_to_indexing_string(mdata->from);
+    g_string_append(i_from_str, from_str);
+    g_free(from_str);
   }
+
   /* Reply-to */
   if (mdata->reply_to) {
     gchar *reply_to_str = addresses_list_to_indexing_string(mdata->reply_to);
