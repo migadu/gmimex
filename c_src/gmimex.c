@@ -1,4 +1,8 @@
+#define __USE_XOPEN
+#define _GNU_SOURCE
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <libgen.h>
 #include <dirent.h>
 #include <time.h>
@@ -1813,7 +1817,6 @@ static IndexingMessage *indexing_message_from_path(const gchar *path) {
   im->i_subject = NULL;
   if (mdata->subject)
     im->i_subject = g_strdup(mdata->subject);
-
   im->i_content = NULL;
   if (mdata->html)
     im->i_content = g_strdup(mdata->html->text->str);
@@ -1918,10 +1921,12 @@ static void index_directory_messages(const gchar *mailbox_path, const gchar *dir
         g_free(namelist[fl]);
         struct stat attrib;
         if (stat(message_path, &attrib) != -1) {
-          if (attrib.st_mtime > last_run_at) {
+          if (difftime(attrib.st_mtime, last_run_at) > 0) {
+            printf("Time file:     %s\n", ctime(&(attrib.st_mtime)));
+            printf("Time last_run: %s\n", ctime(&last_run_at));
             gmimex_index_message(mailbox_path, message_path);
           } else {
-            g_printf("Skipping: %s\n", message_path);
+            /* g_printf("Skipping: %s\n", message_path); */
           }
         }
         g_free(message_path);
@@ -1970,20 +1975,43 @@ static gboolean is_maildir(const gchar *path) {
 static time_t get_last_indexed_at(const gchar *mailbox_path) {
   gchar *last_run_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, "last_run", NULL);
 
-  struct stat attrib;
-  if (stat(last_run_path, &attrib) != -1)
-    return attrib.st_mtime;
+  struct tm tm;
+  FILE *fin = fopen(last_run_path, "r");
+  if (NULL == fin) {
+    g_printf("No last_run file: %s\n", last_run_path);
+    strptime("Thu Jan 01 00:00:00 1970", "%a %b %d %H:%M:%S %C%y", &tm);
+  } else {
+    char buffer[50];
+    fread(buffer, 51, 1, fin);
+    fclose(fin);
+    if (strptime(buffer, "%a %b %d %H:%M:%S %C%y", &tm) == NULL) {
+      g_printerr("Cannot parse datetime from last_run file: %s. Reindex all\n", last_run_path);
+      strptime("Thu Jan 01 00:00:00 1970", "%a %b %d %H:%M:%S %C%y", &tm);
+    }
+  }
 
-  return 0;
+  g_printf("Last run: %s\n", asctime(&tm));
+
+
+  return mktime(&tm);
 }
 
 
 static void update_last_indexed_at(const gchar *mailbox_path) {
   gchar *last_run_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, "last_run", NULL);
-  time_t currenttime = time(NULL);
-  FILE *fout = fopen(last_run_path, "wb");
-  fwrite(&currenttime, sizeof(currenttime), 1, fout);
-  fclose(fout);
+
+  time_t t;
+
+  localtime(&t); /* Set time to current time */
+
+  char *timestring = ctime(&t);
+
+  printf("update_last_indexed_at: %s\n", last_run_path);
+  FILE *fout = fopen(last_run_path, "w");
+  if (NULL != fin) {
+    fwrite(timestring, strlen(timestring)*sizeof(char)+1, 1, fout);
+    fclose(fout);
+  }
 }
 
 /*
