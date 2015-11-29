@@ -1,29 +1,17 @@
 #include <string.h>
-#include <libgen.h>
-#include <dirent.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fts.h>
 #include <glib.h>
-#include <glib/gprintf.h>
 #include <glib/gstdio.h>
 #include <gmime/gmime.h>
 #include <gumbo.h>
 
 #include "parson.h"
 #include "gmimex.h"
-#include "search.h"
 
 #define UTF8_CHARSET "UTF-8"
 #define RECURSION_LIMIT 30
 #define CITATION_COLOUR 4537548
-#define MAX_PREVIEW_LENGTH 512
-
 #define MAX_CID_SIZE 65536
 #define MIN_DATA_URI_IMAGE "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA="
-
-#define INDEX_DIRECTORY_NAME ".gmimexindex"
 
 
 /*
@@ -52,13 +40,12 @@ typedef GPtrArray AddressesList;
  * MessageBody
  *
  * Structure to keep the body (text or html) within the MessageData with its
- * preview and sanitized (HTML) content.
+ * sanitized (HTML) content.
  *
  */
 typedef struct MessageBody {
   gchar   *content_type;
   GString *content;
-  GString *text;
   guint   size;
 } MessageBody;
 
@@ -149,15 +136,6 @@ static gchar *gc_strip(const gchar *text) {
   g_free(lstripped);
   return stripped;
 }
-
-static gchar *strip_trailing_slashes(const gchar* path) {
-  gchar *new_path = g_strdup(path);
-  guint path_size = strlen(new_path);
-  while (new_path[--path_size] == '/')
-    new_path[path_size] = '\0';
-  return new_path;
-}
-
 
 
 static GString *gstr_strip(GString *text) {
@@ -256,7 +234,6 @@ static MessageBody *new_message_body(void) {
   MessageBody *mb = g_malloc(sizeof(MessageBody));
   mb->content_type = NULL;
   mb->content = NULL;
-  mb->text = NULL;
   mb->size = 0;
   return mb;
 }
@@ -270,9 +247,6 @@ static void free_message_body(MessageBody *mbody) {
 
   if (mbody->content)
     g_string_free(mbody->content, TRUE);
-
-  if (mbody->text)
-    g_string_free(mbody->text, TRUE);
 
   g_free(mbody);
 }
@@ -797,7 +771,7 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
         (node->v.element.tag == GUMBO_TAG_FORM))
       g_string_append(atts, " target=\"_blank\"");
 
-    if (node->v.element.tag == GUMBO_TAG_FORM)
+    if (node->v.element.tag == GUMBO_TAG_FORM) // TODO: do this with javascript instead!!
       g_string_append(atts, " onSubmit=\"return confirm('This form will submit to an external URL. Are you sure you want to continue?');\"");
   }
 
@@ -841,9 +815,9 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
 
 
 /*
- * TEXTIZER
+ * Textizer -> fetches text content out of HTML
  *
- */
+
 static GString *textize(const GumboNode* node) {
   if (node->type == GUMBO_NODE_TEXT) {
     return g_string_new(node->v.text.text);
@@ -872,18 +846,8 @@ static GString *textize(const GumboNode* node) {
   }
 }
 
+*/
 
-
-
-static void create_xapian_index_directory(const gchar *mailbox_path) {
-  gchar *index_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, NULL);
-  if (!g_file_test(index_path, G_FILE_TEST_EXISTS)) {
-    if (g_mkdir(index_path, 0755)==-1 && errno!=EEXIST) {
-      perror("mkdir");
-    }
-  }
-  g_free(index_path);
-}
 
 /*
  *
@@ -1347,10 +1311,6 @@ static MessageBody* get_body(CollectedPart *body_part, GPtrArray *inlines) {
   GString *raw_content = g_string_new_len((const gchar*) body_part->content->data, body_part->content->len);
   GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, raw_content->str, raw_content->len);
 
-  // Get a text preview without those HTML tags
-  GString *text = textize(output->root);
-  mb->text = text;
-
   // Remove unallowed HTML tags (like scripts, bad href etc..)
   GString *sanitized_content = sanitize(output->document, inlines);
   mb->content = sanitized_content;
@@ -1550,10 +1510,6 @@ static JSON_Value *message_body_to_json(MessageBody *mbody) {
   json_object_set_string(body_object, "type",    mbody->content_type);
   json_object_set_string(body_object, "content", mbody->content->str);
 
-  gchar *preview = g_strndup(mbody->text->str, MAX_PREVIEW_LENGTH);
-  json_object_set_string(body_object, "preview", preview);
-  g_free(preview);
-
   json_object_set_number(body_object, "size",    mbody->size);
 
   return body_value;
@@ -1616,30 +1572,13 @@ static GString *gmime_message_to_json(GMimeMessage *message, gboolean include_co
 
 
 
-
-/*
- *
- *
- */
-void gmimex_init(void) {
-  g_mime_init(GMIME_ENABLE_RFC2047_WORKAROUNDS);
-}
-
-
-/*
- *
- *
- */
-void gmimex_shutdown(void) {
-  g_mime_shutdown();
-}
-
-
 /*
  *
  *
  */
 GString *gmimex_get_json(gchar *path, gboolean include_content) {
+  g_mime_init(GMIME_ENABLE_RFC2047_WORKAROUNDS);
+
   GMimeMessage *message = gmime_message_from_path(path);
   if (!message)
     return NULL;
@@ -1647,6 +1586,7 @@ GString *gmimex_get_json(gchar *path, gboolean include_content) {
   GString *json_message = gmime_message_to_json(message, include_content);
   g_object_unref(message);
 
+  g_mime_shutdown();
   return json_message;
 }
 
@@ -1656,6 +1596,8 @@ GString *gmimex_get_json(gchar *path, gboolean include_content) {
  *
  */
 GByteArray *gmimex_get_part(gchar *path, guint part_id) {
+  g_mime_init(GMIME_ENABLE_RFC2047_WORKAROUNDS);
+
   GMimeMessage *message = gmime_message_from_path(path);
   if (!message)
     return NULL;
@@ -1663,374 +1605,6 @@ GByteArray *gmimex_get_part(gchar *path, guint part_id) {
   GByteArray *attachment = gmime_message_get_part_data(message, part_id);
   g_object_unref(message);
 
+  g_mime_shutdown();
   return attachment;
-}
-
-
-
-static MessageData *gmimex_message_from_path(const gchar *path, gboolean include_content) {
-  GMimeMessage *message = gmime_message_from_path(path);
-  if (!message)
-    return NULL;
-
-  MessageData *mdata = convert_message(message, include_content);
-  g_object_unref(message);
-  return mdata;
-}
-
-
-/*
- *
- *
- */
-static void free_indexing_message(IndexingMessage *im) {
-  g_return_if_fail(im != NULL);
-
-  g_free(im->path);
-  g_free(im->i_from);
-
-  if (im->i_to)
-    g_free(im->i_to);
-
-  if (im->i_message_id)
-    g_free(im->i_message_id);
-
-  if (im->i_subject)
-    g_free(im->i_subject);
-
-  if (im->i_content)
-    g_free(im->i_content);
-
-  if (im->i_attachments)
-    g_free(im->i_attachments);
-
-  g_free(im);
-}
-
-
-
-/*
- *
- *
- */
-static gchar *addresses_list_to_indexing_string(AddressesList *list) {
-  gchar *prepared_str = NULL;
-  GString *p_addresses_str = g_string_new(NULL);
-
-  guint i;
-  for (i = 0; i < list->len; i++) {
-    if (i > 0)
-      g_string_append_c(p_addresses_str, ' ');
-
-    Address *addr = addresses_list_get(list, i);
-    g_string_append(p_addresses_str, addr->address);
-
-    if (addr->name) {
-      g_string_append_c(p_addresses_str, ' ');
-      g_string_append(p_addresses_str, addr->name);
-    }
-  }
-  prepared_str = p_addresses_str->str;
-  g_string_free(p_addresses_str, FALSE);
-  return prepared_str;
-}
-
-
-
-/*
- *
- *
- */
-static gchar *message_attachments_list_to_indexing_string(MessageAttachmentsList *list) {
-  if (!list)
-    return NULL;
-
-  gchar *prepared_str = NULL;
-  GString *p_attachments_str = g_string_new(NULL);
-
-  guint i;
-  for (i = 0; i < list->len; i++) {
-    MessageAttachment *matt = message_attachments_list_get(list, i);
-    g_string_append(p_attachments_str, matt->filename);
-    g_string_append_c(p_attachments_str, ' ');
-  }
-
-  prepared_str = p_attachments_str->str;
-  g_string_free(p_attachments_str, FALSE);
-  return prepared_str;
-}
-
-
-
-/*
- *
- *
- */
-static IndexingMessage *indexing_message_from_path(const gchar *path) {
-
-  MessageData *mdata = gmimex_message_from_path(path, TRUE);
-  IndexingMessage *im = g_malloc(sizeof(IndexingMessage));
-  im->path = g_strdup(path);
-
-  im->i_message_id = NULL;
-  if (mdata->message_id)
-    im->i_message_id = g_strdup(mdata->message_id);
-  else {
-    gchar *filename = basename(im->path);
-    gchar **fparts = g_strsplit(filename, ":", -1);
-    if (fparts[0])
-      im->i_message_id = g_strdup(fparts[0]);
-    else
-      im->i_message_id = g_strdup(filename);
-    g_strfreev(fparts);
-  }
-
-  im->i_subject = NULL;
-  if (mdata->subject)
-    im->i_subject = g_strdup(mdata->subject);
-
-  im->i_content = NULL;
-  if (mdata->html)
-    im->i_content = g_strdup(mdata->html->text->str);
-  else if (mdata->text)
-    im->i_content = g_strdup(mdata->text->text->str);
-
-  GString *i_from_str = g_string_new(NULL);
-  if (mdata->from) {
-    gchar *from_str = addresses_list_to_indexing_string(mdata->from);
-    g_string_append(i_from_str, from_str);
-    g_free(from_str);
-  }
-
-  if (mdata->reply_to) {
-    gchar *reply_to_str = addresses_list_to_indexing_string(mdata->reply_to);
-    g_string_append_c(i_from_str, ' ');
-    g_string_append(i_from_str, reply_to_str);
-    g_free(reply_to_str);
-  }
-  im->i_from = i_from_str->str;
-  g_string_free(i_from_str, FALSE);
-
-  GString *i_to_str = g_string_new(NULL);
-
-  if (mdata->to) {
-    gchar *to_str = addresses_list_to_indexing_string(mdata->to);
-    g_string_append(i_to_str, to_str);
-    g_free(to_str);
-  }
-
-  if (mdata->cc) {
-    gchar *cc_str = addresses_list_to_indexing_string(mdata->cc);
-    g_string_append_c(i_to_str, ' ');
-    g_string_append(i_to_str, cc_str);
-    g_free(cc_str);
-  }
-
-  if (mdata->bcc) {
-    gchar *bcc_str = addresses_list_to_indexing_string(mdata->bcc);
-    g_string_append_c(i_to_str, ' ');
-    g_string_append(i_to_str, bcc_str);
-    g_free(bcc_str);
-  }
-  im->i_to = i_to_str->str;
-  g_string_free(i_to_str, FALSE);
-
-  im->i_attachments = NULL;
-  if (mdata->attachments)
-    im->i_attachments = message_attachments_list_to_indexing_string(mdata->attachments);
-
-  free_message_data(mdata);
-  return im;
-}
-
-
-/*
- *
- *
- */
-void gmimex_index_message(const gchar *mailbox_path, const gchar *message_path) {
-  g_return_if_fail(mailbox_path != NULL);
-  g_return_if_fail(message_path != NULL);
-
-  if (!g_file_test(mailbox_path, G_FILE_TEST_IS_DIR))
-    perror("mailbox_path not_dir: %s");
-  else {
-    create_xapian_index_directory(mailbox_path);
-    if (!g_file_test(message_path, G_FILE_TEST_IS_REGULAR))
-      perror("message_path not found");
-    else {
-      IndexingMessage *im = indexing_message_from_path(message_path);
-
-      if (im) {
-        g_printf("Indexing: %s\n", message_path);
-        gchar *index_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, NULL);
-        xapian_index_message(index_path, im);
-        g_free(index_path);
-        free_indexing_message(im);
-      }
-    }
-  }
-}
-
-
-
-/*
- *
- *
- */
-static void index_directory_messages(const gchar *mailbox_path, const gchar *dir_path, time_t last_run_at) {
-  g_return_if_fail(mailbox_path != NULL);
-  g_return_if_fail(dir_path != NULL);
-
-  struct dirent **namelist;
-  int fl = scandir(dir_path, &namelist, NULL, NULL);
-
-  if (fl < 0)
-    perror("scandir");
-  else
-    while (fl--)
-      if (namelist[fl]->d_name[0] != '.') {
-        gchar *message_path = g_strjoin("/", dir_path, namelist[fl]->d_name, NULL);
-        g_free(namelist[fl]);
-        struct stat attrib;
-        if (stat(message_path, &attrib) != -1) {
-          if (attrib.st_mtime > last_run_at) {
-            gmimex_index_message(mailbox_path, message_path);
-          } else {
-            g_printf("Skipping: %s\n", message_path);
-          }
-        }
-        g_free(message_path);
-      }
-  g_free(namelist);
-}
-
-
-
-/*
- *
- *
- */
-static gboolean is_maildir(const gchar *path) {
-    g_return_val_if_fail(path != NULL, FALSE);
-
-    struct dirent **namelist;
-    int dir_length;
-
-    dir_length = scandir(path, &namelist, NULL, NULL);
-
-    if (dir_length > 0) {
-      gboolean cur_found = FALSE;
-      gboolean new_found = FALSE;
-      gboolean tmp_found = FALSE;
-
-      guint i;
-      for (i = 0; (i < dir_length) && !(cur_found && new_found && tmp_found); i++) {
-        if (!cur_found && !g_ascii_strcasecmp(namelist[i]->d_name, "cur"))
-          cur_found = TRUE;
-        else if (!new_found && !g_ascii_strcasecmp(namelist[i]->d_name, "new"))
-          new_found = TRUE;
-        else if (!tmp_found && !g_ascii_strcasecmp(namelist[i]->d_name, "tmp"))
-          tmp_found = TRUE;
-        g_free(namelist[i]);
-      }
-      g_free(namelist);
-      return cur_found && new_found && tmp_found;
-    }
-
-    perror("scandir");
-    return FALSE;
-}
-
-
-static time_t get_last_indexed_at(const gchar *mailbox_path) {
-  gchar *last_run_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, "last_run", NULL);
-
-  struct stat attrib;
-  if (stat(last_run_path, &attrib) != -1)
-    return attrib.st_mtime;
-
-  return 0;
-}
-
-
-static void update_last_indexed_at(const gchar *mailbox_path) {
-  gchar *last_run_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, "last_run", NULL);
-  time_t currenttime = time(NULL);
-  FILE *fout = fopen(last_run_path, "wb");
-  fwrite(&currenttime, sizeof(currenttime), 1, fout);
-  fclose(fout);
-}
-
-/*
- *
- *
- */
-void gmimex_index_mailbox(const gchar *mailbox_path) {
-  g_return_if_fail(mailbox_path != NULL);
-  g_return_if_fail(access(mailbox_path, F_OK) != -1);
-
-  gchar *paths[2] = { NULL, NULL };
-  paths[0] = strip_trailing_slashes(mailbox_path);
-  FTS *tree = fts_open(paths, FTS_NOCHDIR | FTS_PHYSICAL, 0);
-  g_free(paths[0]);
-
-  if (!tree) {
-    perror("fts_open");
-    return;
-  }
-
-  create_xapian_index_directory(mailbox_path);
-
-  time_t last_run_at = get_last_indexed_at(mailbox_path);
-  update_last_indexed_at(mailbox_path);
-
-  FTSENT *node;
-  FTSENT *child;
-
-  while((node = fts_read(tree)) != NULL) {
-    if (node->fts_level > 0 && node->fts_name[0] == '.')
-      fts_set(tree, node, FTS_SKIP);
-    else if ((node->fts_info & FTS_D) && is_maildir(node->fts_path)) {
-      child = fts_children(tree, 0);
-
-      if (errno) {
-        perror("fts_children");
-        continue;
-      }
-
-      while (child && child->fts_link) {
-        if ((child->fts_info & FTS_D) && (!g_ascii_strcasecmp(child->fts_name, "cur"))) {
-          gchar *dir_path = g_strjoin("/", child->fts_path, child->fts_name, NULL);
-          index_directory_messages(mailbox_path, dir_path, last_run_at);
-          g_free(dir_path);
-          fts_set(tree, child, FTS_SKIP);
-        }
-        child = child->fts_link;
-      }
-    }
-  }
-
-  if (errno)
-    perror("fts_read");
-
-  if (fts_close(tree))
-    perror("fts_close");
-}
-
-
-gchar **gmimex_search_mailbox(const gchar *mailbox_path, const gchar *query, const guint max_results) {
-  g_return_val_if_fail(mailbox_path != NULL, NULL);
-  g_return_val_if_fail(query != NULL, NULL);
-
-  gchar *index_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, NULL);
-  gchar *results_str = xapian_search(index_path, query, max_results);
-  g_free(index_path);
-
-  if (!results_str)
-    return NULL;
-
-  gchar **results = g_strsplit(results_str, "\n", -1);
-  g_free(results_str);
-  return results;
 }
