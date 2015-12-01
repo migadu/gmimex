@@ -146,7 +146,11 @@ defmodule Gmimex do
       {:ok, path}
     else
       new_path = maildirname |> Path.join('new') |> Path.join(filename)
-      :ok = File.rename(path, new_path)
+      case Mix.env do
+        :prod -> System.cmd "sudo", ["mv", path, new_path]
+        :dev  -> :ok = File.rename path, new_path
+        :test -> :ok = File.rename path, new_path
+      end
       {:ok, new_path}
     end
   end
@@ -162,7 +166,11 @@ defmodule Gmimex do
     new_maildir = base_path |> Path.join(folder) |> Path.join('cur')
     File.mkdir_p! new_maildir
     new_path =  new_maildir |> Path.join(filename)
-      :ok = File.rename(message_path, new_path)
+      case Mix.env do
+        :prod -> System.cmd "sudo", ["mv", message_path, new_path]
+        :dev  -> :ok = File.rename message_path, new_path
+        :test -> :ok = File.rename message_path, new_path
+      end
       {:ok, new_path}
   end
 
@@ -280,7 +288,11 @@ defmodule Gmimex do
     {:ok, path} = move_to_cur(path) # assure the email is in cur
     new_path = update_filename_with_flag(path, flag, set_toggle)
     if path !== new_path do
-      File.rename path, new_path
+      case Mix.env do
+        :prod -> System.cmd "sudo", ["mv", path, new_path]
+        :dev  -> :ok = File.rename path, new_path
+        :test -> :ok = File.rename path, new_path
+      end
     end
     new_path
   end
