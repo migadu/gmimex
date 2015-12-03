@@ -568,7 +568,7 @@ static GString *get_tag_name(GumboNode *node) {
 }
 
 
-static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrArray *inlines_ary) {
+static GString *build_attributes(GumboNode *node, GumboAttribute *at, gboolean no_entities, GPtrArray *inlines_ary) {
   gchar *key = g_strjoin(NULL, "|", at->name, "|", NULL);
   gchar *key_pattern = g_regex_escape_string(key, -1);
   g_free(key);
@@ -641,7 +641,13 @@ static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrA
   }
 
   GString *atts = g_string_new(" ");
-  g_string_append(atts, at->name);
+  // Prefix image source attributes with data-
+  if (node->type == GUMBO_NODE_ELEMENT) {
+    if ((node->v.element.tag == GUMBO_TAG_IMG) && !g_ascii_strcasecmp(at->name, "src"))
+      g_string_append(atts, "data-");
+  } else {
+    g_string_append(atts, at->name);
+  }
 
   // how do we want to handle attributes with empty values
   // <input type="checkbox" checked />  or <input type="checkbox" checked="" />
@@ -761,7 +767,7 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
   guint i;
   for (i = 0; i < attribs->length; ++i) {
     GumboAttribute* at = (GumboAttribute*)(attribs->data[i]);
-    GString *attsstr = build_attributes(at, no_entity_substitution, inlines_ary);
+    GString *attsstr = build_attributes(node, at, no_entity_substitution, inlines_ary);
     g_string_append(atts, attsstr->str);
     g_string_free(attsstr, TRUE);
   }
