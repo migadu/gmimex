@@ -534,12 +534,6 @@ static gchar* empty_tags                = "|area|br|col|hr|img|input|";
 static gchar* special_handling          = "|html|body|";
 static gchar* no_entity_sub             = "|pre|";
 
-
-// data-style= if (style contains url(\shttp://)
-
-//> style replace url\(["']\S+http:// with url(proxy?url= urlescape)
-
-
 // Forward declaration
 static GString* sanitize(GumboNode* node, GPtrArray* inlines_ary);
 
@@ -600,6 +594,11 @@ static GString *build_attributes(GumboNode* node, GumboAttribute *at, gboolean n
     gboolean is_permitted_protocol = FALSE;
 
     if (pparts_length) {
+      static gchar* protocol_join_str = ":";
+      gchar* new_joined = g_strjoinv(protocol_join_str, protocol_parts);
+      g_string_assign(attr_value, new_joined);
+      g_free(new_joined);
+
       gchar *attr_protocol = g_strjoin(NULL, "|", protocol_parts[0], "|", NULL);
       gchar *attr_prot_pattern = g_regex_escape_string(attr_protocol, -1);
       g_free(attr_protocol);
@@ -651,16 +650,7 @@ static GString *build_attributes(GumboNode* node, GumboAttribute *at, gboolean n
     if (((node->v.element.tag == GUMBO_TAG_IMG) && !g_ascii_strcasecmp(at->name, "src")) ||
         (!g_ascii_strcasecmp(at->name, "style") && !g_ascii_strcasecmp(attr_value->str, "url(")))
       g_string_append(atts, "data-proxy-");
-
-    if ((node->v.element.tag == GUMBO_TAG_A) ||
-        (node->v.element.tag == GUMBO_TAG_FORM))
-      g_string_append(atts, "target=\"_blank\" ");
   }
-
-  //   // if (node->v.element.tag == GUMBO_TAG_FORM) // TODO: do this with javascript instead!!
-  //   //   g_string_append(atts, " onSubmit=\"return confirm('This form will submit to an external URL. Are you sure you want to continue?');\"");
-  // }
-
 
   g_string_append(atts, at->name);
 
