@@ -526,13 +526,23 @@ static void free_part_extractor_data(PartExtractorData *ped, gboolean release_co
 
 
 static gchar* permitted_tags            = "|a|abbr|acronym|address|area|b|bdo|body|big|blockquote|br|button|caption|center|cite|code|col|colgroup|dd|del|dfn|dir|div|dl|dt|em|fieldset|font|form|h1|h2|h3|h4|h5|h6|hr|i|img|input|ins|kbd|label|legend|li|map|menu|ol|optgroup|option|p|pre|q|s|samp|select|small|span|strike|strong|sub|sup|table|tbody|td|textarea|tfoot|th|thead|u|tr|tt|u|ul|var|";
-static gchar* permitted_attributes      = "|href|src|action|style|color|bgcolor|width|height|colspan|rowspan|cellspacing|cellpadding|border|align|valign|dir|type|";
-static gchar* protocol_attributes       = "|href|src|action|";
+static gchar* permitted_attributes      = "|href|src|action|background|style|color|bgcolor|width|height|colspan|rowspan|cellspacing|cellpadding|border|align|valign|dir|type|";
+static gchar* protocol_attributes       = "|href|src|action|background|";
 static gchar* protocol_separators_regex = ":|(&#0*58)|(&#x70)|(&#x0*3a)|(%|&#37;)3A";
-static gchar* permitted_protocols       = "|ftp|http|https|cid|data|irc|mailto|news|gopher|nntp|telnet|webcal|xmpp|callto|feed|";
+static gchar* permitted_protocols       = "||ftp|http|https|cid|data|irc|mailto|news|gopher|nntp|telnet|webcal|xmpp|callto|feed|";
 static gchar* empty_tags                = "|area|br|col|hr|img|input|";
 static gchar* special_handling          = "|html|body|";
 static gchar* no_entity_sub             = "|pre|";
+
+// static gchar* proxy_attributes          = "|background|src|"; // add the proxy prefix here, use g_uri_escape_string() [full]
+// static gchar* styles                    = "|background|";
+
+
+// data-src
+// data-background=
+// data-style= if (style contains url(\shttp://)
+
+//> style replace url\(["']\S+http:// with url(proxy?url= urlescape)
 
 
 // Forward declaration
@@ -568,7 +578,7 @@ static GString *get_tag_name(GumboNode *node) {
 }
 
 
-static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrArray *inlines_ary) {
+static GString *build_attributes(GumboNode* node, GumboAttribute *at, gboolean no_entities, GPtrArray *inlines_ary) {
   gchar *key = g_strjoin(NULL, "|", at->name, "|", NULL);
   gchar *key_pattern = g_regex_escape_string(key, -1);
   g_free(key);
@@ -612,8 +622,8 @@ static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrA
     }
   }
 
+  gboolean cid_replaced = FALSE;
   if (cid_content_id) {
-    gboolean cid_replaced = FALSE;
     if (inlines_ary && inlines_ary->len) {
       guint i;
       for (i = 0; i < inlines_ary->len; i++) {
@@ -640,7 +650,23 @@ static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrA
     g_free(cid_content_id);
   }
 
-  GString *atts = g_string_new(NULL);
+  GString *atts = g_string_new(" ");
+
+  if (node->type == GUMBO_NODE_ELEMENT) {
+    if (((node->v.element.tag == GUMBO_TAG_IMG) && !g_ascii_strcasecmp(at->name, "src")) ||
+        (!g_ascii_strcasecmp(at->name, "background")) ||
+        (!g_ascii_strcasecmp(at->name, "style") && !g_ascii_strcasecmp(attr_value->str, "url(")))
+      g_string_append(atts, "data-proxy-");
+
+    if ((node->v.element.tag == GUMBO_TAG_A) ||
+        (node->v.element.tag == GUMBO_TAG_FORM))
+      g_string_append(atts, "target=\"_blank\" ");
+  }
+
+  //   // if (node->v.element.tag == GUMBO_TAG_FORM) // TODO: do this with javascript instead!!
+  //   //   g_string_append(atts, " onSubmit=\"return confirm('This form will submit to an external URL. Are you sure you want to continue?');\"");
+  // }
+
 
   g_string_append(atts, at->name);
 
@@ -762,25 +788,9 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
   guint i;
   for (i = 0; i < attribs->length; ++i) {
     GumboAttribute* at = (GumboAttribute*)(attribs->data[i]);
-    g_string_append(atts, " ");
-
-    if (node->type == GUMBO_NODE_ELEMENT) {
-      if ((node->v.element.tag == GUMBO_TAG_IMG) && !g_ascii_strcasecmp(at->name, "src"))
-        g_string_append(atts, " data-");
-    }
-
-    GString *attsstr = build_attributes(at, no_entity_substitution, inlines_ary);
+    GString *attsstr = build_attributes(node, at, no_entity_substitution, inlines_ary);
     g_string_append(atts, attsstr->str);
     g_string_free(attsstr, TRUE);
-  }
-
-  if (node->type == GUMBO_NODE_ELEMENT) {
-    if ((node->v.element.tag == GUMBO_TAG_A) ||
-        (node->v.element.tag == GUMBO_TAG_FORM))
-      g_string_append(atts, " target=\"_blank\"");
-
-    if (node->v.element.tag == GUMBO_TAG_FORM) // TODO: do this with javascript instead!!
-      g_string_append(atts, " onSubmit=\"return confirm('This form will submit to an external URL. Are you sure you want to continue?');\"");
   }
 
   if (is_empty_tag) {
