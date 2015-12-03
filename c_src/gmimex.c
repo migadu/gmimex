@@ -762,11 +762,12 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
   guint i;
   for (i = 0; i < attribs->length; ++i) {
     GumboAttribute* at = (GumboAttribute*)(attribs->data[i]);
+    g_string_append(atts, " ");
+
     if (node->type == GUMBO_NODE_ELEMENT) {
       if ((node->v.element.tag == GUMBO_TAG_IMG) && !g_ascii_strcasecmp(at->name, "src"))
         g_string_append(atts, " data-");
-    } else
-      g_string_append(atts, " ");
+    }
 
     GString *attsstr = build_attributes(at, no_entity_substitution, inlines_ary);
     g_string_append(atts, attsstr->str);
