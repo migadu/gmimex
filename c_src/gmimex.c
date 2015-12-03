@@ -525,14 +525,14 @@ static void free_part_extractor_data(PartExtractorData *ped, gboolean release_co
  */
 
 
-static gchar* permitted_tags            = "|a|abbr|acronym|address|area|b|bdo|body|big|blockquote|br|button|caption|center|cite|code|col|colgroup|dd|del|dfn|dir|div|dl|dt|em|fieldset|font|form|h1|h2|h3|h4|h5|h6|hr|i|img|input|ins|kbd|label|legend|li|map|menu|ol|optgroup|option|p|pre|q|s|samp|select|small|span|style|strike|strong|sub|sup|table|tbody|td|textarea|tfoot|th|thead|u|tr|tt|u|ul|var|";
+static gchar* permitted_tags            = "|a|abbr|acronym|address|area|b|bdo|body|big|blockquote|br|button|caption|center|cite|code|col|colgroup|dd|del|dfn|dir|div|dl|dt|em|fieldset|font|form|h1|h2|h3|h4|h5|h6|hr|i|img|input|ins|kbd|label|legend|li|map|menu|ol|optgroup|option|p|pre|q|s|samp|select|small|span|strike|strong|sub|sup|table|tbody|td|textarea|tfoot|th|thead|u|tr|tt|u|ul|var|";
 static gchar* permitted_attributes      = "|href|src|action|style|color|bgcolor|width|height|colspan|rowspan|cellspacing|cellpadding|border|align|valign|dir|type|";
 static gchar* protocol_attributes       = "|href|src|action|";
 static gchar* protocol_separators_regex = ":|(&#0*58)|(&#x70)|(&#x0*3a)|(%|&#37;)3A";
 static gchar* permitted_protocols       = "|ftp|http|https|cid|data|irc|mailto|news|gopher|nntp|telnet|webcal|xmpp|callto|feed|";
 static gchar* empty_tags                = "|area|br|col|hr|img|input|";
 static gchar* special_handling          = "|html|body|";
-static gchar* no_entity_sub             = "|style|";
+static gchar* no_entity_sub             = "|pre|";
 
 
 // Forward declaration
