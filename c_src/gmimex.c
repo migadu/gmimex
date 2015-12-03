@@ -645,9 +645,8 @@ static GString *build_attributes(GumboNode *node, GumboAttribute *at, gboolean n
   if (node->type == GUMBO_NODE_ELEMENT) {
     if ((node->v.element.tag == GUMBO_TAG_IMG) && !g_ascii_strcasecmp(at->name, "src"))
       g_string_append(atts, "data-");
-  } else {
-    g_string_append(atts, at->name);
   }
+  g_string_append(atts, at->name);
 
   // how do we want to handle attributes with empty values
   // <input type="checkbox" checked />  or <input type="checkbox" checked="" />
