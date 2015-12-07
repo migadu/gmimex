@@ -2,7 +2,7 @@ defmodule Mix.Tasks.Compile.Gmimex do
   @shortdoc "Compiles gmimex library"
 
   def run(_) do
-    {result, _error_code} = System.cmd("make", [], stderr_to_stdout: true)
+    {result, _error_code} = System.cmd("make", ["clean", "all"], stderr_to_stdout: true)
     Mix.shell.info result
     Mix.Project.build_structure
 
