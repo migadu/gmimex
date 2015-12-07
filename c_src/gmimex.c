@@ -646,14 +646,12 @@ static GString *build_attributes(GumboNode* node, GumboAttribute *at, gboolean n
 
   GString *atts = g_string_new(" ");
 
-  gchar *style_url_pattern = g_regex_escape_string("url(", -1);
   if (node->type == GUMBO_NODE_ELEMENT)
     if (((node->v.element.tag == GUMBO_TAG_IMG) &&
           !g_ascii_strcasecmp(at->name, "src")) ||
         (!g_ascii_strcasecmp(at->name, "style") &&
-          g_regex_match_simple(style_url_pattern, attr_value->str, G_REGEX_CASELESS, 0)))
+          g_regex_match_simple("url", attr_value->str, G_REGEX_CASELESS, 0)))
       g_string_append(atts, "data-proxy-");
-  g_free(style_url_pattern);
 
   g_string_append(atts, at->name);
 
