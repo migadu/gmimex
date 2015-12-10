@@ -49,20 +49,6 @@ defmodule Gmimex do
   end
 
 
-  def index_message(maildir_path, message_path) do
-    GmimexNif.index_message(maildir_path, message_path)
-  end
-
-  def index_mailbox(maildir_path) do
-    GmimexNif.index_mailbox(maildir_path)
-  end
-
-
-  def search_mailbox(maildir_path, query, max_results \\ 10) do
-    GmimexNif.search_mailbox(maildir_path, query, max_results)
-  end
-
-
   @doc """
   Read the emails within a folder.
   Maildir_path is the root directory of the mailbox (without ending in cur,new).

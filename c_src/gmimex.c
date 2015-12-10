@@ -1,6 +1,7 @@
 #define __USE_XOPEN
 #define _GNU_SOURCE
 #include <string.h>
+<<<<<<< HEAD
 #include <stdlib.h>
 #include <stdio.h>
 #include <libgen.h>
@@ -10,24 +11,18 @@
 #include <sys/types.h>
 #include <fts.h>
 #include <glib.h>
-#include <glib/gprintf.h>
 #include <glib/gstdio.h>
 #include <gmime/gmime.h>
 #include <gumbo.h>
 
 #include "parson.h"
 #include "gmimex.h"
-#include "search.h"
 
 #define UTF8_CHARSET "UTF-8"
 #define RECURSION_LIMIT 30
 #define CITATION_COLOUR 4537548
-#define MAX_PREVIEW_LENGTH 512
-
 #define MAX_CID_SIZE 65536
 #define MIN_DATA_URI_IMAGE "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA="
-
-#define INDEX_DIRECTORY_NAME ".gmimexindex"
 
 
 /*
@@ -56,13 +51,12 @@ typedef GPtrArray AddressesList;
  * MessageBody
  *
  * Structure to keep the body (text or html) within the MessageData with its
- * preview and sanitized (HTML) content.
+ * sanitized (HTML) content.
  *
  */
 typedef struct MessageBody {
   gchar   *content_type;
   GString *content;
-  GString *text;
   guint   size;
 } MessageBody;
 
@@ -153,15 +147,6 @@ static gchar *gc_strip(const gchar *text) {
   g_free(lstripped);
   return stripped;
 }
-
-static gchar *strip_trailing_slashes(const gchar* path) {
-  gchar *new_path = g_strdup(path);
-  guint path_size = strlen(new_path);
-  while (new_path[--path_size] == '/')
-    new_path[path_size] = '\0';
-  return new_path;
-}
-
 
 
 static GString *gstr_strip(GString *text) {
@@ -260,7 +245,6 @@ static MessageBody *new_message_body(void) {
   MessageBody *mb = g_malloc(sizeof(MessageBody));
   mb->content_type = NULL;
   mb->content = NULL;
-  mb->text = NULL;
   mb->size = 0;
   return mb;
 }
@@ -274,9 +258,6 @@ static void free_message_body(MessageBody *mbody) {
 
   if (mbody->content)
     g_string_free(mbody->content, TRUE);
-
-  if (mbody->text)
-    g_string_free(mbody->text, TRUE);
 
   g_free(mbody);
 }
@@ -555,15 +536,14 @@ static void free_part_extractor_data(PartExtractorData *ped, gboolean release_co
  */
 
 
-static gchar* permitted_tags            = "|a|abbr|acronym|address|area|b|bdo|body|big|blockquote|br|button|caption|center|cite|code|col|colgroup|dd|del|dfn|dir|div|dl|dt|em|fieldset|font|form|h1|h2|h3|h4|h5|h6|hr|i|img|input|ins|kbd|label|legend|li|map|menu|ol|optgroup|option|p|pre|q|s|samp|select|small|span|style|strike|strong|sub|sup|table|tbody|td|textarea|tfoot|th|thead|u|tr|tt|u|ul|var|";
+static gchar* permitted_tags            = "|a|abbr|acronym|address|area|b|bdo|body|big|blockquote|br|button|caption|center|cite|code|col|colgroup|dd|del|dfn|dir|div|dl|dt|em|fieldset|font|form|h1|h2|h3|h4|h5|h6|hr|i|img|input|ins|kbd|label|legend|li|map|menu|ol|optgroup|option|p|pre|q|s|samp|select|small|span|strike|strong|sub|sup|table|tbody|td|textarea|tfoot|th|thead|u|tr|tt|u|ul|var|";
 static gchar* permitted_attributes      = "|href|src|action|style|color|bgcolor|width|height|colspan|rowspan|cellspacing|cellpadding|border|align|valign|dir|type|";
 static gchar* protocol_attributes       = "|href|src|action|";
 static gchar* protocol_separators_regex = ":|(&#0*58)|(&#x70)|(&#x0*3a)|(%|&#37;)3A";
-static gchar* permitted_protocols       = "|ftp|http|https|cid|data|irc|mailto|news|gopher|nntp|telnet|webcal|xmpp|callto|feed|";
+static gchar* permitted_protocols       = "||ftp|http|https|cid|data|irc|mailto|news|gopher|nntp|telnet|webcal|xmpp|callto|feed|";
 static gchar* empty_tags                = "|area|br|col|hr|img|input|";
 static gchar* special_handling          = "|html|body|";
-static gchar* no_entity_sub             = "|style|";
-
+static gchar* no_entity_sub             = "|pre|";
 
 // Forward declaration
 static GString* sanitize(GumboNode* node, GPtrArray* inlines_ary);
@@ -598,7 +578,7 @@ static GString *get_tag_name(GumboNode *node) {
 }
 
 
-static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrArray *inlines_ary) {
+static GString *build_attributes(GumboNode* node, GumboAttribute *at, gboolean no_entities, GPtrArray *inlines_ary) {
   gchar *key = g_strjoin(NULL, "|", at->name, "|", NULL);
   gchar *key_pattern = g_regex_escape_string(key, -1);
   g_free(key);
@@ -625,6 +605,11 @@ static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrA
     gboolean is_permitted_protocol = FALSE;
 
     if (pparts_length) {
+      static gchar* protocol_join_str = ":";
+      gchar* new_joined = g_strjoinv(protocol_join_str, protocol_parts);
+      g_string_assign(attr_value, new_joined);
+      g_free(new_joined);
+
       gchar *attr_protocol = g_strjoin(NULL, "|", protocol_parts[0], "|", NULL);
       gchar *attr_prot_pattern = g_regex_escape_string(attr_protocol, -1);
       g_free(attr_protocol);
@@ -642,8 +627,8 @@ static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrA
     }
   }
 
+  gboolean cid_replaced = FALSE;
   if (cid_content_id) {
-    gboolean cid_replaced = FALSE;
     if (inlines_ary && inlines_ary->len) {
       guint i;
       for (i = 0; i < inlines_ary->len; i++) {
@@ -671,6 +656,14 @@ static GString *build_attributes(GumboAttribute *at, gboolean no_entities, GPtrA
   }
 
   GString *atts = g_string_new(" ");
+
+  if (node->type == GUMBO_NODE_ELEMENT)
+    if (((node->v.element.tag == GUMBO_TAG_IMG) &&
+          !g_ascii_strcasecmp(at->name, "src")) ||
+        (!g_ascii_strcasecmp(at->name, "style") &&
+          g_regex_match_simple("url", attr_value->str, G_REGEX_CASELESS, 0)))
+      g_string_append(atts, "data-proxy-");
+
   g_string_append(atts, at->name);
 
   // how do we want to handle attributes with empty values
@@ -791,18 +784,9 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
   guint i;
   for (i = 0; i < attribs->length; ++i) {
     GumboAttribute* at = (GumboAttribute*)(attribs->data[i]);
-    GString *attsstr = build_attributes(at, no_entity_substitution, inlines_ary);
+    GString *attsstr = build_attributes(node, at, no_entity_substitution, inlines_ary);
     g_string_append(atts, attsstr->str);
     g_string_free(attsstr, TRUE);
-  }
-
-  if (node->type == GUMBO_NODE_ELEMENT) {
-    if ((node->v.element.tag == GUMBO_TAG_A) ||
-        (node->v.element.tag == GUMBO_TAG_FORM))
-      g_string_append(atts, " target=\"_blank\"");
-
-    if (node->v.element.tag == GUMBO_TAG_FORM)
-      g_string_append(atts, " onSubmit=\"return confirm('This form will submit to an external URL. Are you sure you want to continue?');\"");
   }
 
   if (is_empty_tag) {
@@ -845,9 +829,9 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
 
 
 /*
- * TEXTIZER
+ * Textizer -> fetches text content out of HTML
  *
- */
+
 static GString *textize(const GumboNode* node) {
   if (node->type == GUMBO_NODE_TEXT) {
     return g_string_new(node->v.text.text);
@@ -876,18 +860,8 @@ static GString *textize(const GumboNode* node) {
   }
 }
 
+*/
 
-
-
-static void create_xapian_index_directory(const gchar *mailbox_path) {
-  gchar *index_path = g_strjoin("/", mailbox_path, INDEX_DIRECTORY_NAME, NULL);
-  if (!g_file_test(index_path, G_FILE_TEST_EXISTS)) {
-    if (g_mkdir(index_path, 0755)==-1 && errno!=EEXIST) {
-      perror("mkdir");
-    }
-  }
-  g_free(index_path);
-}
 
 /*
  *
@@ -1351,10 +1325,6 @@ static MessageBody* get_body(CollectedPart *body_part, GPtrArray *inlines) {
   GString *raw_content = g_string_new_len((const gchar*) body_part->content->data, body_part->content->len);
   GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, raw_content->str, raw_content->len);
 
-  // Get a text preview without those HTML tags
-  GString *text = textize(output->root);
-  mb->text = text;
-
   // Remove unallowed HTML tags (like scripts, bad href etc..)
   GString *sanitized_content = sanitize(output->document, inlines);
   mb->content = sanitized_content;
@@ -1554,10 +1524,6 @@ static JSON_Value *message_body_to_json(MessageBody *mbody) {
   json_object_set_string(body_object, "type",    mbody->content_type);
   json_object_set_string(body_object, "content", mbody->content->str);
 
-  gchar *preview = g_strndup(mbody->text->str, MAX_PREVIEW_LENGTH);
-  json_object_set_string(body_object, "preview", preview);
-  g_free(preview);
-
   json_object_set_number(body_object, "size",    mbody->size);
 
   return body_value;
@@ -1620,30 +1586,13 @@ static GString *gmime_message_to_json(GMimeMessage *message, gboolean include_co
 
 
 
-
-/*
- *
- *
- */
-void gmimex_init(void) {
-  g_mime_init(GMIME_ENABLE_RFC2047_WORKAROUNDS);
-}
-
-
-/*
- *
- *
- */
-void gmimex_shutdown(void) {
-  g_mime_shutdown();
-}
-
-
 /*
  *
  *
  */
 GString *gmimex_get_json(gchar *path, gboolean include_content) {
+  g_mime_init(GMIME_ENABLE_RFC2047_WORKAROUNDS);
+
   GMimeMessage *message = gmime_message_from_path(path);
   if (!message)
     return NULL;
@@ -1651,6 +1600,7 @@ GString *gmimex_get_json(gchar *path, gboolean include_content) {
   GString *json_message = gmime_message_to_json(message, include_content);
   g_object_unref(message);
 
+  g_mime_shutdown();
   return json_message;
 }
 
@@ -1660,6 +1610,8 @@ GString *gmimex_get_json(gchar *path, gboolean include_content) {
  *
  */
 GByteArray *gmimex_get_part(gchar *path, guint part_id) {
+  g_mime_init(GMIME_ENABLE_RFC2047_WORKAROUNDS);
+
   GMimeMessage *message = gmime_message_from_path(path);
   if (!message)
     return NULL;
@@ -1667,8 +1619,10 @@ GByteArray *gmimex_get_part(gchar *path, guint part_id) {
   GByteArray *attachment = gmime_message_get_part_data(message, part_id);
   g_object_unref(message);
 
+  g_mime_shutdown();
   return attachment;
 }
+<<<<<<< HEAD
 
 
 

@@ -85,99 +85,12 @@ static ERL_NIF_TERM nif_get_part(ErlNifEnv* env, int argc, const ERL_NIF_TERM ar
 }
 
 
-/*
- *
- *
- */
-static ERL_NIF_TERM nif_index_mailbox(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-  gchar *mailbox_path = get_char_argument(env, &argv[0]);
-  if (!mailbox_path)
-    return enif_make_badarg(env);
-
-  gmimex_index_mailbox(mailbox_path);
-  g_free(mailbox_path);
-
-  return enif_make_atom(env, "ok");
-}
-
-
-/*
- *
- *
- */
-static ERL_NIF_TERM nif_index_message(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-  gchar *mailbox_path = get_char_argument(env, &argv[0]);
-  if (!mailbox_path)
-    return enif_make_badarg(env);
-
-  gchar *message_path = get_char_argument(env, &argv[1]);
-  if (!message_path)
-    return enif_make_badarg(env);
-
-  gmimex_index_message(mailbox_path, message_path);
-  g_free(message_path);
-  g_free(mailbox_path);
-
-  return enif_make_atom(env, "ok");
-}
-
-
-
-/*
- *
- *
- */
-static ERL_NIF_TERM nif_search_mailbox(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
-  gchar *mailbox_path = get_char_argument(env, &argv[0]);
-  if (!mailbox_path)
-    return enif_make_badarg(env);
-
-  gchar *query_str = get_char_argument(env, &argv[1]);
-  if (!query_str)
-    return enif_make_badarg(env);
-
-  int max_results;
-  if(!enif_get_int(env, argv[2], &max_results)){
-    g_free(mailbox_path);
-    g_free(query_str);
-    return enif_make_badarg(env);
-  }
-
-  gchar **results = gmimex_search_mailbox(mailbox_path, query_str, max_results);
-  g_free(mailbox_path);
-  g_free(query_str);
-
-  if (!results)
-    return enif_make_badarg(env);
-
-  guint results_count = 0;
-  while (results[results_count])
-    results_count++;
-
-  ERL_NIF_TERM *nif_arr = g_malloc(sizeof(ERL_NIF_TERM) * results_count);
-
-  guint i;
-  for (i = 0; i < results_count; i++) {
-    ErlNifBinary bin = {0};
-    GString *m_path = g_string_new(results[i]);
-    enif_alloc_binary(m_path->len, &bin);
-    (void)memcpy(bin.data, m_path->str, m_path->len);
-    nif_arr[i] = enif_make_binary(env, &bin);
-    g_string_free(m_path, TRUE);
-  }
-
-  g_strfreev(results);
-  return enif_make_list_from_array(env, nif_arr, results_count);
-}
-
-
 
 /*
  *
  *
  */
 static int load(ErlNifEnv* env, void** priv, ERL_NIF_TERM info) {
-  gmimex_init();
   return 0;
 }
 
@@ -187,7 +100,6 @@ static int load(ErlNifEnv* env, void** priv, ERL_NIF_TERM info) {
  *
  */
 static void unload(ErlNifEnv* env, void* priv) {
-  gmimex_shutdown();
 }
 
 
@@ -197,10 +109,7 @@ static void unload(ErlNifEnv* env, void* priv) {
  */
 static ErlNifFunc nif_funcs[] = {
   { "get_json",       2, nif_get_json       },
-  { "get_part",       2, nif_get_part       },
-  { "index_mailbox",  1, nif_index_mailbox  },
-  { "index_message",  2, nif_index_message  },
-  { "search_mailbox", 3, nif_search_mailbox },
+  { "get_part",       2, nif_get_part       }
 };
 
 

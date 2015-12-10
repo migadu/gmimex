@@ -9,9 +9,6 @@ int main (int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  gmimex_init();
-
-
   int part_id = g_ascii_strtoll(argv[2], NULL, 10);
   if (!part_id) {
     g_printerr("part_id could not be parsed\r\n");
@@ -33,8 +30,6 @@ int main (int argc, char *argv[]) {
   fclose(fout);
 
   g_byte_array_free(attachment, TRUE);
-
-  gmimex_shutdown();
 
   return 0;
 }
