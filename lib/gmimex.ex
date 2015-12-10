@@ -280,13 +280,9 @@ defmodule Gmimex do
     new_path = update_filename_with_flag(path, flag, opts[:value])
     if path !== new_path do
       if opts[:with_sudo] do
-        IO.puts "+++ with sudo"
-        IO.puts path
-        IO.puts new_path
         {_, 0} = System.cmd("sudo", ["mv", path, new_path])
       else
         File.rename path, new_path
-        IO.puts "--- without sudo"
       end
     end
     new_path
