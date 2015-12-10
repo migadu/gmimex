@@ -1,6 +1,8 @@
 defmodule Gmimex do
 
-  @get_json_defaults [raw: false, content: false]
+  @get_json_defaults [raw: false, content: false, with_sudo: false]
+  @flags_default_opts [value: true, with_sudo: false]
+  @move_message_default_opts [folder: ".", with_sudo: false]
 
 
   def get_json(path, opts \\ [])
@@ -53,13 +55,8 @@ defmodule Gmimex do
   If from_idx and to_idx is given, the entries in the list of emails is replaced
   with the full email (and thus the preview).
   """
-  def read_folder(maildir_path, from_idx \\ 0, to_idx \\ 0)
-  def read_folder(maildir_path, from_idx, to_idx) when from_idx < 0 do
-    read_folder(maildir_path, 0, to_idx)
-  end
-
-  def read_folder(maildir_path, from_idx, to_idx) do
-    move_new_to_cur(maildir_path)
+  def read_folder(maildir_path, from_idx \\ 0, to_idx \\ 0, opts \\ []) do
+    move_new_to_cur(maildir_path, opts)
     cur_path = Path.join(maildir_path, "cur")
     cur_email_names = files_ordered_by_time_desc(cur_path)
     emails = Enum.map(cur_email_names, fn(x) ->
@@ -84,9 +81,9 @@ defmodule Gmimex do
 
 
   # move all files from 'new' to 'cur'
-  defp move_new_to_cur(maildir_path) do
+  defp move_new_to_cur(maildir_path, opts) do
     {:ok, new_emails} = File.ls(Path.join(maildir_path, "new"))
-    Enum.each(new_emails, fn(x) -> filepath = Path.join(Path.join(maildir_path, "new"), x); move_to_cur(filepath) end)
+    Enum.each(new_emails, fn(x) -> filepath = Path.join(Path.join(maildir_path, "new"), x); move_to_cur(filepath, opts) end)
   end
 
 
@@ -104,7 +101,8 @@ defmodule Gmimex do
   @doc """
   Moves an email from 'new' to 'cur' in the mailbox directory.
   """
-  def move_to_cur(path) do
+  def move_to_cur(path, opts \\ []) do
+    opts = Keyword.merge(@move_message_default_opts, opts)
     filename = Path.basename(path) |> String.split(":2") |> List.first
     maildirname = Path.dirname(path) |> Path.dirname
     statdirname = Path.dirname(path) |> Path.basename
@@ -113,7 +111,11 @@ defmodule Gmimex do
       {:ok, path}
     else
       new_path = maildirname |> Path.join('cur') |> Path.join("#{filename}:2,")
-      :ok = File.rename(path, new_path)
+      if opts[:with_sudo] do
+        System.cmd "sudo", ["mv", path, new_path]
+      else
+        :ok = File.rename path, new_path
+      end
       {:ok, new_path}
     end
   end
@@ -123,7 +125,8 @@ defmodule Gmimex do
   Moves an email from 'cur' to 'new' in the mailbox directory. Should never be
   used except in testing.
   """
-  def move_to_new(path) do
+  def move_to_new(path, opts \\ []) do
+    opts = Keyword.merge(@move_message_default_opts, opts)
     filename = Path.basename(path) |> String.split(":2") |> List.first
     maildirname = Path.dirname(path) |> Path.dirname
     statdirname = Path.dirname(path) |> Path.basename
@@ -132,7 +135,11 @@ defmodule Gmimex do
       {:ok, path}
     else
       new_path = maildirname |> Path.join('new') |> Path.join(filename)
-      :ok = File.rename(path, new_path)
+      if opts[:with_sudo] do
+        System.cmd "sudo", ["mv", path, new_path]
+      else
+        :ok = File.rename path, new_path
+      end
       {:ok, new_path}
     end
   end
@@ -143,12 +150,17 @@ defmodule Gmimex do
   the mailbox on the email server, filename is the path to the email,
   and folder is the new folder where the email should be moved to.
   """
-  def move_message_to_folder(base_path, message_path, folder \\ ".") do
+  def move_message_to_folder(base_path, message_path, opts \\ []) do
+    opts = Keyword.merge(@move_message_default_opts, opts)
     filename = Path.basename(message_path)
-    new_maildir = base_path |> Path.join(folder) |> Path.join('cur')
+    new_maildir = base_path |> Path.join(opts[:folder]) |> Path.join('cur')
     File.mkdir_p! new_maildir
     new_path =  new_maildir |> Path.join(filename)
-      :ok = File.rename(message_path, new_path)
+      if opts[:with_sudo] do
+        System.cmd "sudo", ["mv", message_path, new_path]
+      else
+        :ok = File.rename message_path, new_path
+      end
       {:ok, new_path}
   end
 
@@ -157,38 +169,38 @@ defmodule Gmimex do
   Un/Marks an email as passed, that is resent/forwarded/bounced.
   See http://cr.yp.to/proto/maildir.html for more information.
   """
-  def passed!(path, toggle \\ true), do: set_flag(path, "P", toggle)
+  def passed!(path, opts \\ []), do: set_flag(path, "P", opts)
 
 
 
   @doc """
   Un/Marks an email as replied.
   """
-  def replied!(path, toggle \\ true), do: set_flag(path, "R", toggle)
+  def replied!(path, opts \\ []), do: set_flag(path, "R", opts)
 
 
   @doc """
   Un/Marks an email as seen.
   """
-  def seen!(path, toggle \\ true), do: set_flag(path, "S", toggle)
+  def seen!(path, opts \\ []), do: set_flag(path, "S", opts)
 
 
   @doc """
   Un/Marks an email as trashed.
   """
-  def trashed!(path, toggle \\ true), do: set_flag(path, "T", toggle)
+  def trashed!(path, opts \\ []), do: set_flag(path, "T", opts)
 
 
   @doc """
   Un/Marks an email as draft.
   """
-  def draft!(path, toggle \\ true), do: set_flag(path, "D", toggle)
+  def draft!(path, opts \\ []), do: set_flag(path, "D", opts)
 
 
   @doc """
   Un/Marks an email as flagged.
   """
-  def flagged!(path, toggle \\ true), do: set_flag(path, "F", toggle)
+  def flagged!(path, opts \\ []), do: set_flag(path, "F", opts)
 
 
   @doc ~S"""
@@ -244,12 +256,12 @@ defmodule Gmimex do
   end
 
 
-  def update_filename_with_flag(path, flag, set_toggle \\ true) do
+  def update_filename_with_flag(path, flag, value \\ true) do
     [filename, flags] = Path.basename(path) |> String.split(":2,")
     flag_present = String.contains?(flags, String.upcase(flag)) || String.contains?(flags, String.downcase(flag))
     new_flags = flags
     new_path = path
-    if set_toggle do
+    if value do
       if !flag_present, do:
         new_flags = "#{flags}#{String.upcase(flag)}" |> to_char_list |> Enum.sort |> to_string
     else
@@ -262,11 +274,20 @@ defmodule Gmimex do
 
 
 
-  defp set_flag(path, flag, set_toggle) do
-    {:ok, path} = move_to_cur(path) # assure the email is in cur
-    new_path = update_filename_with_flag(path, flag, set_toggle)
+  defp set_flag(path, flag, opts \\ []) do
+    opts = Keyword.merge(@flags_default_opts, opts)
+    {:ok, path} = move_to_cur(path, opts) # assure the email is in cur
+    new_path = update_filename_with_flag(path, flag, opts[:value])
     if path !== new_path do
-      File.rename path, new_path
+      if opts[:with_sudo] do
+        IO.puts "+++ with sudo"
+        IO.puts path
+        IO.puts new_path
+        {_, 0} = System.cmd("sudo", ["mv", path, new_path])
+      else
+        File.rename path, new_path
+        IO.puts "--- without sudo"
+      end
     end
     new_path
   end

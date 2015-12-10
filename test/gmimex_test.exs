@@ -77,12 +77,12 @@ defmodule GmimexTest do
     path = Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
     expected_path = Path.expand("test/data/test.com/aaa/Drafts/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
 
-    {:ok, res_path} = Gmimex.move_message_to_folder(base_path, path, "Drafts")
+    {:ok, res_path} = Gmimex.move_message_to_folder(base_path, path, folder: "Drafts")
     assert expected_path, res_path
     assert File.exists? expected_path
     refute File.exists? path
 
-    {:ok, res_path} = Gmimex.move_message_to_folder(base_path, res_path, ".")
+    {:ok, res_path} = Gmimex.move_message_to_folder(base_path, res_path, folder: ".")
     assert path, res_path
     assert File.exists? path
     refute File.exists? expected_path
@@ -109,10 +109,10 @@ defmodule GmimexTest do
   end
 
 
-  test "unseen!" do
+  test "unseen! with moving from new to cur" do
     path = Path.expand("test/data/test.com/aaa/new/1447089870_2.27636.brumbrum,U=1634,FMD5=7e33429f656f1e6e9d79b29c3f82c57e")
     expected_path = Path.expand("test/data/test.com/aaa/cur/1447089870_2.27636.brumbrum,U=1634,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,")
-    res_path = Gmimex.seen! path, false
+    res_path = Gmimex.seen! path, value: false
     assert File.exists?(res_path)
     assert expected_path == res_path
     GmimexTest.Helpers.restore_from_backup
@@ -122,7 +122,7 @@ defmodule GmimexTest do
   test "unseen! 2" do
     path = Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FRS")
     expected_path = Path.expand("test/data/test.com/aaa/cur/1443716368_0.10854.brumbrum,U=605,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,FR")
-    res_path = Gmimex.seen!(path, false)
+    res_path = Gmimex.seen!(path, value: false)
     assert File.exists?(res_path)
     assert expected_path == res_path
     GmimexTest.Helpers.restore_from_backup

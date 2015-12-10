@@ -820,26 +820,20 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
 /*
  * Textizer -> fetches text content out of HTML
  *
-
 static GString *textize(const GumboNode* node) {
   if (node->type == GUMBO_NODE_TEXT) {
     return g_string_new(node->v.text.text);
-
   } else if (node->type == GUMBO_NODE_ELEMENT &&
              node->v.element.tag != GUMBO_TAG_SCRIPT &&
              node->v.element.tag != GUMBO_TAG_STYLE) {
-
     const GumboVector* children = &node->v.element.children;
     GString *contents = g_string_new(NULL);
-
     guint i;
     for (i = 0; i < children->length; ++i) {
       GString *text = textize((GumboNode*) children->data[i]);
       gstr_strip(text);
-
       if (i && text->len && contents->len)
         g_string_append_c(contents, ' ');
-
       g_string_append(contents, text->str);
       g_string_free(text, TRUE);
     }
@@ -848,7 +842,6 @@ static GString *textize(const GumboNode* node) {
     return g_string_new(NULL);
   }
 }
-
 */
 
 
