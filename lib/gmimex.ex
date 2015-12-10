@@ -1,7 +1,7 @@
 defmodule Gmimex do
 
   @get_json_defaults [raw: false, content: false, with_sudo: false]
-  @flags_default_opts [toggle: true, with_sudo: false]
+  @flags_default_opts [value: true, with_sudo: false]
   @move_message_default_opts [folder: ".", with_sudo: false]
 
 
@@ -270,12 +270,12 @@ defmodule Gmimex do
   end
 
 
-  def update_filename_with_flag(path, flag, set_toggle \\ true) do
+  def update_filename_with_flag(path, flag, value \\ true) do
     [filename, flags] = Path.basename(path) |> String.split(":2,")
     flag_present = String.contains?(flags, String.upcase(flag)) || String.contains?(flags, String.downcase(flag))
     new_flags = flags
     new_path = path
-    if set_toggle do
+    if value do
       if !flag_present, do:
         new_flags = "#{flags}#{String.upcase(flag)}" |> to_char_list |> Enum.sort |> to_string
     else
@@ -291,7 +291,7 @@ defmodule Gmimex do
   defp set_flag(path, flag, opts \\ []) do
     opts = Keyword.merge(@flags_default_opts, opts)
     {:ok, path} = move_to_cur(path, opts) # assure the email is in cur
-    new_path = update_filename_with_flag(path, flag, opts[:toggle])
+    new_path = update_filename_with_flag(path, flag, opts[:value])
     if path !== new_path do
       if opts[:with_sudo] do
         {_, 0} = System.cmd("sudo", ["mv", path, new_path])
