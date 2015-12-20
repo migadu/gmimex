@@ -1,6 +1,6 @@
 defmodule Gmimex do
 
-  @get_json_defaults [raw: false, content: false, with_sudo: false]
+  @get_json_defaults [raw: false, content: false, with_sudo: false ]
   @flags_default_opts [value: true, with_sudo: false]
   @move_message_default_opts [folder: ".", with_sudo: false]
 
