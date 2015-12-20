@@ -46,6 +46,7 @@ typedef GPtrArray AddressesList;
 typedef struct MessageBody {
   gchar   *content_type;
   GString *content;
+  GString *raw;
   guint   size;
 } MessageBody;
 
@@ -234,6 +235,7 @@ static MessageBody *new_message_body(void) {
   MessageBody *mb = g_malloc(sizeof(MessageBody));
   mb->content_type = NULL;
   mb->content = NULL;
+  mb->raw = NULL;
   mb->size = 0;
   return mb;
 }
@@ -247,6 +249,9 @@ static void free_message_body(MessageBody *mbody) {
 
   if (mbody->content)
     g_string_free(mbody->content, TRUE);
+
+  if (mbody->raw)
+    g_string_free(mbody->raw, TRUE);
 
   g_free(mbody);
 }
@@ -1301,18 +1306,19 @@ static MessageBody* get_body(CollectedPart *body_part, GPtrArray *inlines) {
 
   // We keep the raw size intentionally
   mb->size = body_part->content->len;
+  mb->raw = g_string_new_len((const gchar*) body_part->content->data, body_part->content->len);
+
   mb->content_type = g_strdup(body_part->content_type);
 
   // Parse any HTML tags
-  GString *raw_content = g_string_new_len((const gchar*) body_part->content->data, body_part->content->len);
-  GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, raw_content->str, raw_content->len);
+
+  GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, mb->raw->str, mb->raw->len);
 
   // Remove unallowed HTML tags (like scripts, bad href etc..)
   GString *sanitized_content = sanitize(output->document, inlines);
   mb->content = sanitized_content;
 
   gumbo_destroy_output(&kGumboDefaultOptions, output);
-  g_string_free(raw_content, TRUE);
 
   return mb;
 }
@@ -1505,8 +1511,8 @@ static JSON_Value *message_body_to_json(MessageBody *mbody) {
 
   json_object_set_string(body_object, "type",    mbody->content_type);
   json_object_set_string(body_object, "content", mbody->content->str);
-
   json_object_set_number(body_object, "size",    mbody->size);
+  json_object_set_string(body_object, "raw",     mbody->raw->str);
 
   return body_value;
 }
