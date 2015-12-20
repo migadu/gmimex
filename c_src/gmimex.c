@@ -1311,14 +1311,15 @@ static MessageBody* get_body(CollectedPart *body_part, GPtrArray *inlines) {
   mb->content_type = g_strdup(body_part->content_type);
 
   // Parse any HTML tags
-
-  GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, mb->raw->str, mb->raw->len);
+  GString *raw_content = g_string_new_len((const gchar*) body_part->content->data, body_part->content->len);
+  GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, raw_content->str, raw_content->len);
 
   // Remove unallowed HTML tags (like scripts, bad href etc..)
   GString *sanitized_content = sanitize(output->document, inlines);
   mb->content = sanitized_content;
 
   gumbo_destroy_output(&kGumboDefaultOptions, output);
+  g_string_free(raw_content, TRUE);
 
   return mb;
 }
