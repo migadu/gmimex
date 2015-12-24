@@ -1432,7 +1432,7 @@ static MessageData *convert_message(GMimeMessage *message, guint content_option)
 
   md->date = g_mime_message_get_date_as_string(message);
 
-  const gchar *in_reply_to = g_mime_object_get_header(GMIME_OBJECT (message), "In-reply-to");
+  const gchar *in_reply_to = g_mime_object_get_header(GMIME_OBJECT (message), "In-Reply-To");
   if (in_reply_to) {
     gchar *in_reply_to_str = g_mime_utils_header_decode_text(in_reply_to);
     md->in_reply_to = g_mime_references_decode(in_reply_to_str);
