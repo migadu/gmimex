@@ -1537,17 +1537,18 @@ static JSON_Value *message_attachments_list_to_json(MessageAttachmentsList *matt
 static JSON_Value *references_to_json(GMimeReferences *references) {
   if (!references)
     return NULL;
-  GMimeReferences *runner;
+
+  const char *msgid;
+  const GMimeReferences *cur;
   JSON_Value *references_value = json_value_init_array();
   JSON_Array *references_array = json_value_get_array(references_value);
 
-  runner = references;
-  while (TRUE) {
-    json_array_append_string(references_array, runner->msgid);
-    runner = references->next;
-    if (!runner)
-      return references_value;
+  for (cur = references; cur; cur = g_mime_references_get_next(cur)) {
+    msgid = g_mime_references_get_message_id (cur);
+    json_array_append_string(references_array, msgid);
   }
+
+  return references_value;
 }
 
 
