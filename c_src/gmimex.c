@@ -1441,7 +1441,7 @@ static MessageData *convert_message(GMimeMessage *message, guint content_option)
 
   const gchar *references = g_mime_object_get_header(GMIME_OBJECT (message), "References");
   if (references) {
-    gchar *references_str = g_mime_utils_header_decode_text(in_reply_to);
+    gchar *references_str = g_mime_utils_header_decode_text(references);
     md->references = g_mime_references_decode(references_str);
     g_free(references_str);
   }
