@@ -13,6 +13,8 @@
 #define MAX_CID_SIZE 65536
 #define MIN_DATA_URI_IMAGE "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA="
 
+#define COLLECT_RAW_CONTENT 2
+
 
 /*
  * Address
@@ -92,9 +94,8 @@ typedef struct MessageData {
   AddressesList          *bcc;
   gchar                  *subject;
   gchar                  *date;
-  gchar                  *sort_id;
-  gchar                  *in_reply_to;
-  gchar                  *references;
+  GMimeReferences        *in_reply_to;
+  GMimeReferences        *references;
   MessageBody            *text;
   MessageBody            *html;
   MessageAttachmentsList *attachments;
@@ -305,7 +306,6 @@ static MessageData *new_message_data(void) {
   mdata->bcc = NULL;
   mdata->subject = NULL;
   mdata->date = NULL;
-  mdata->sort_id = NULL;
   mdata->in_reply_to = NULL;
   mdata->references = NULL;
   mdata->text = NULL;
@@ -342,13 +342,11 @@ static void free_message_data(MessageData *mdata) {
   if (mdata->date)
     g_free(mdata->date);
 
-  g_free(mdata->sort_id);
-
   if (mdata->in_reply_to)
-    g_free(mdata->in_reply_to);
+     g_mime_references_free(mdata->in_reply_to);
 
   if (mdata->references)
-    g_free(mdata->references);
+     g_mime_references_free(mdata->references);
 
   if (mdata->text)
     free_message_body(mdata->text);
@@ -432,6 +430,7 @@ static void free_collected_part(gpointer part) {
  *
  */
 typedef struct PartCollectorData {
+  gboolean      raw;
   guint         recursion_depth;  // We keep track of explicit recursions, and limit them (RECURSION_LIMIT)
   guint         part_id;          // We keep track of the depth within message parts to identify parts later
   CollectedPart *html_part;
@@ -443,8 +442,10 @@ typedef struct PartCollectorData {
 } PartCollectorData;
 
 
-static PartCollectorData* new_part_collector_data(void) {
+static PartCollectorData* new_part_collector_data(guint content_option) {
   PartCollectorData *pcd = g_malloc(sizeof(PartCollectorData));
+
+  pcd->raw = (content_option == COLLECT_RAW_CONTENT);
 
   pcd->recursion_depth = 0;
   pcd->part_id         = 0;
@@ -985,7 +986,7 @@ static void collect_part(GMimeObject *part, PartCollectorData *fdata, gboolean m
       g_object_unref(utf8_charset_filter);
     }
 
-    if (is_new_text) {
+    if (!fdata->raw && is_new_text) {
       GMimeFilter *strip_filter = g_mime_filter_strip_new();
       g_mime_stream_filter_add(GMIME_STREAM_FILTER(filtered_mem_stream), strip_filter);
       g_object_unref(strip_filter);
@@ -1005,14 +1006,14 @@ static void collect_part(GMimeObject *part, PartCollectorData *fdata, gboolean m
       g_object_unref(html_filter);
     }
 
-    if (is_new_text || is_new_html) {
+    if (!fdata->raw && (is_new_text || is_new_html)) {
       GMimeFilter *from_filter = g_mime_filter_from_new(GMIME_FILTER_FROM_MODE_ESCAPE);
       g_mime_stream_filter_add(GMIME_STREAM_FILTER(filtered_mem_stream), from_filter);
       g_object_unref(from_filter);
     }
 
     // Add Enriched/RTF filter for this content
-    if (is_new_html && (is_text_enriched || is_text_rtf)) {
+    if (!fdata->raw && (is_new_html && (is_text_enriched || is_text_rtf))) {
       guint flags = 0;
       if (is_text_rtf)
         flags = GMIME_FILTER_ENRICHED_IS_RICHTEXT;
@@ -1105,8 +1106,8 @@ static void collector_foreach_callback(GMimeObject *parent, GMimeObject *part, g
 }
 
 
-static PartCollectorData *collect_parts(GMimeMessage *message) {
-  PartCollectorData *pc = new_part_collector_data();
+static PartCollectorData *collect_parts(GMimeMessage *message, guint content_option) {
+  PartCollectorData *pc = new_part_collector_data(content_option);
   g_mime_message_foreach(message, collector_foreach_callback, pc);
   return pc;
 }
@@ -1294,25 +1295,30 @@ static AddressesList *get_bcc_addresses(GMimeMessage *message) {
 }
 
 
-static MessageBody* get_body(CollectedPart *body_part, GPtrArray *inlines) {
+static MessageBody* get_body(CollectedPart *body_part, gboolean sanitize_body, GPtrArray *inlines) {
   g_return_val_if_fail(body_part != NULL, NULL);
 
   MessageBody *mb = new_message_body();
 
   // We keep the raw size intentionally
   mb->size = body_part->content->len;
+
   mb->content_type = g_strdup(body_part->content_type);
 
-  // Parse any HTML tags
-  GString *raw_content = g_string_new_len((const gchar*) body_part->content->data, body_part->content->len);
-  GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, raw_content->str, raw_content->len);
+  if (sanitize_body) {
+    // Parse any HTML tags
+    GString *raw_content = g_string_new_len((const gchar*) body_part->content->data, body_part->content->len);
+    GumboOutput* output = gumbo_parse_with_options(&kGumboDefaultOptions, raw_content->str, raw_content->len);
 
-  // Remove unallowed HTML tags (like scripts, bad href etc..)
-  GString *sanitized_content = sanitize(output->document, inlines);
-  mb->content = sanitized_content;
+    // Remove unallowed HTML tags (like scripts, bad href etc..)
+    GString *sanitized_content = sanitize(output->document, inlines);
+    mb->content = sanitized_content;
 
-  gumbo_destroy_output(&kGumboDefaultOptions, output);
-  g_string_free(raw_content, TRUE);
+    gumbo_destroy_output(&kGumboDefaultOptions, output);
+    g_string_free(raw_content, TRUE);
+  } else {
+    mb->content = g_string_new_len((const gchar*) body_part->content->data, body_part->content->len);
+  }
 
   return mb;
 }
@@ -1404,8 +1410,7 @@ static MessageAttachmentsList *get_attachments(PartCollectorData *pdata) {
 }
 
 
-
-static MessageData *convert_message(GMimeMessage *message, gboolean include_content) {
+static MessageData *convert_message(GMimeMessage *message, guint content_option) {
   if (!message)
     return NULL;
 
@@ -1427,32 +1432,28 @@ static MessageData *convert_message(GMimeMessage *message, gboolean include_cont
 
   md->date = g_mime_message_get_date_as_string(message);
 
-  char sort_id[100];
-  time_t date;
-  int tz_offset;
-  g_mime_message_get_date(message, &date, &tz_offset);
-  if (!date)
-    date = 0;
-  struct tm *t = localtime(&date);
-  size_t sort_id_len = strftime(sort_id, sizeof(sort_id)-1, "%s", t);  // %Y%m%d%H%M%S
-  md->sort_id = g_strndup(sort_id, sort_id_len);
-
-  const gchar *in_reply_to = g_mime_object_get_header(GMIME_OBJECT (message), "In-reply-to");
-  if (in_reply_to)
-    md->in_reply_to = g_mime_utils_header_decode_text(in_reply_to);
+  const gchar *in_reply_to = g_mime_object_get_header(GMIME_OBJECT (message), "In-Reply-To");
+  if (in_reply_to) {
+    gchar *in_reply_to_str = g_mime_utils_header_decode_text(in_reply_to);
+    md->in_reply_to = g_mime_references_decode(in_reply_to_str);
+    g_free(in_reply_to_str);
+  }
 
   const gchar *references = g_mime_object_get_header(GMIME_OBJECT (message), "References");
-  if (references)
-    md->references = g_mime_utils_header_decode_text(references);
+  if (references) {
+    gchar *references_str = g_mime_utils_header_decode_text(references);
+    md->references = g_mime_references_decode(references_str);
+    g_free(references_str);
+  }
 
-  if (include_content) {
-    PartCollectorData *pc = collect_parts(message);
+  if (content_option) {
+    PartCollectorData *pc = collect_parts(message, content_option);
 
     if (pc->text_part)
-      md->text = get_body(pc->text_part, NULL);
+      md->text = get_body(pc->text_part, (content_option != COLLECT_RAW_CONTENT), NULL);
 
     if (pc->html_part)
-      md->html = get_body(pc->html_part, pc->inlines);
+      md->html = get_body(pc->html_part, (content_option != COLLECT_RAW_CONTENT), pc->inlines);
 
     md->attachments = get_attachments(pc);
 
@@ -1505,7 +1506,6 @@ static JSON_Value *message_body_to_json(MessageBody *mbody) {
 
   json_object_set_string(body_object, "type",    mbody->content_type);
   json_object_set_string(body_object, "content", mbody->content->str);
-
   json_object_set_number(body_object, "size",    mbody->size);
 
   return body_value;
@@ -1534,8 +1534,26 @@ static JSON_Value *message_attachments_list_to_json(MessageAttachmentsList *matt
 }
 
 
-static GString *gmime_message_to_json(GMimeMessage *message, gboolean include_content) {
-  MessageData *mdata = convert_message(message, include_content);
+static JSON_Value *references_to_json(GMimeReferences *references) {
+  if (!references)
+    return NULL;
+
+  const char *msgid;
+  const GMimeReferences *cur;
+  JSON_Value *references_value = json_value_init_array();
+  JSON_Array *references_array = json_value_get_array(references_value);
+
+  for (cur = references; cur; cur = g_mime_references_get_next(cur)) {
+    msgid = g_mime_references_get_message_id (cur);
+    json_array_append_string(references_array, msgid);
+  }
+
+  return references_value;
+}
+
+
+static GString *gmime_message_to_json(GMimeMessage *message, guint content_option) {
+  MessageData *mdata = convert_message(message, content_option);
 
 
   JSON_Value *root_value = json_value_init_object();
@@ -1549,9 +1567,10 @@ static GString *gmime_message_to_json(GMimeMessage *message, gboolean include_co
   json_object_set_string(root_object, "messageId",   mdata->message_id);
   json_object_set_string(root_object, "subject",     mdata->subject);
   json_object_set_string(root_object, "date",        mdata->date);
-  json_object_set_string(root_object, "sortId",      mdata->sort_id);
-  json_object_set_string(root_object, "inReplyTo",   mdata->in_reply_to);
-  json_object_set_string(root_object, "references",  mdata->references);
+
+  json_object_set_value(root_object, "inReplyTo",   references_to_json(mdata->in_reply_to));
+  json_object_set_value(root_object, "references",  references_to_json(mdata->references));
+
   json_object_set_value(root_object,  "text",        message_body_to_json(mdata->text));
   json_object_set_value(root_object,  "html",        message_body_to_json(mdata->html));
   json_object_set_value(root_object,  "attachments", message_attachments_list_to_json(mdata->attachments));
@@ -1572,14 +1591,14 @@ static GString *gmime_message_to_json(GMimeMessage *message, gboolean include_co
  *
  *
  */
-GString *gmimex_get_json(gchar *path, gboolean include_content) {
+GString *gmimex_get_json(gchar *path, guint content_option) {
   g_mime_init(GMIME_ENABLE_RFC2047_WORKAROUNDS);
 
   GMimeMessage *message = gmime_message_from_path(path);
   if (!message)
     return NULL;
 
-  GString *json_message = gmime_message_to_json(message, include_content);
+  GString *json_message = gmime_message_to_json(message, content_option);
   g_object_unref(message);
 
   g_mime_shutdown();

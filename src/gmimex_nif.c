@@ -33,11 +33,15 @@ static ERL_NIF_TERM nif_get_json(ErlNifEnv* env, int argc, const ERL_NIF_TERM ar
     return enif_make_badarg(env);
 
   gchar include_content_atom[10];
-  gboolean include_content = TRUE;
-  if (argc == 2 && enif_get_atom(env, argv[1], include_content_atom, sizeof(include_content_atom), ERL_NIF_LATIN1))
-    include_content = !g_ascii_strcasecmp(include_content_atom, "true");
+  guint content_option = 0;
+  if (argc == 2 && enif_get_atom(env, argv[1], include_content_atom, sizeof(include_content_atom), ERL_NIF_LATIN1)) {
+    if (!g_ascii_strcasecmp(include_content_atom, "true"))
+      content_option = 1;
+    else if (!g_ascii_strcasecmp(include_content_atom, "raw"))
+      content_option = 2;
+  }
 
-  GString *json_str = gmimex_get_json(path, include_content);
+  GString *json_str = gmimex_get_json(path, content_option);
   g_free(path);
 
   if (!json_str)
