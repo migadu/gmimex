@@ -10,7 +10,7 @@ NIF_COMPILE_OPTIONS=-I$(ERLANG_PATH) $(ALL_LIBS)
 ifeq ($(shell uname),Darwin)
 NIF_COMPILE_OPTIONS+= -dynamiclib -undefined dynamic_lookup
 endif
-CFLAGS=-O3 -fPIC -Wall `pkg-config --cflags glib-2.0 gmime-2.6`
+CFLAGS=-O3 -fPIC -Wall `pkg-config --cflags glib-2.0 gmime-2.6 gumbo`
 
 all: gmimex
 

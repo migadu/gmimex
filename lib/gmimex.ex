@@ -81,7 +81,7 @@ defmodule Gmimex do
 
 
   # move all files from 'new' to 'cur'
-  defp move_new_to_cur(maildir_path, opts) do
+  def move_new_to_cur(maildir_path, opts) do
     {:ok, new_emails} = File.ls(Path.join(maildir_path, "new"))
     Enum.each(new_emails, fn(x) -> filepath = Path.join(Path.join(maildir_path, "new"), x); move_to_cur(filepath, opts) end)
   end
