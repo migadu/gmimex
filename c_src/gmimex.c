@@ -12,8 +12,7 @@
 #define CITATION_COLOUR 4537548
 #define MAX_CID_SIZE 65536
 #define MIN_DATA_URI_IMAGE "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-#define VIEWPORT "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"/>"
-
+#define VIEWPORT "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>"
 
 #define COLLECT_RAW_CONTENT 2
 
