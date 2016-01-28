@@ -11,7 +11,8 @@
 #define RECURSION_LIMIT 30
 #define CITATION_COLOUR 4537548
 #define MAX_CID_SIZE 65536
-#define MIN_DATA_URI_IMAGE "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA="
+#define MIN_DATA_URI_IMAGE "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+#define VIEWPORT "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>"
 
 #define COLLECT_RAW_CONTENT 2
 
@@ -94,9 +95,8 @@ typedef struct MessageData {
   AddressesList          *bcc;
   gchar                  *subject;
   gchar                  *date;
-  gchar                  *sort_id;
-  gchar                  *in_reply_to;
-  gchar                  *references;
+  GMimeReferences        *in_reply_to;
+  GMimeReferences        *references;
   MessageBody            *text;
   MessageBody            *html;
   MessageAttachmentsList *attachments;
@@ -307,7 +307,6 @@ static MessageData *new_message_data(void) {
   mdata->bcc = NULL;
   mdata->subject = NULL;
   mdata->date = NULL;
-  mdata->sort_id = NULL;
   mdata->in_reply_to = NULL;
   mdata->references = NULL;
   mdata->text = NULL;
@@ -344,13 +343,11 @@ static void free_message_data(MessageData *mdata) {
   if (mdata->date)
     g_free(mdata->date);
 
-  g_free(mdata->sort_id);
-
   if (mdata->in_reply_to)
-    g_free(mdata->in_reply_to);
+     g_mime_references_free(mdata->in_reply_to);
 
   if (mdata->references)
-    g_free(mdata->references);
+     g_mime_references_free(mdata->references);
 
   if (mdata->text)
     free_message_body(mdata->text);
@@ -748,6 +745,14 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
     GString *node_ser = sanitize_contents(node, inlines_ary);
     g_string_append(results, node_ser->str);
     g_string_free(node_ser, TRUE);
+    return results;
+  }
+
+  if ((node->type == GUMBO_NODE_ELEMENT) &&
+      (node->v.element.tag == GUMBO_TAG_HEAD)) {
+    GString *results = g_string_new("<head>\n");
+    g_string_append(results, VIEWPORT);
+    g_string_append(results, "</head>\n");
     return results;
   }
 
@@ -1414,7 +1419,6 @@ static MessageAttachmentsList *get_attachments(PartCollectorData *pdata) {
 }
 
 
-
 static MessageData *convert_message(GMimeMessage *message, guint content_option) {
   if (!message)
     return NULL;
@@ -1437,23 +1441,19 @@ static MessageData *convert_message(GMimeMessage *message, guint content_option)
 
   md->date = g_mime_message_get_date_as_string(message);
 
-  char sort_id[100];
-  time_t date;
-  int tz_offset;
-  g_mime_message_get_date(message, &date, &tz_offset);
-  if (!date)
-    date = 0;
-  struct tm *t = localtime(&date);
-  size_t sort_id_len = strftime(sort_id, sizeof(sort_id)-1, "%s", t);  // %Y%m%d%H%M%S
-  md->sort_id = g_strndup(sort_id, sort_id_len);
-
-  const gchar *in_reply_to = g_mime_object_get_header(GMIME_OBJECT (message), "In-reply-to");
-  if (in_reply_to)
-    md->in_reply_to = g_mime_utils_header_decode_text(in_reply_to);
+  const gchar *in_reply_to = g_mime_object_get_header(GMIME_OBJECT (message), "In-Reply-To");
+  if (in_reply_to) {
+    gchar *in_reply_to_str = g_mime_utils_header_decode_text(in_reply_to);
+    md->in_reply_to = g_mime_references_decode(in_reply_to_str);
+    g_free(in_reply_to_str);
+  }
 
   const gchar *references = g_mime_object_get_header(GMIME_OBJECT (message), "References");
-  if (references)
-    md->references = g_mime_utils_header_decode_text(references);
+  if (references) {
+    gchar *references_str = g_mime_utils_header_decode_text(references);
+    md->references = g_mime_references_decode(references_str);
+    g_free(references_str);
+  }
 
   if (content_option) {
     PartCollectorData *pc = collect_parts(message, content_option);
@@ -1543,6 +1543,24 @@ static JSON_Value *message_attachments_list_to_json(MessageAttachmentsList *matt
 }
 
 
+static JSON_Value *references_to_json(GMimeReferences *references) {
+  if (!references)
+    return NULL;
+
+  const char *msgid;
+  const GMimeReferences *cur;
+  JSON_Value *references_value = json_value_init_array();
+  JSON_Array *references_array = json_value_get_array(references_value);
+
+  for (cur = references; cur; cur = g_mime_references_get_next(cur)) {
+    msgid = g_mime_references_get_message_id (cur);
+    json_array_append_string(references_array, msgid);
+  }
+
+  return references_value;
+}
+
+
 static GString *gmime_message_to_json(GMimeMessage *message, guint content_option) {
   MessageData *mdata = convert_message(message, content_option);
 
@@ -1558,9 +1576,10 @@ static GString *gmime_message_to_json(GMimeMessage *message, guint content_optio
   json_object_set_string(root_object, "messageId",   mdata->message_id);
   json_object_set_string(root_object, "subject",     mdata->subject);
   json_object_set_string(root_object, "date",        mdata->date);
-  json_object_set_string(root_object, "sortId",      mdata->sort_id);
-  json_object_set_string(root_object, "inReplyTo",   mdata->in_reply_to);
-  json_object_set_string(root_object, "references",  mdata->references);
+
+  json_object_set_value(root_object, "inReplyTo",   references_to_json(mdata->in_reply_to));
+  json_object_set_value(root_object, "references",  references_to_json(mdata->references));
+
   json_object_set_value(root_object,  "text",        message_body_to_json(mdata->text));
   json_object_set_value(root_object,  "html",        message_body_to_json(mdata->html));
   json_object_set_value(root_object,  "attachments", message_attachments_list_to_json(mdata->attachments));
