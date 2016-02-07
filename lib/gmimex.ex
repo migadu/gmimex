@@ -1,8 +1,8 @@
 defmodule Gmimex do
 
-  @get_json_defaults [raw: false, content: false, with_sudo: false ]
-  @flags_default_opts [value: true, with_sudo: false]
-  @move_message_default_opts [folder: ".", with_sudo: false]
+  @get_json_defaults [raw: false, content: false ]
+  @flags_default_opts [value: true]
+  @move_message_default_opts [folder: "."]
 
 
   def get_json(path, opts \\ [])
@@ -113,11 +113,7 @@ defmodule Gmimex do
       {:ok, path}
     else
       new_path = maildirname |> Path.join('cur') |> Path.join("#{filename}:2,")
-      if opts[:with_sudo] do
-        System.cmd "sudo", ["mv", path, new_path]
-      else
-        :ok = File.rename path, new_path
-      end
+      :ok = File.rename path, new_path
       {:ok, new_path}
     end
   end
@@ -137,11 +133,7 @@ defmodule Gmimex do
       {:ok, path}
     else
       new_path = maildirname |> Path.join('new') |> Path.join(filename)
-      if opts[:with_sudo] do
-        System.cmd "sudo", ["mv", path, new_path]
-      else
-        :ok = File.rename path, new_path
-      end
+      :ok = File.rename path, new_path
       {:ok, new_path}
     end
   end
@@ -155,15 +147,11 @@ defmodule Gmimex do
   def move_message_to_folder(base_path, message_path, opts \\ []) do
     opts = Keyword.merge(@move_message_default_opts, opts)
     filename = Path.basename(message_path)
-    new_maildir = base_path |> Path.join(opts[:folder]) |> Path.join('cur')
+    new_maildir = base_path |> Path.join(opts[:folder]) |> Path.join('new')
     File.mkdir_p! new_maildir
     new_path =  new_maildir |> Path.join(filename)
-      if opts[:with_sudo] do
-        System.cmd "sudo", ["mv", message_path, new_path]
-      else
-        :ok = File.rename message_path, new_path
-      end
-      {:ok, new_path}
+    :ok = File.rename message_path, new_path
+    {:ok, new_path}
   end
 
 
@@ -274,18 +262,12 @@ defmodule Gmimex do
   end
 
 
-
-
   defp set_flag(path, flag, opts \\ []) do
     opts = Keyword.merge(@flags_default_opts, opts)
     {:ok, path} = move_to_cur(path, opts) # assure the email is in cur
     new_path = update_filename_with_flag(path, flag, opts[:value])
     if path !== new_path do
-      if opts[:with_sudo] do
-        {_, 0} = System.cmd("sudo", ["mv", path, new_path])
-      else
-        File.rename path, new_path
-      end
+      File.rename path, new_path
     end
     new_path
   end
@@ -307,6 +289,7 @@ defmodule Gmimex do
     filename = Path.basename(path)
     find_email_path(maildir, filename)
   end
+
 
   def find_email_path(maildir, filename) do
     path = Path.join(maildir, filename)

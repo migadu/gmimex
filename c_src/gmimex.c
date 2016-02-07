@@ -12,7 +12,6 @@
 #define CITATION_COLOUR 4537548
 #define MAX_CID_SIZE 65536
 #define MIN_DATA_URI_IMAGE "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-#define VIEWPORT "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>"
 
 #define COLLECT_RAW_CONTENT 2
 
@@ -745,14 +744,6 @@ static GString *sanitize(GumboNode* node, GPtrArray* inlines_ary) {
     GString *node_ser = sanitize_contents(node, inlines_ary);
     g_string_append(results, node_ser->str);
     g_string_free(node_ser, TRUE);
-    return results;
-  }
-
-  if ((node->type == GUMBO_NODE_ELEMENT) &&
-      (node->v.element.tag == GUMBO_TAG_HEAD)) {
-    GString *results = g_string_new("<head>\n");
-    g_string_append(results, VIEWPORT);
-    g_string_append(results, "</head>\n");
     return results;
   }
 
