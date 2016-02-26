@@ -147,9 +147,9 @@ defmodule Gmimex do
   def move_message_to_folder(base_path, message_path, opts \\ []) do
     opts = Keyword.merge(@move_message_default_opts, opts)
     filename = Path.basename(message_path)
-    new_maildir = base_path |> Path.join(opts[:folder]) |> Path.join('new')
+    new_maildir = base_path |> Path.join(opts[:folder]) |> Path.join('cur')
     File.mkdir_p! new_maildir
-    new_path =  new_maildir |> Path.join(filename)
+    new_path =  new_maildir |> Path.join(filename) |> Path.expand
     :ok = File.rename message_path, new_path
     {:ok, new_path}
   end
