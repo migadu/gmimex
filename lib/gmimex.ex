@@ -345,4 +345,50 @@ defmodule Gmimex do
     end)
   end
 
+  @doc """
+  Returnes the list of folders including the number of (new) emails
+  """
+  def folder_list_with_stats(mailbox_path) do
+    folder_list(mailbox_path)
+      |> Enum.map(fn(x) ->
+        folder_path = Path.join(mailbox_path, x)
+        stats = folder_stats(folder_path)
+        Map.merge(%{path: x}, stats)
+      end)
+
+  end
+
+
+  defp folder_stats(folder_path) do
+    new_path = Path.join(folder_path, "new")
+    new_cmd = "find #{new_path} -type f | wc -l"
+    cur_path = Path.join(folder_path, "cur")
+    cur_cmd = "find #{cur_path} -type f | wc -l"
+    read_cmd = "find #{cur_path} -type f -name '*2,*S*' | wc -l"
+    nr_new = :os.cmd(to_char_list(new_cmd))  |> to_string |> String.strip |> String.to_integer
+    nr_cur = :os.cmd(to_char_list(cur_cmd))  |> to_string |> String.strip |> String.to_integer
+    nr_read = :os.cmd(to_char_list(read_cmd))  |> to_string |> String.strip |> String.to_integer
+    %{total_messages: (nr_cur + nr_new), new_messages: nr_new, read_messages: nr_read, unread_messages: (nr_cur + nr_new - nr_read)}
+  end
+
+
+  @doc """
+  Returns the list of maildir folders.
+  The folder list is not cleaned, that is all folders start
+  with a "/".
+  """
+  def folder_list(mailbox_path) do
+    # ensure that mailbox_path does not ends with a "/"
+    if String.last(mailbox_path) == "/", do: mailbox_path = String.slice(mailbox_path, 0..-2)
+    # We use System.cmd because it's much, much faster than Path.wildcard
+    case System.cmd("find", [mailbox_path, "-type", "d", "-path", "*/new", "-o", "-path", "*/cur", "-o", "-path", "*/tmp", "-exec", "dirname", "{}", "\;"]) do
+      {paths, 0} ->
+        paths
+          |> String.strip
+          |> String.split("\n")
+          |> Enum.map(&(String.replace(&1, mailbox_path, ""))) # create relative paths
+      {_, 1} -> [] # if no folders, return empty array
+    end
+  end
+
 end
