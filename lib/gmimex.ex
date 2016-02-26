@@ -387,6 +387,7 @@ defmodule Gmimex do
           |> String.strip
           |> String.split("\n")
           |> Enum.map(&(String.replace(&1, mailbox_path, ""))) # create relative paths
+          |> Enum.map(&(if &1 == "", do: "/", else: &1)) # create relative paths
       {_, 1} -> [] # if no folders, return empty array
     end
   end
