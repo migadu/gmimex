@@ -343,6 +343,7 @@ defmodule Gmimex do
 
 
   defp folder_stats(folder_path) do
+    IO.inspect folder_path: folder_path
     new_path = Path.join(folder_path, "new")
     new_cmd = "find #{new_path} -type f | wc -l"
     cur_path = Path.join(folder_path, "cur")
@@ -361,6 +362,7 @@ defmodule Gmimex do
   with a "/".
   """
   def folder_list(mailbox_path) do
+    IO.inspect mailbox_path: mailbox_path
     # ensure that mailbox_path does not ends with a "/"
     if String.last(mailbox_path) == "/", do: mailbox_path = String.slice(mailbox_path, 0..-2)
     # We use System.cmd because it's much, much faster than Path.wildcard
