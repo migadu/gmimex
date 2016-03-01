@@ -356,9 +356,12 @@ defmodule Gmimex do
     cur_path = Path.join(folder_path, "cur")
     cur_cmd = "find #{cur_path} -type f | wc -l"
     read_cmd = "find #{cur_path} -type f -name '*2,*S*' | wc -l"
-    nr_new = :os.cmd(to_char_list(new_cmd))  |> to_string |> String.strip |> String.to_integer
-    nr_cur = :os.cmd(to_char_list(cur_cmd))  |> to_string |> String.strip |> String.to_integer
-    nr_read = :os.cmd(to_char_list(read_cmd))  |> to_string |> String.strip |> String.to_integer
+    # nr_new  = :os.cmd(to_char_list(new_cmd))  |> to_string |> String.strip |> String.to_integer
+    # nr_cur  = :os.cmd(to_char_list(cur_cmd))  |> to_string |> String.strip |> String.to_integer
+    # nr_read = :os.cmd(to_char_list(read_cmd))  |> to_string |> String.strip |> String.to_integer
+    nr_new  = 0
+    nr_cur  = 0
+    nr_read = 0
     %{total_messages: (nr_cur + nr_new), new_messages: nr_new, read_messages: nr_read, unread_messages: (nr_cur + nr_new - nr_read)}
   end
 

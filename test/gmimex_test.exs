@@ -185,12 +185,12 @@ defmodule GmimexTest do
   end
 
 
-  test "folder list with stats" do
-    mailbox_path = Path.expand(Path.expand("test/data/test.com/aaa"))
+  # test "folder list with stats" do
+  #   mailbox_path = Path.expand(Path.expand("test/data/test.com/aaa"))
 
-    folders = Gmimex.folder_list_with_stats(mailbox_path)
-    assert folders == [%{path: "/", unread_messages: 5, new_messages: 3, total_messages: 6, read_messages: 1, unread_messages: 5},
-                       %{new_messages: 0, path: "/.Drafts", read_messages: 0, total_messages: 0, unread_messages: 0}]
-  end
+  #   folders = Gmimex.folder_list_with_stats(mailbox_path)
+  #   assert folders == [%{path: "/", unread_messages: 5, new_messages: 3, total_messages: 6, read_messages: 1, unread_messages: 5},
+  #                      %{new_messages: 0, path: "/.Drafts", read_messages: 0, total_messages: 0, unread_messages: 0}]
+  # end
 
 end
