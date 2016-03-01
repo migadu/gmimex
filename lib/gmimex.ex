@@ -83,7 +83,10 @@ defmodule Gmimex do
   # move all files from 'new' to 'cur'
   def move_new_to_cur(maildir_path, opts) do
     new_path = Path.join(maildir_path, "new")
-    unless File.exists?(new_path), do: raise "Path: #{new_path} does not exist"
+    unless File.exists?(new_path) do
+      IO.puts "Path: #{new_path} does not exist, we create it"
+      File.mkdir_p! new_path
+    end
     {:ok, new_emails} = File.ls(Path.join(maildir_path, "new"))
     Enum.each(new_emails, fn(x) -> filepath = Path.join(new_path, x); move_to_cur(filepath, opts) end)
   end
@@ -113,6 +116,10 @@ defmodule Gmimex do
       {:ok, path}
     else
       new_path = maildirname |> Path.join('cur') |> Path.join("#{filename}:2,")
+      unless File.exists?(new_path) do
+        IO.puts "Path: #{new_path} does not exist, we create it"
+        File.mkdir_p! new_path
+      end
       :ok = File.rename path, new_path
       {:ok, new_path}
     end
