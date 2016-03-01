@@ -116,9 +116,9 @@ defmodule Gmimex do
       {:ok, path}
     else
       new_path = maildirname |> Path.join('cur') |> Path.join("#{filename}:2,")
-      unless File.exists?(new_path) do
+      unless File.exists?(Path.join(maildirname, 'cur')) do
         IO.puts "Path: #{new_path} does not exist, we create it"
-        File.mkdir_p! new_path
+        File.mkdir_p!(Path.join(maildirname, 'cur'))
       end
       :ok = File.rename path, new_path
       {:ok, new_path}
