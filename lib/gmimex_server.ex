@@ -42,7 +42,7 @@ defmodule GmimexServer do
 
 
   defp start_port do
-    Port.open({:spawn, "priv/port"}, [:binary, {:packet, 4}])
+    Port.open({:spawn, :filename.join(:code.priv_dir(:gmimex), 'port')}, [:binary, {:packet, 4}])
   end
 
   defp send_request(state, cmd) do
