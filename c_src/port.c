@@ -1,9 +1,8 @@
-#include <glib/gstdio.h>
 #include <glib.h>
+#include <glib/gprintf.h>
 #include "erl_comm.h"
 #include "gmimex.h"
 #include "parson.h"
-#include "string.h"
 
 #define JSON_NO_MESSAGE_CONTENT 0
 #define JSON_PREPARED_MESSAGE_CONTENT 1

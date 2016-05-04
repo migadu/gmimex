@@ -8,7 +8,6 @@ defmodule Gmimex do
   def get_json(path, opts \\ [])
 
   def get_json(path, opts) when is_binary(path) do
-    opts = Keyword.merge(@get_json_defaults, opts)
     {:ok, do_get_json(path, opts)}
   end
 
@@ -25,7 +24,7 @@ defmodule Gmimex do
     {:ok, server} = GmimexServer.start_link
     {:ok, json_bin} = case opts[:content] do
       false -> GmimexServer.get_preview_json(server, path)
-      true  -> GmimexServer.get_json(server, path, opts[:content])
+      true  -> GmimexServer.get_json(server, path, opts[:raw])
     end
     if opts[:raw] do
       json_bin

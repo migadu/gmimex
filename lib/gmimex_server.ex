@@ -9,7 +9,7 @@ defmodule GmimexServer do
     GenServer.call(server, {:get_preview_json, path})
   end
 
-  def get_json(server, path, keep_raw \\ false) do
+  def get_json(server, path, keep_raw) do
     GenServer.call(server, {:get_json, path, keep_raw})
   end
 
@@ -28,10 +28,10 @@ defmodule GmimexServer do
     {:reply, reply, state}
   end
 
-  def handle_call(request, from, state) do
-    # Call the default implementation from GenServer
-    super(request, from, state)
-  end
+  # def handle_call(request, from, state) do
+  #   # Call the default implementation from GenServer
+  #   super(request, from, state)
+  # end
 
 
   def handle_info({port, {:exit_status, status}}, %{port: port}) do
@@ -68,8 +68,8 @@ defmodule GmimexServer do
   def decode( <<101, 114, 114, _message :: binary>>), do:
     :error
 
-  def decode(json_response), do:
-    {:ok, json_response }
+  def decode(response), do:
+    {:ok, response}
 
 
 end

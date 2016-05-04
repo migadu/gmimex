@@ -181,7 +181,8 @@ defmodule GmimexTest do
     mailbox_path = Path.expand(Path.expand("test/data/test.com/aaa"))
 
     folders = Gmimex.folder_list(mailbox_path)
-    assert folders == ["/", "/.Drafts"]
+    assert Enum.member?(folders, "/")
+    assert Enum.member?(folders, "/.Drafts")
   end
 
 
