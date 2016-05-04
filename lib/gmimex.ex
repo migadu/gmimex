@@ -7,11 +7,10 @@ defmodule Gmimex do
 
   def get_json(path, opts \\ [])
 
-
   def get_json(path, opts) when is_binary(path) do
+    opts = Keyword.merge(@get_json_defaults, opts)
     {:ok, do_get_json(path, opts)}
   end
-
 
   def get_json(paths, opts) when is_list(paths) do
     {:ok, paths |> Enum.map(fn(x) ->
@@ -23,7 +22,11 @@ defmodule Gmimex do
   defp do_get_json(path, opts) do
     opts = Keyword.merge(@get_json_defaults, opts)
     unless File.exists?(path), do: raise "Email path: #{path} not found"
-    json_bin = GmimexNif.get_json(path, opts[:content])
+    {:ok, server} = GmimexServer.start_link
+    {:ok, json_bin} = case opts[:content] do
+      false -> GmimexServer.get_preview_json(server, path)
+      true  -> GmimexServer.get_json(server, path, opts[:content])
+    end
     if opts[:raw] do
       json_bin
     else
@@ -40,12 +43,14 @@ defmodule Gmimex do
 
 
   def get_json_list(email_list, opts \\ []) do
-    email_list |> Enum.map(fn(x) -> {:ok, email} = Gmimex.get_json(x, opts); email end)
+    email_list |> Enum.map(fn(x) -> {:ok, email} = get_json(x, opts); email end)
   end
 
 
   def get_part(path, part_id) do
-    GmimexNif.get_part(path, part_id)
+    {:ok, server} = GmimexServer.start_link
+    {:ok, data} = GmimexServer.get_part(server, path, part_id)
+    data
   end
 
 
@@ -60,7 +65,7 @@ defmodule Gmimex do
     cur_path = Path.join(maildir_path, "cur")
     cur_email_names = files_ordered_by_time_desc(cur_path)
     emails = Enum.map(cur_email_names, fn(x) ->
-      {:ok, email} = Gmimex.get_json(Path.join(cur_path, x), content: false);email end)
+      {:ok, email} = get_json(Path.join(cur_path, x), content: false);email end)
     sorted_emails = Enum.sort(emails, &(&1["sortId"] > &2["sortId"]))
 
     if from_idx > (len = Enum.count(sorted_emails)), do: from_idx = len
@@ -224,12 +229,12 @@ defmodule Gmimex do
     dirname = Path.dirname(path)
     filename = Enum.reduce(flags, fn(x, acc) ->
       case x do
-        :passed   -> acc = Gmimex.passed!  filename, false
-        :replied  -> acc = Gmimex.replied! filename, false
-        :seen     -> acc = Gmimex.seen!    filename, false
-        :trashed  -> acc = Gmimex.trashed! filename, false
-        :draft    -> acc = Gmimex.draft!   filename, false
-        :flagged  -> acc = Gmimex.flagged! filename, false
+        :passed   -> acc = passed!  filename, false
+        :replied  -> acc = replied! filename, false
+        :seen     -> acc = seen!    filename, false
+        :trashed  -> acc = trashed! filename, false
+        :draft    -> acc = draft!   filename, false
+        :flagged  -> acc = flagged! filename, false
       end
     end)
     Path.join(dirname, filename)

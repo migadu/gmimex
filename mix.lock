@@ -1,1 +1,3 @@
-%{"poison": {:hex, :poison, "1.5.0"}}
+%{"cure": {:hex, :cure, "0.4.1"},
+  "msgpax": {:hex, :msgpax, "0.8.2"},
+  "poison": {:hex, :poison, "1.5.0"}}

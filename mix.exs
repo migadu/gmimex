@@ -32,7 +32,7 @@ defmodule Gmimex.Mixfile do
     [app: :gmimex,
      version: @version,
      elixir: "~> 1.0",
-     compilers:     [:gmimex, :elixir, :app],
+     compilers: [:gmimex, :elixir, :app],
      name: "gmimex",
      package: package,
      build_embedded: Mix.env == :prod,
@@ -47,11 +47,11 @@ defmodule Gmimex.Mixfile do
 
   defp package do
     [
-      maintainers:  ["Dejan Strbac"],
+      maintainers:  ["Migadu GmbH"],
       licenses:     ["MIT"],
       links: %{
         "GitHub" => "https://github.com/dejanstrbac/gmimex",
-        "Issues" => "https://github.com/asaaki/gmimex/issues",
+        "Issues" => "https://github.com/dejanstrbac/gmimex/issues",
         "Docs"   => "http://hexdocs.pm/gmimex/"
       },
       files: [
