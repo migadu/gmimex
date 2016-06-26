@@ -5,6 +5,10 @@ defmodule GmimexServer do
     GenServer.start_link(__MODULE__, nil, opts)
   end
 
+  def stop(server) do
+    GenServer.stop(server)
+  end
+
   def get_preview_json(server, path) do
     GenServer.call(server, {:get_preview_json, path})
   end
@@ -44,6 +48,13 @@ defmodule GmimexServer do
   defp start_port do
     Port.open({:spawn, :filename.join(:code.priv_dir(:gmimex), 'port')}, [:binary, {:packet, 4}])
   end
+
+
+  def terminate(_reason, state) do
+    %{ port: port } = state
+    Port.close(port)
+  end
+
 
   defp send_request(state, cmd) do
     id = state.next_id

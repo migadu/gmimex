@@ -26,6 +26,7 @@ defmodule Gmimex do
       false -> GmimexServer.get_preview_json(server, path)
       true  -> GmimexServer.get_json(server, path, opts[:raw])
     end
+    GmimexServer.stop(server)
     if opts[:raw] do
       json_bin
     else
@@ -49,6 +50,7 @@ defmodule Gmimex do
   def get_part(path, part_id) do
     {:ok, server} = GmimexServer.start_link
     {:ok, data} = GmimexServer.get_part(server, path, part_id)
+    GmimexServer.stop(server)
     data
   end
 
